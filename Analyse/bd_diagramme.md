@@ -114,6 +114,7 @@ class PlageHoraire {
     jour : int
     mois : string
     année : int
+    ConfirmationPrésence : bool
 
     + *idHoraire : int
 }
@@ -124,6 +125,20 @@ class Contract {
     idStagiaire : int
     idMds : int
 }
+
+' class TypeEmployeur {
+'     TypeEmployeur : Enum
+' }
+
+' class Statut {
+'     Enum
+' }
+
+' class Statut {
+'     Enum
+' }
+
+
 
 Horaire "1" --- "0..*" PlageHoraire
 
