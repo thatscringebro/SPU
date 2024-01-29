@@ -20,3 +20,22 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.boutton-navigation {
+  text-align: center;
+  display: flex;
+  margin-top: 1rem;
+  background: none;
+  border: none;
+}
+
+.boutton-navigation .cache-sur-mobile {
+  margin-left: 1rem;
+}
+
+@media (max-width: 768px) {
+  .cache-sur-mobile {
+    display: none;
+  }
+}
+
