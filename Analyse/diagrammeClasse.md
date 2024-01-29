@@ -16,24 +16,49 @@ class "Utilisateur" AS User {
 
 }
 
-class "Coordonateur" AS co {
-    + Assigner(mds, stagiaire)
+class "Coordonateur" AS Co {
+    + Affecter()
 }
 
-class "Enseignant" AS ens {
+class "Enseignant" AS Ens {
     - matiere : string
     + Suivre(stagiaire)
 }
 
 class "Maitre de stage" AS Mds {
     + Evaluer(stagiaire)
-    - idCaserne : string
-    - NomEntreprise : string
+    - idMatricule : string
+    - statut : Statut
+    - civilite : Civilite
+    - telMaison : string
+    - accreditation : string
+    - renouvellement : string 
+    - actif : bool
+    - commentaires : string 
+    - commentairesCISSS : string
+    - nomEmployeur : string
     - idStagiaire : int
-    - idEntreprise : int
+    - idEmployeur : int
+    
 }
 
-class "Stagiaire" AS st{
+enum TypeEmployeur {
+    CISSS
+    CIUSSS
+}
+
+enum Civilite {
+    M
+    Mme
+}
+
+enum Statut {
+    Incomplet_EnAttente
+    Accepté
+    Refusé
+}
+
+class "Stagiaire" AS St{
     - idEnseignant : int
     - idMds : int
 
@@ -45,19 +70,43 @@ class "Stagiaire" AS st{
 
 class Stage {
     - idStage : int
-    - lieu : string
-    - idEntreprise : int
+    - milieuStage : string
+    - titre : string
+    - signataireContrat : string
+    - fonction : string 
+    - signataire : string
+    - tel : string
+    - adresse : Adresse
+    - superviseur : Mds
+    - stagiaire : Stagiaire
+    - secteur : string
+    - program : string
+    - typeStage : string
     - dateDebutStage : dateTime
     - dateFinStage : dateTime
+    - superviseurCollège : Enseignant
+    - poste : string
+
+
+    - idEntreprise : int
     - description : string
 }
 
-class "Entreprise" AS ent {
-    - id : int
-    - adresse : string
-    - telephone : int
+class Adresse {
+    - numRue : string
+    - nomRue : int
+    - ville : string
+    - province : string 
+    - codePostal : string
+    - pays : string
+}
 
-    + ConsulterLstStagiaire()
+class "Employeur" AS Emp {
+    - id : int
+    - adresse : Adresse
+
+    + ConsulterLstSesStagiaires()
+    + ConsulterHoraireSesMds
 }
 
 class Horaire {
@@ -79,6 +128,25 @@ class Absence {
 
     + AfficherAbsences()
 }
+
+
+User <|-- Co
+User <|-- Ens
+User <|-- Mds
+User <|-- St
+User <|-- Emp
+
+St *-- Stage
+
+Adresse *-- Emp 
+Stage o-- Emp 
+
+Mds *-- Horaire
+St *-- Horaire
+Absence o-- Horaire
+
+'agrégation (o--) = disposable, pas dépendant
+'composition (*--) = obligé d'avoir un
 
 
 ```
