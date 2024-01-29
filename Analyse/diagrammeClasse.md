@@ -21,6 +21,7 @@ class "Coordonateur" AS co {
 }
 
 class "Enseignant" AS ens {
+    - matiere : string
     + Suivre(stagiaire)
 }
 
@@ -48,6 +49,7 @@ class Stage {
     - idEntreprise : int
     - dateDebutStage : dateTime
     - dateFinStage : dateTime
+    - description : string
 }
 
 class "Entreprise" AS ent {
@@ -62,10 +64,21 @@ class Horaire {
     - id : int
     - idMds : int
     - idStagiaire : int
-    + CreerDisponibilite(jour, heure)
+
+    - date : date
+    - heureDebut : time
+    - heureFin : time
 }
 
+class Absence {
+    - id : int
 
+    - date : date
+    - heureDebut : time
+    - heureFin : time
+
+    + AfficherAbsences()
+}
 
 
 ```
