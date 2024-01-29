@@ -25,6 +25,8 @@ body {
   text-align: center;
   display: flex;
   margin-top: 1rem;
+  background: none;
+  border: none;
 }
 
 .boutton-navigation .cache-sur-mobile {
