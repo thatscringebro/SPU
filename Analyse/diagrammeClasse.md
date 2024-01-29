@@ -6,40 +6,65 @@
 hide circle
 
 
-class Personne {
-    int : id
-    string : nom
-    string : prenom
-    string : courriel
-    int : telephone
+class "Utilisateur" AS User {
+    - id : int 
+    - nom : string
+    - prenom : string
+    - courriel : string 
+    - telephone : int
+    - SeConnecter()
+
 }
 
-class Coordonateur {
-    Assigner(mds, stagiaire)
+class "Coordonateur" AS co {
+    + Assigner(mds, stagiaire)
 }
 
-class Enseignant {
-    Suivre(stagiaire)
+class "Enseignant" AS ens {
+    + Suivre(stagiaire)
 }
 
-class "Maitre de stage" AS MDS {
-    Evaluer(stagiaire)
-    string : idCaserne
-    string : NomEntreprise
-    int : idStagiaire
-    int : idEntreprise
+class "Maitre de stage" AS Mds {
+    + Evaluer(stagiaire)
+    - idCaserne : string
+    - NomEntreprise : string
+    - idStagiaire : int
+    - idEntreprise : int
 }
 
-class Stagiaire {
-    int : idEnseignant
-    int : idMds
+class "Stagiaire" AS st{
+    - idEnseignant : int
+    - idMds : int
+
+    + Ajouter()
+    + Consulter()
+    + MettreAJour()
+    + Rechercher()
 }
 
-class Entreprise {
-    int : id
-    string : adresse
-    int : telephone
+class Stage {
+    - idStage : int
+    - lieu : string
+    - idEntreprise : int
+    - dateDebutStage : dateTime
+    - dateFinStage : dateTime
 }
+
+class "Entreprise" AS ent {
+    - id : int
+    - adresse : string
+    - telephone : int
+
+    + ConsulterLstStagiaire()
+}
+
+class Horaire {
+    - id : int
+    - idMds : int
+    - idStagiaire : int
+    + CreerDisponibilite(jour, heure)
+}
+
 
 
 
