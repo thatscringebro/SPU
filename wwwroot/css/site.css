@@ -24,6 +24,7 @@ body {
 .boutton-navigation {
   text-align: center;
   display: flex;
+  margin-top: 1rem;
 }
 
 .boutton-navigation .cache-sur-mobile {
