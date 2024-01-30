@@ -35,7 +35,7 @@ body {
   margin-left: 1rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1050px) {
   .cache-sur-mobile {
     display: none;
   }
