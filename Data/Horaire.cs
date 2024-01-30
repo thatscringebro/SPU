@@ -4,10 +4,10 @@ namespace SPU.Data
 {
     public class Horaire
     {
-        public int id;
+        public Guid id;
 
-        public int idMDS;
-        public int idStagiaire;
+        public Guid idMDS;
+        public Guid idStagiaire;
 
         [ForeignKey(nameof(idStagiaire))]
         public virtual Stagiaire Stagiaire { get; set; }

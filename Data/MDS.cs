@@ -8,7 +8,7 @@ namespace SPU.Data
     public class MDS
     {
 
-        public int id;
+        public Guid id;
         public string idMatricule;
         public Status status; 
         public Civilite civilite;
@@ -19,9 +19,9 @@ namespace SPU.Data
         public string commentaire;
         public string commentaireCIUSS;
         public string NomEmployeur;
-        public int idStagiaire;
-        public int idEmployeur;
-        public int idHoraire;
+        public Guid idStagiaire;
+        public Guid idEmployeur;
+        public Guid idHoraire;
         //public Utilisateur utilisateur;
 
         [ForeignKey(nameof(idHoraire))]

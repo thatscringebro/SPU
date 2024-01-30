@@ -1,8 +1,10 @@
-﻿namespace SPU.Data
+﻿using System.Runtime.InteropServices;
+
+namespace SPU.Data
 {
     public class Adresse
     {
-        public int id;
+        public Guid id;
         public string NumeroDeRue;
         public string NomDeRue;
         public string ville;

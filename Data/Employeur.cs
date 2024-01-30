@@ -4,8 +4,8 @@ namespace SPU.Data
 {
     public class Employeur
     {
-        public int id;
-        public int idAdresse;
+        public Guid id;
+        public Guid idAdresse;
         //public Utilisateur utilisateur
 
         [ForeignKey(nameof(idAdresse))]

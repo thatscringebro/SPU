@@ -2,17 +2,21 @@
 
 namespace SPU.Data
 {
-    public class Stagiaire
+    public class Chat
     {
         public Guid id;
 
-        //public Utilisateur utilisateur;
+        public Guid idStagiaire;
         public Guid idEnseignant;
-        
 
+
+        [ForeignKey(nameof(idStagiaire))]
+        public virtual Stagiaire stagiaire { get; set; }
         [ForeignKey(nameof(idEnseignant))]
         public virtual Enseignant enseignant { get; set; }
 
+
         public List<MDS> mds;
+        public List<Message> message;  
     }
 }
