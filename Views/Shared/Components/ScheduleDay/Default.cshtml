@@ -8,6 +8,7 @@
                 <div class="colonne">
                     <div class="date">
                         @jour.DayOfWeek
+
                         @switch (jour.Month)
                         {
                             case 1:
@@ -49,10 +50,6 @@
                         }
                     </div>
                     <div class="heures">
-                        @for (int i = 0; i < 24; i++)
-                        {
-                            <div class="heure @(i == 23 ? "derniere-heure": "")"></div>
-                        }
                     </div>
                 </div>
             </li>
@@ -78,6 +75,8 @@
         border: 1px solid grey;
         border-radius: 5px;
         margin: 3px;
+        display: flex;
+        flex-direction: column; /* Afficher les éléments en colonne */
     }
 
     .horizontal-list {
@@ -93,18 +92,9 @@
         }
 
     .heures {
+        flex-grow: 1;
+        border-top: 1px solid lightgrey;
         display: flex;
         flex-direction: column;
-        height: 92%;
     }
-
-    .heure {
-        flex-grow: 1;
-        border-bottom: 1px solid lightgrey;
-    }
-
-    .derniere-heure {
-        border-bottom: none;
-    }
-
 </style>
