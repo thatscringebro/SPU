@@ -7,26 +7,26 @@ hide circle
 
 
 class "Utilisateur" AS User {
-    - id : int 
+    - id : Guid 
     - nom : string
     - prenom : string
     - courriel : string 
-    - telephone : int
-    - SeConnecter()
+    - telephone : string
+    - SeConnecter() : void
 
 }
 
-class "Coordonateur" AS Co {
-    + Affecter()
+class "Coordinateur" AS Co {
+    - id : Guid 
+    + Affecter(stagiare : Stagiaire, mds : Mds) : void
 }
 
 class "Enseignant" AS Ens {
-    - matiere : string
-    + Suivre(stagiaire)
+    - id : Guid 
+    + SuivreStagiaire(stagiaire : Stagiaire) : void
 }
 
 class "Maitre de stage" AS Mds {
-    + Evaluer(stagiaire)
     - idMatricule : string
     - statut : Statut
     - civilite : Civilite
@@ -40,6 +40,7 @@ class "Maitre de stage" AS Mds {
     - idStagiaire : int
     - idEmployeur : int
     
+    + Evaluer(stagiaire : Stagiaire) : void
 }
 
 enum TypeEmployeur {
@@ -54,22 +55,22 @@ enum Civilite {
 
 enum Statut {
     Incomplet_EnAttente
-    Accepté
-    Refusé
+    Accepte
+    Refuse
 }
 
 class "Stagiaire" AS St{
-    - idEnseignant : int
-    - idMds : int
+    - id : Guid 
+    - idEnseignant : Guid 
+    - idMds : string
 
-    + Ajouter()
-    + Consulter()
-    + MettreAJour()
-    + Rechercher()
+    '+ ConsulterStage()
+    '+ MettreAJourInfos()
+    '+ Rechercher()
 }
 
 class Stage {
-    - idStage : int
+    - idStage : Guid 
     - milieuStage : string
     - titre : string
     - signataireContrat : string
@@ -78,7 +79,7 @@ class Stage {
     - tel : string
     - adresse : Adresse
     - superviseur : Mds
-    - stagiaire : Stagiaire
+    - Stagiaire : Stagiaire
     - secteur : string
     - program : string
     - typeStage : string
@@ -88,13 +89,14 @@ class Stage {
     - poste : string
 
 
-    - idEntreprise : int
+    - idEntreprise : Guid 
     - description : string
 }
 
 class Adresse {
+    - id : Guid 
     - numRue : string
-    - nomRue : int
+    - nomRue : string
     - ville : string
     - province : string 
     - codePostal : string
@@ -102,48 +104,99 @@ class Adresse {
 }
 
 class "Employeur" AS Emp {
-    - id : int
+    - id : Guid 
     - adresse : Adresse
 
-    + ConsulterLstSesStagiaires()
-    + ConsulterHoraireSesMds
+    + ConsulterLstSesStagiaires() : LstStagiaires
+    + ConsulterHoraireSesMds(mds : Mds) : LstHoraireMds
 }
 
 class Horaire {
-    - id : int
-    - idMds : int
-    - idStagiaire : int
+    - id : Guid 
+    - idMds : String
+    - idStagiaire : Guid 
 
-    - date : date
-    - heureDebut : time
-    - heureFin : time
+    + ObtenirPlagesHoraires() : lstPlageHoraire
 }
 
-class Absence {
-    - id : int
-
-    - date : date
-    - heureDebut : time
-    - heureFin : time
-
-    + AfficherAbsences()
+class PlageHoraire {
+    - id : Guid 
+    - dateDebut : int
+    - dateFin : int
+    - confirmationPresence : bool
+    - idHoraire : Guid 
 }
 
+class Message {
+    - id : Guid 
+    - contenu : string
+    '- dateHeure : string? dateTime
+    - idUser : string
+}
+
+class Evaluation {
+    - id : Guid 
+    - formulaire : string
+    - idStagiaire : Guid 
+    - idMds : string
+
+
+    - isAutoEvaluation : bool
+}
+
+class Contrat {
+    - id : Guid 
+    - formulaire : string
+    - idStagiaire : Guid 
+    - idMds : string
+}
+
+class EmployeurMds {
+    - idEntreprise : Guid 
+    - idMds : string
+}
+
+class Chat {
+    - id : Guid
+    + ObtenirListMessage() : void
+}
 
 User <|-- Co
 User <|-- Ens
 User <|-- Mds
 User <|-- St
-User <|-- Emp
+'User <|-- Emp
 
 St *-- Stage
-
-Adresse *-- Emp 
+Emp *-- Adresse
 Stage o-- Emp 
 
-Mds *-- Horaire
+Message "0..*" -- "1" Mds
+Evaluation "1" -- "1" Mds 
+Mds "1" -- "1..*" Contrat
+
+Mds "1..*" -- "1" Stagiaire
+Mds "1" *-- "1..*" Horaire
 St *-- Horaire
-Absence o-- Horaire
+
+Horaire "1" -- "0..*" PlageHoraire
+
+Mds "1..*" -- "1" EmployeurMds
+EmployeurMds "1" -- "0..*"Emp
+
+Enseignant "1" -- "0..*" Stagiaire
+
+Message "0..*" -- "1" Stagiaire
+
+Message "0..*" -- "1" Enseignant
+
+Evaluation "1" -- "1" Stagiaire
+
+Contrat "1" -- "1" Stagiaire
+
+Horaire "1" -- "1" Stagiaire
+
+Co "1" -- "0..*" Stagiaire
 
 'agrégation (o--) = disposable, pas dépendant
 'composition (*--) = obligé d'avoir un
