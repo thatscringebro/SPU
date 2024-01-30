@@ -5,7 +5,6 @@ namespace SPU.Data
     public class Stagiaire
     {
         public Guid id;
-
         //public Utilisateur utilisateur;
         public Guid idEnseignant;
         
