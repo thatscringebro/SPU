@@ -1,7 +1,18 @@
+@Model List<Chat>
+@using SPU.Domaine.Entites
 @{
     ViewData["Title"] = "Home Page";
 }
 
+@foreach(Chat chat in @Model)
+{
+  <div>
+    @foreach(Message message in chat.message)
+    {
+      <li>@message.message</li>
+    }
+  </div>
+}
 <div class="container">
     <div class="row p-1">
         <div class="col-1">User</div>
@@ -10,6 +21,10 @@
     <div class="row p-1">
         <div class="col-1">Message</div>
         <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
+    </div>
+    <div class="row p-1">
+        <div class="col-1">Room</div>
+        <div class="col-5"><input type="text" class="w-100" id="roomInput" /></div> 
     </div>
     <div class="row p-1">
         <div class="col-6 text-end">

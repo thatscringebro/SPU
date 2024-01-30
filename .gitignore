@@ -50,3 +50,4 @@ obj/
 # Visual Studio Code directories
 .vscode/
 /.vs
+/Migrations
