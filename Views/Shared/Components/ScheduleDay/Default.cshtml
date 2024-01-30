@@ -1,0 +1,110 @@
+﻿@model List<DateTime>
+
+<div class="horizontal-list">
+    <ul>
+        @foreach (var jour in Model)
+        {
+            <li>
+                <div class="colonne">
+                    <div class="date">
+                        @jour.DayOfWeek
+                        @switch (jour.Month)
+                        {
+                            case 1:
+                                <p class="jour-mois">@jour.Day.ToString() Janvier</p>
+                                break;
+                            case 2:
+                                <p>@jour.Day.ToString() Février</p>
+                                break;
+                            case 3:
+                                <p>@jour.Day.ToString() Mars</p>
+                                break;
+                            case 4:
+                                <p>@jour.Day.ToString() Avril</p>
+                                break;
+                            case 5:
+                                <p>@jour.Day.ToString() Mai</p>
+                                break;
+                            case 6:
+                                <p>@jour.Day.ToString() Juin</p>
+                                break;
+                            case 7:
+                                <p>@jour.Day.ToString() Juillet</p>
+                                break;
+                            case 8:
+                                <p>@jour.Day.ToString() Août</p>
+                                break;
+                            case 9:
+                                <p>@jour.Day.ToString() Septembre</p>
+                                break;
+                            case 10:
+                                <p>@jour.Day.ToString() Octobre</p>
+                                break;
+                            case 11:
+                                <p>@jour.Day.ToString() Novembre</p>
+                                break;
+                            case 12:
+                                <p>@jour.Day.ToString() Décembre</p>
+                                break;
+                        }
+                    </div>
+                    <div class="heures">
+                        @for (int i = 0; i < 24; i++)
+                        {
+                            <div class="heure @(i == 23 ? "derniere-heure": "")"></div>
+                        }
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+
+<style>
+    .date {
+        text-align: center;
+        color: black;
+        border-bottom: 1px solid grey;
+    }
+
+    .jour-mois, p {
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+
+    .colonne {
+        width: 100px;
+        height: 550px;
+        border: 1px solid grey;
+        border-radius: 5px;
+        margin: 3px;
+    }
+
+    .horizontal-list {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+        .horizontal-list ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: inline-flex;
+        }
+
+    .heures {
+        display: flex;
+        flex-direction: column;
+        height: 92%;
+    }
+
+    .heure {
+        flex-grow: 1;
+        border-bottom: 1px solid lightgrey;
+    }
+
+    .derniere-heure {
+        border-bottom: none;
+    }
+
+</style>
