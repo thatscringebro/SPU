@@ -11,7 +11,7 @@ class "Coordonateur" AS co {
 }
 
 class "Enseignant" AS enseignant {
-    + id : int 
+    + id : int
     + nom : string
     + prenom : string
     + courriel : string
@@ -33,8 +33,15 @@ class "Message" AS message {
     + id : int
     + message : string
     + date&heure : string
-
     + *idutilisateur : int
+}
+
+class "Chat" as chat {
+    + id : int
+
+    + *idStagiaire
+    + *idMds
+    + *idEnseignant
 }
 
 
@@ -81,8 +88,6 @@ class "Entreprise" AS ent {
 }
 
 class Horaire {
-
-    PlageHoraire plageHoraire
     + id : int
 
     + *idMds : int
@@ -91,8 +96,11 @@ class Horaire {
 
 class Evaluation {
     + id : int
-    + GoogleForms : GoogleForms
+    + LienGoogleForms : string
     + EstStagiaire : bool
+    + Actif : bool
+    + Consulte : bool
+    
 
     + *idStagiaire : int
     + *idMds : int
@@ -153,6 +161,33 @@ class Contract {
     + *idMds : int
 }
 
+class Stage {
+    - idStage : int
+    - milieuStage : string
+    - titre : string
+    - fonction : string 
+    - signataire : string
+    - secteur : string
+    - program : string
+    - typeStage : string
+    - dateDebutStage : dateTime
+    - dateFinStage : dateTime
+    - superviseurCollège : Enseignant
+    - poste : string
+
+    - *idEntreprise : int
+    - *idMds : int
+    - *idStagiaire : int
+}
+
+class StageMds {
+    - *idMds
+    - *idStagiaire
+}
+
+
+
+
 ' class TypeEmployeur {
 '     TypeEmployeur : Enum
 ' }
@@ -166,6 +201,22 @@ class Contract {
 ' }
 
 
+'Chat enseignant plusieurs'
+'Chat stagiaire 1 chat
+'Chat mds plusieurs
+
+chat "1" -- "1..*" message
+
+chat "1" -- "1" stagiaire
+chat "1" -- "1" Mds
+chat "1" -- "1..*" enseignant
+
+
+Stage "1..*" -- "1" ent
+Stage "1" -- "1..*" Mds
+Stage "1..*" -- "1" StageMds
+Mds "1" -- "1" StageMds
+Stage "1" -- "1" stagiaire
 
 Horaire "1" --- "0..*" PlageHoraire
 
@@ -176,9 +227,6 @@ Mds "1..*" -- "1" stagiaire
 
 enseignant "1" --- "0..*" stagiaire
 
-message "0..*" -- "1" stagiaire
-message "0..*" -- "1" Mds
-message "0..*" -- "1" enseignant
 
 ' Evaluation "1" -- "1" Mds 
 ' Evaluation "1" -- "1" stagiaire
@@ -196,7 +244,8 @@ PlageHoraire "1" -- "1" ConfirmationStagiaire
 PlageHoraire "1" -- "1" ConfirmationMDS
 
 Evaluation "1" -- "1" Mds
-Evaluation "1" -- "1" stagiaire
+Evaluation "1..*" -- "1" stagiaire
+
 
 ```
 
