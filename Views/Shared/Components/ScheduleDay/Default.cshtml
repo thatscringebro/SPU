@@ -1,58 +1,68 @@
-﻿@model List<DateTime>
+﻿@using SPU.ViewModels;
+@model List<JourneeTravailleVM>
+
+@{
+    int Annee = DateTime.Now.Year;
+}
 
 <div class="horizontal-list">
     <ul>
-        @foreach (var jour in Model)
+        @for (int mois = 1; mois <= 12; mois++)
         {
-            <li>
-                <div class="colonne">
-                    <div class="date">
-                        @jour.DayOfWeek
+            @for (int jour = 1; jour <= DateTime.DaysInMonth(Annee, mois); jour++)
+            {
+                DateTime journee = new DateTime(Annee, mois, jour); 
+                <li>
+                    <div class="colonne">
+                        <div class="date">
+                            @journee.DayOfWeek
 
-                        @switch (jour.Month)
-                        {
-                            case 1:
-                                <p class="jour-mois">@jour.Day.ToString() Janvier</p>
-                                break;
-                            case 2:
-                                <p>@jour.Day.ToString() Février</p>
-                                break;
-                            case 3:
-                                <p>@jour.Day.ToString() Mars</p>
-                                break;
-                            case 4:
-                                <p>@jour.Day.ToString() Avril</p>
-                                break;
-                            case 5:
-                                <p>@jour.Day.ToString() Mai</p>
-                                break;
-                            case 6:
-                                <p>@jour.Day.ToString() Juin</p>
-                                break;
-                            case 7:
-                                <p>@jour.Day.ToString() Juillet</p>
-                                break;
-                            case 8:
-                                <p>@jour.Day.ToString() Août</p>
-                                break;
-                            case 9:
-                                <p>@jour.Day.ToString() Septembre</p>
-                                break;
-                            case 10:
-                                <p>@jour.Day.ToString() Octobre</p>
-                                break;
-                            case 11:
-                                <p>@jour.Day.ToString() Novembre</p>
-                                break;
-                            case 12:
-                                <p>@jour.Day.ToString() Décembre</p>
-                                break;
-                        }
+                            @switch (journee.Month)
+                            {
+                                case 1:
+                                    <p class="jour-mois">@journee.Day.ToString() Janvier</p>
+                                    break;
+                                case 2:
+                                    <p>@journee.Day.ToString() Février</p>
+                                    break;
+                                case 3:
+                                    <p>@journee.Day.ToString() Mars</p>
+                                    break;
+                                case 4:
+                                    <p>@journee.Day.ToString() Avril</p>
+                                    break;
+                                case 5:
+                                    <p>@journee.Day.ToString() Mai</p>
+                                    break;
+                                case 6:
+                                    <p>@journee.Day.ToString() Juin</p>
+                                    break;
+                                case 7:
+                                    <p>@journee.Day.ToString() Juillet</p>
+                                    break;
+                                case 8:
+                                    <p>@journee.Day.ToString() Août</p>
+                                    break;
+                                case 9:
+                                    <p>@journee.Day.ToString() Septembre</p>
+                                    break;
+                                case 10:
+                                    <p>@journee.Day.ToString() Octobre</p>
+                                    break;
+                                case 11:
+                                    <p>@journee.Day.ToString() Novembre</p>
+                                    break;
+                                case 12:
+                                    <p>@journee.Day.ToString() Décembre</p>
+                                    break;
+                            }
+                        </div>
+                        <div class="heures">
+                            
+                        </div>
                     </div>
-                    <div class="heures">
-                    </div>
-                </div>
-            </li>
+                </li>
+            }
         }
     </ul>
 </div>
