@@ -27,6 +27,8 @@ body {
   margin-top: 1rem;
   background: none;
   border: none;
+  text-decoration: none;
+  color: inherit;
 }
 
 .boutton-navigation .cache-sur-mobile {
