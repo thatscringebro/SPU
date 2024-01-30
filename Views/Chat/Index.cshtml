@@ -1,7 +1,18 @@
+@Model List<Chat>
+@using SPU.Domaine.Entites
 @{
     ViewData["Title"] = "Home Page";
 }
 
+@foreach(Chat chat in @Model)
+{
+  <div>
+    @foreach(Message message in chat.message)
+    {
+      <li>@message.message</li>
+    }
+  </div>
+}
 <div class="container">
     <div class="row p-1">
         <div class="col-1">User</div>
