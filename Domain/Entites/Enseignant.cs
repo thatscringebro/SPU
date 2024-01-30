@@ -1,8 +1,8 @@
-﻿namespace SPU.Data
+﻿namespace SPU.Domaine.Entites
 {
     public class Enseignant
     {
-        public Guid id;
+        public Guid Id { get; set; }
 
         public List<Stagiaire> stagiaires = new();
 

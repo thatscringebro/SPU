@@ -1,11 +1,14 @@
+using Microsoft.EntityFrameworkCore;
 using SignalRChat.Hubs;
-
+using SPU.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
+builder.Services.AddDbContext<SpuContext>(options =>
+options.UseNpgsql(builder.Configuration.GetConnectionString("defaultConnection")));
 
 var app = builder.Build();
 

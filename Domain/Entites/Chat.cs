@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SPU.Data
+namespace SPU.Domaine.Entites
 {
     public class Chat
     {
-        public Guid id;
+        public Guid Id { get; set; }
 
-        public Guid idStagiaire;
-        public Guid idEnseignant;
+        public Guid idStagiaire { get; set; }
+        public Guid idEnseignant { get; set; }
 
 
         [ForeignKey(nameof(idStagiaire))]
@@ -16,7 +16,7 @@ namespace SPU.Data
         public virtual Enseignant enseignant { get; set; }
 
 
-        public List<MDS> mds;
-        public List<Message> message;  
+        public List<MDS> mds = new();
+        public List<Message> message = new();
     }
 }
