@@ -20,3 +20,24 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.boutton-navigation {
+  text-align: center;
+  display: flex;
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  text-decoration: none;
+  color: inherit;
+}
+
+.boutton-navigation .cache-sur-mobile {
+  margin-left: 1rem;
+}
+
+@media (max-width: 768px) {
+  .cache-sur-mobile {
+    display: none;
+  }
+}
+
