@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace SPU.Domaine.Entites
+namespace SPU.Domain.Entites
 {
     public class Adresse
     {

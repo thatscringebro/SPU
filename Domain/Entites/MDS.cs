@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using SPU.Enum;
 
-namespace SPU.Domaine.Entites
+namespace SPU.Domain.Entites
 {
     public class MDS
     {
@@ -22,7 +22,10 @@ namespace SPU.Domaine.Entites
         public Guid idStagiaire { get; set; }
         public Guid idEmployeur { get; set; }
         public Guid idHoraire { get; set; }
-        //public Utilisateur utilisateur;
+        public Guid UtilisateurId { get; set; }
+
+        [ForeignKey(nameof(UtilisateurId))]
+        public virtual Utilisateur utilisateur { get; set; }
 
         [ForeignKey(nameof(idHoraire))]
         public virtual Horaire horaire { get; set; }
