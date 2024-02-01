@@ -2,17 +2,22 @@
 
 namespace SPU.Domain.Entites
 {
-    public class Enseignant
+    public class Enseignant : Utilisateur
     {
-        public Guid Id { get; set; }
-        public Guid UtilisateurId { get; set; }
+        //public Guid Id { get; set; }
+        //public Guid UtilisateurId { get; set; }
 
-        [ForeignKey(nameof(UtilisateurId))]
-        public virtual Utilisateur utilisateur { get; set; }
+        //[ForeignKey(nameof(UtilisateurId))]
+        //public virtual Utilisateur utilisateur { get; set; }
+        public Guid idChat { get; set; }
+
+
+        [ForeignKey(nameof(idChat))]
+        public virtual Chat chat { get; set; }
         public List<Stagiaire> stagiaires = new();
 
-
-
-
+        public Enseignant(string userName) : base(userName)
+        {
+        }
     }
 }
