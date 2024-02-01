@@ -9,7 +9,10 @@ namespace SPU.Domain.Entites
         public string message { get; set; }
         public DateTime dateHeure { get; set; }
 
+        public Guid idUtilisateur { get; set; }
 
+        [ForeignKey(nameof(idUtilisateur))]
+        public virtual Utilisateur Utilisateur { get; set; }
         //Futur foreign key avec identity
         //public int idUtilisateur;
 
