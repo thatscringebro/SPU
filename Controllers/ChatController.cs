@@ -2,6 +2,8 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using SPU.Models;
 using SPU.Domain;
 using SPU.Domain.Entites;
@@ -12,13 +14,12 @@ public class ChatController : Controller
 {
     private readonly string _loggedUserId;
     private readonly SpuContext _context;
-    private UserManager<Utilisateur> _userManager;
 
-    public ChatController(SpuContext context, UserManager<Utilisateur> userManager)
+    public ChatController(SpuContext context, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
-        _userManager = userManager;
-        _loggedUserId = _userManager.GetUserId(User);
+        var claim = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+        _loggedUserId = claim?.Value;
     }
 
     [Authorize]
