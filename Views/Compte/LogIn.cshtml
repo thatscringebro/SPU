@@ -15,14 +15,12 @@
 				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 				<div class="form-group login__field">
 					<label asp-for="UserName" class="control-label"></label>
-					<i class="login__icon fas fa-user"></i>
 					<input asp-for="UserName" class="form-control login__input"/>
 					<span asp-validation-for="UserName" class="text-danger"></span>
 				</div>
 
 				<div class="form-group login__field">
 					<label asp-for="Pwd" class="control-label"></label>
-					<i class="login__icon fas fa-lock"></i>
 					<input asp-for="Pwd" class="form-control login__input"/>
 					<span asp-validation-for="Pwd" class="text-danger"></span>
 				</div>
@@ -37,7 +35,7 @@
 
 				<button class="form-group mt-2 mb-2 button login__submit">
 					<span class="button__text">Connexion</span>
-					<i class="button__icon fas fa-chevron-right"></i>
+					<i class="button__icon"></i>
 				</button>
 				
 			</form>
