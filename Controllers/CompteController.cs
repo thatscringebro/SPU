@@ -28,6 +28,7 @@ namespace SPU.Controllers
         {
             ViewBag.ReturnUrl = returnUrl;
             ViewBag.LogoutSuccessMessage = TempData["LogoutSuccessMessage"] as string;
+
             return View();
         }
 
@@ -35,7 +36,7 @@ namespace SPU.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(ConnexionVM vm, string? returnUrl = "")
         {
-            if (!ModelState.IsValid)
+			if (!ModelState.IsValid)
             {
                 ViewBag.ReturnUrl = returnUrl;
                 return View(vm);
@@ -43,7 +44,7 @@ namespace SPU.Controllers
 
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(vm.UserName, vm.Pwd, vm.reme, false);
+                var result = await _signInManager.PasswordSignInAsync(vm.UserName, vm.Pwd, vm.RememberMe, false);
 
                 if (!result.Succeeded)
                 {
@@ -55,7 +56,7 @@ namespace SPU.Controllers
                 if (!string.IsNullOrEmpty(returnUrl))
                     return Redirect(returnUrl);
 
-                return RedirectToAction("Home", "Index");
+                return RedirectToAction("Index", "Home");
             }
             catch
             {
