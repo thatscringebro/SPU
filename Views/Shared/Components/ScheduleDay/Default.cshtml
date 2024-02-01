@@ -11,7 +11,7 @@
         {
             @for (int jour = 1; jour <= DateTime.DaysInMonth(Annee, mois); jour++)
             {
-                DateTime journee = new DateTime(Annee, mois, jour); 
+                DateTime journee = new DateTime(Annee, mois, jour);
                 <li>
                     <div class="colonne">
                         <div class="date">
@@ -58,7 +58,53 @@
                             }
                         </div>
                         <div class="heures">
-                            
+                            @for (int i = 0; i < 48; i++)
+                            {
+                                bool isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
+                                Guid IdPlageHoraire = new Guid();
+                                foreach (var item in Model)
+                                {
+                                    // Convertir la date de début et de fin du quart en minutes
+                                    int debutQuartMinutes = item.DateDebutQuart.Hour * 60 + item.DateDebutQuart.Minute;
+                                    int finQuartMinutes = item.DateFinQuart.Hour * 60 + item.DateFinQuart.Minute;
+
+                                    // Si le quart de travail commence et se termine le même jour
+                                    if (item.DateDebutQuart.Date == item.DateFinQuart.Date)
+                                    {
+                                        // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
+                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 30 && i * 30 < finQuartMinutes)
+                                        {
+                                            isWorkingHour = true;
+                                            IdPlageHoraire = item.Id;
+
+                                            break;
+                                        }
+                                    }
+                                    else // Si le quart de travail commence un jour et se termine le lendemain
+                                    {
+                                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
+                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 30)
+                                        {
+                                            isWorkingHour = true;
+                                            IdPlageHoraire = item.Id;
+
+                                            break;
+                                        }
+                                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
+                                        if (item.DateFinQuart.Date == journee.Date && i * 30 < finQuartMinutes)
+                                        {
+                                            isWorkingHour = true;
+                                            IdPlageHoraire = item.Id;
+
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                // Appliquer le style en fonction de la condition isWorkingHour
+                                <div class="demiHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 10.533333px; @(isWorkingHour ? "background-color: lightblue;" : "") @(i % 2 == 1 ? "border-bottom: 1px solid lightgrey;" : "")">
+                                </div>
+                            }
                         </div>
                     </div>
                 </li>
@@ -106,5 +152,6 @@
         border-top: 1px solid lightgrey;
         display: flex;
         flex-direction: column;
+        overflow: hidden
     }
 </style>
