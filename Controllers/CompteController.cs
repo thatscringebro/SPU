@@ -43,7 +43,7 @@ namespace SPU.Controllers
 
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(vm.UserName, vm.Pwd, false, false);
+                var result = await _signInManager.PasswordSignInAsync(vm.UserName, vm.Pwd, vm.reme, false);
 
                 if (!result.Succeeded)
                 {
