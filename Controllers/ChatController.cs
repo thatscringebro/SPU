@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using SPU.Models;
 using SPU.Domain;
 using SPU.Domain.Entites;
@@ -20,6 +21,7 @@ public class ChatController : Controller
         _loggedUserId = _userManager.GetUserId(User);
     }
 
+    [Authorize]
     public IActionResult Index()
     {
         Utilisateur user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
