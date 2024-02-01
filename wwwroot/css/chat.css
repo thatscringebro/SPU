@@ -25,7 +25,13 @@ aside{
 	font-size:15px;
 	vertical-align:top;
 }
-
+.main_noaside{
+  height: 100%;
+  width: 100%;
+	display:inline-block;
+	font-size:15px;
+	vertical-align:top;
+}
 aside header{
 	padding:30px 20px;
 }
