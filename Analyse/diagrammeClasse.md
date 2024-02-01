@@ -157,9 +157,9 @@ Message "0..*" -- "1" Mds
 Message "0..*" -- "1" Stagiaire
 Message "0..*" -- "1" Enseignant
 
-Mds "1" -- "1..*" Contrat
-Mds "1..*" -- "1" Stagiaire
-Mds "1" -- "1..*" Horaire
+Mds "1" -- "0..*" Contrat
+Mds "0..*" -- "1" Stagiaire
+Mds "1" -- "0..*" Horaire
 Mds "1..*" -- "1" EmployeurMds
 
 Evaluation "1..*" -- "1" Mds 

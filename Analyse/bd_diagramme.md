@@ -122,25 +122,11 @@ class PlageHoraire {
     + *idHoraire : int
 }
 
-class ConfirmationStagiaire {
+class ConfirmationTemps {
     + id : int
     + ConfirmationPrésence : bool
     + CommentaireAbsence : string
-
-    + *idPlageHoraire
-    ' Entreprise : string
-    ' Nom&PrénomStagiaire : string
-    ' ConfirmationPrésence : bool
-    ' CommentaireAbsence : string
-    ' date : dateTime
-    ' durée : int
-    ' MatriculeTAP1 : string
-    ' MatriculeTAP2 : string
-}
-
-class ConfirmationMDS {
-    + id : int
-    + ConfirmationPrésence : bool
+    + EstStagiaire : bool
 
     + *idPlageHoraire
     ' Entreprise : string
@@ -240,8 +226,7 @@ Mds "1" -- "1..*" Contract
 Horaire "1" -- "1" stagiaire
 Horaire "1..*" -- "1" Mds
 
-PlageHoraire "1" -- "1" ConfirmationStagiaire
-PlageHoraire "1" -- "1" ConfirmationMDS
+PlageHoraire "1" -- "1..2" ConfirmationTemps
 
 Evaluation "1" -- "1" Mds
 Evaluation "1..*" -- "1" stagiaire

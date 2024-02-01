@@ -1,11 +1,15 @@
 ﻿
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SPU.Domaine.Entites;
+using SPU.Domain.Entites;
+
 
 namespace SPU.Domain
 {
-    public class SpuContext : DbContext
+    public class SpuContext : IdentityDbContext<Utilisateur, IdentityRole<Guid>, Guid>
     {
+        public DbSet<Utilisateur> Utilisateurs { get; set; }
         public DbSet<Adresse> Adresses { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<ConfirmationTemps> ConfirmationTemps { get; set; }
@@ -26,6 +30,7 @@ namespace SPU.Domain
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); 
+            modelBuilder.Seed();
         }
     }
       

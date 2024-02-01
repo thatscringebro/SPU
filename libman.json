@@ -5,6 +5,10 @@
     {
       "library": "@microsoft/signalr@latest",
       "destination": "wwwroot/lib/signalr/"
+    },
+    {
+      "library": "bootstrap@5.3.2",
+      "destination": "wwwroot/bootstrap/"
     }
   ]
 }

@@ -3,12 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using SPU.Enum;
 
-namespace SPU.Domaine.Entites
+namespace SPU.Domain.Entites
 {
-    public class MDS
+    public class MDS : Utilisateur
     {
+        public MDS(string userName) : base(userName)
+        {
+        }
 
-        public Guid Id { get; set; }
+        //public Guid Id { get; set; }
         public string idMatricule { get; set; }
         public Status status { get; set; }
         public Civilite civilite { get; set; }
@@ -22,8 +25,14 @@ namespace SPU.Domaine.Entites
         public Guid idStagiaire { get; set; }
         public Guid idEmployeur { get; set; }
         public Guid idHoraire { get; set; }
-        //public Utilisateur utilisateur;
+        public Guid idChat { get; set; }
+        //public Guid UtilisateurId { get; set; }
 
+        //[ForeignKey(nameof(UtilisateurId))]
+        //public virtual Utilisateur utilisateur { get; set; }
+
+        [ForeignKey(nameof(idChat))]
+        public virtual Chat chat { get; set; }
         [ForeignKey(nameof(idHoraire))]
         public virtual Horaire horaire { get; set; }
         [ForeignKey(nameof(idEmployeur))]
