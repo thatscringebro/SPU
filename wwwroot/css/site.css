@@ -17,8 +17,8 @@ html {
   min-height: 100%;
 }
 
-body {
-
+main {
+  height: 100%;
 }
 
 .boutton-navigation {
@@ -33,6 +33,13 @@ body {
 
 .boutton-navigation .cache-sur-mobile {
   margin-left: 1rem;
+}
+
+.main_header {
+  height: 9vh;
+}
+.main_container {
+  height: 87vh;
 }
 
 @media (max-width: 1050px) {
