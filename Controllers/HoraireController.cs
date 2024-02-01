@@ -6,6 +6,7 @@ namespace SPU.Controllers
     {
         public IActionResult Index()
         {
+
             return View();
         }
     }
