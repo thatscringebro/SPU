@@ -1,46 +1,163 @@
-@* @Model List<Chat>
-@using SPU.Domaine.Entites
+@using SPU.Domain.Entites
 @{
     ViewData["Title"] = "Home Page";
 }
+<link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
 
-@foreach(Chat chat in @Model)
-{
-  <div>
-    @foreach(Message message in chat.message)
-    {
-      <li>@message.message</li>
-    }
-  </div>
-}
-<div class="container">
-    <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-1">Message</div>
-        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-1">Room</div>
-        <div class="col-5"><input type="text" class="w-100" id="roomInput" /></div> 
-    </div>
-    <div class="row p-1">
-        <div class="col-6 text-end">
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <hr />
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
-    </div>
+<div id="container">
+	<aside>
+		<header>
+			<input type="text" placeholder="search">
+		</header>
+		<ul>
+			<li>
+				<div>
+					<h2>Prénom Nom</h2>
+				</div>
+			</li>
+			<li>
+				
+				<div>
+					<h2>Prénom Nom</h2>
+					
+				</div>
+			</li>
+			<li>
+				
+				<div>
+					<h2>Prénom Nom</h2>
+					
+				</div>
+			</li>
+			<li>
+				
+				<div>
+					<h2>Prénom Nom</h2>
+					
+				</div>
+			</li>
+			<li>
+				
+				<div>
+					<h2>Prénom Nom</h2>
+				
+				</div>
+			</li>
+			<li>
+				
+				<div>
+					<h2>Prénom Nom</h2>
+					
+				</div>
+			</li>
+			<li>
+				
+				<div>
+					<h2>Prénom Nom</h2>
+					
+				</div>
+			</li>
+			<li>
+				
+				<div>
+					<h2>Prénom Nom</h2>
+					
+				</div>
+			</li>
+			<li>
+				
+				<div>
+					<h2>Prénom Nom</h2>
+					
+				</div>
+			</li>
+			<li>
+			
+				<div>
+					<h2>Prénom Nom</h2>
+					
+				</div>
+			</li>
+		</ul>
+	</aside>
+	<div class="main">	
+		<ul id="chat">
+			<li class="you">
+				<div class="entete">
+					
+					<h2>Vincent</h2>
+					<h3>10:12AM, Today</h3>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+				</div>
+			</li>
+			<li class="me">
+				<div class="entete">
+					<h3>10:12AM, Today</h3>
+					<h2>Vincent</h2>
+					
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+				</div>
+			</li>
+			<li class="me">
+				<div class="entete">
+					<h3>10:12AM, Today</h3>
+					<h2>Vincent</h2>
+					
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					OK
+				</div>
+			</li>
+			<li class="you">
+				<div class="entete">
+					
+					<h2>Vincent</h2>
+					<h3>10:12AM, Today</h3>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+				</div>
+			</li>
+			<li class="me">
+				<div class="entete">
+					<h3>10:12AM, Today</h3>
+					<h2>Vincent</h2>
+					
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+				</div>
+			</li>
+			<li class="me">
+				<div class="entete">
+					<h3>10:12AM, Today</h3>
+					<h2>Vincent</h2>
+					
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					OK
+				</div>
+			</li>
+		</ul>
+		<footer>
+			<input type="text" placeholder="Votre message ici" id="messageInput"></input>
+			<a id="sendButton">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+          <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
+        </svg>
+      </a>
+		</footer>
+	</div>
 </div>
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script>
@@ -53,11 +170,13 @@
 
   connection.on("ReceiveMessage", function (user, room, message) {
     var li = document.createElement("li");
-    document.getElementById("messagesList").appendChild(li);
+    li.classList.add("me");
+    document.getElementById("chat").appendChild(li);
     // We can assign user-supplied strings to an element's textContent because it
     // is not interpreted as markup. If you're assigning in any other way, you 
     // should be aware of possible script injection concerns.
-  li.textContent = `${user} says ${message} in room ${room}`;
+    //li.textContent = `${user} says ${message} in room ${room}`;
+    li.innerHTML = "<div class=\"entete\">Allo</div>";
   });
 
   connection.start().then(function () {
@@ -67,12 +186,15 @@
   });
 
   document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
+    var user = "me"//document.getElementById("userInput").value;
     var message = document.getElementById("messageInput").value;
-    var room = document.getElementById("roomInput").value;
-    connection.invoke("SendMessage", user, room, message).catch(function (err) {
+    var room = "1";//document.getElementById("roomInput").valueiiii;
+
+    if(message != null && message != ""){
+      connection.invoke("SendMessage", user, room, message).catch(function (err) {
         return console.error(err.toString());
-    });
+      });
+    }
     event.preventDefault();
   }); 
 </script>

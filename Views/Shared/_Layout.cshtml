@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/SPU.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
+    <header class="main_header">
       <div style="display: flex; justify-content: space-around;">
       <a class="boutton-navigation" asp-controller="Home" asp-action="Index">
         <h1>
@@ -54,7 +54,7 @@
       </a>
     </header>
     <hr>
-    <div class="container">
+    <div class="container main_container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
