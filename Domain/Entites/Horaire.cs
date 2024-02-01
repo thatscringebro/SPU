@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SPU.Domaine.Entites
+namespace SPU.Domain.Entites
 {
     public class Horaire
     {
