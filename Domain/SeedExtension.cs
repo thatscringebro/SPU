@@ -6,6 +6,9 @@ namespace SPU.Domain
 {
     public static class SeedExtension
     {
+
+		public static readonly PasswordHasher<Utilisateur> PASSWORD_HASHER = new();
+
 		public static void Seed(this ModelBuilder builder)
 		{
 			var Coordinateur = AddRole(builder, "Coordinateur");
@@ -14,7 +17,7 @@ namespace SPU.Domain
 			var Stagiaire = AddRole(builder, "Stagiaire");
 			var Employeur = AddRole(builder, "Employeur");
 
-			var user0 = AddUser(builder, "user0", "user0@gmail.com", "D3c1m@l", "Liam", "O'Brien", "1234567899", new DateTime(1989, 10, 10));
+			var user0 = AddUser(builder, "user0", "user0@gmail.com", "Qwerty123!", "Liam", "O'Brien", "1234567899", new DateTime(1989, 10, 10));
 			AddUserToRole(builder, user0, Stagiaire);
 			var user1 = AddUser(builder, "user1", "user1@gmail.com", "password1", "John", "Doe", "1234567890", new DateTime(1980, 1, 1));
 			AddUserToRole(builder, user1, Stagiaire);
@@ -79,6 +82,7 @@ namespace SPU.Domain
 				PhoneNumber = phoneNumber,
 				SecurityStamp = Guid.NewGuid().ToString()
 			};
+			newUser.PasswordHash = PASSWORD_HASHER.HashPassword(newUser, password);
 			builder.Entity<Utilisateur>().HasData(newUser);
 
 			return newUser;
