@@ -12,6 +12,8 @@ namespace SPU.ViewModels
         [DataType(DataType.Password)]
         public string? Pwd { get; set; }
 
-      
+        [Display(Name = "Se souvenir de moi")]
+        public bool RememberMe { get; set; } = false;
+
     }
 }
