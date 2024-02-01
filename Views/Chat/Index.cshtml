@@ -1,164 +1,69 @@
+@model SPU.Domain.Entites.Utilisateur
 @using SPU.Domain.Entites
 @{
     ViewData["Title"] = "Home Page";
 }
+
 <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
 
 <div id="container">
-	<aside>
-		<header>
-			<input type="text" placeholder="search">
-		</header>
-		<ul>
-			<li>
-				<div>
-					<h2>Prénom Nom</h2>
-				</div>
-			</li>
-			<li>
-				
-				<div>
-					<h2>Prénom Nom</h2>
-					
-				</div>
-			</li>
-			<li>
-				
-				<div>
-					<h2>Prénom Nom</h2>
-					
-				</div>
-			</li>
-			<li>
-				
-				<div>
-					<h2>Prénom Nom</h2>
-					
-				</div>
-			</li>
-			<li>
-				
-				<div>
-					<h2>Prénom Nom</h2>
-				
-				</div>
-			</li>
-			<li>
-				
-				<div>
-					<h2>Prénom Nom</h2>
-					
-				</div>
-			</li>
-			<li>
-				
-				<div>
-					<h2>Prénom Nom</h2>
-					
-				</div>
-			</li>
-			<li>
-				
-				<div>
-					<h2>Prénom Nom</h2>
-					
-				</div>
-			</li>
-			<li>
-				
-				<div>
-					<h2>Prénom Nom</h2>
-					
-				</div>
-			</li>
-			<li>
-			
-				<div>
-					<h2>Prénom Nom</h2>
-					
-				</div>
-			</li>
-		</ul>
-	</aside>
-	<div class="main">	
-		<ul id="chat">
-			<li class="you">
-				<div class="entete">
-					
-					<h2>Vincent</h2>
-					<h3>10:12AM, Today</h3>
-				</div>
-				<div class="triangle"></div>
-				<div class="message">
-					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-				</div>
-			</li>
-			<li class="me">
-				<div class="entete">
-					<h3>10:12AM, Today</h3>
-					<h2>Vincent</h2>
-					
-				</div>
-				<div class="triangle"></div>
-				<div class="message">
-					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-				</div>
-			</li>
-			<li class="me">
-				<div class="entete">
-					<h3>10:12AM, Today</h3>
-					<h2>Vincent</h2>
-					
-				</div>
-				<div class="triangle"></div>
-				<div class="message">
-					OK
-				</div>
-			</li>
-			<li class="you">
-				<div class="entete">
-					
-					<h2>Vincent</h2>
-					<h3>10:12AM, Today</h3>
-				</div>
-				<div class="triangle"></div>
-				<div class="message">
-					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-				</div>
-			</li>
-			<li class="me">
-				<div class="entete">
-					<h3>10:12AM, Today</h3>
-					<h2>Vincent</h2>
-					
-				</div>
-				<div class="triangle"></div>
-				<div class="message">
-					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-				</div>
-			</li>
-			<li class="me">
-				<div class="entete">
-					<h3>10:12AM, Today</h3>
-					<h2>Vincent</h2>
-					
-				</div>
-				<div class="triangle"></div>
-				<div class="message">
-					OK
-				</div>
-			</li>
-		</ul>
-		<footer>
-			<input type="text" placeholder="Votre message ici" id="messageInput"></input>
-			<a id="sendButton">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
-          <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
-        </svg>
-      </a>
-		</footer>
-	</div>
+	@switch(Model) {
+		case Stagiaire stagiaireUser:
+        <div class="main">
+        <ul id="chat">
+            @foreach (var message in stagiaireUser.chat.message)
+            {
+                <li class="@((message.Utilisateur.Id == Model.Id) ? "me" : "you")">
+                    <div class="entete">
+                        <h2>@message.Utilisateur.NomComplet</h2>
+                        <h3>@message.dateHeure.ToString("h:mmtt, MMM d")</h3>
+                    </div>
+                    <div class="triangle"></div>
+                    <div class="message">
+                        @message.message
+                    </div>
+                </li>
+            }
+        </ul>
+        <footer>
+            <input type="text" placeholder="Votre message ici" id="messageInput" />
+            <a id="sendButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-send" viewBox="0 0 16 16">
+                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
+                </svg>
+            </a>
+        </footer>
+    </div>
+        break;
+    
+    	case MDS mdsUser:
+        // Now you can access MDS-specific properties or methods
+        break;
+
+    case Enseignant enseignantUser:
+        // Now you can access Enseignant-specific properties or methods
+        break;
+	case Coordonateur coordoUser:
+        <aside>
+        <header>
+            <input type="text" placeholder="search">
+        </header>
+        <ul>
+            @foreach (var chat in coordoUser.chats)
+            {
+                <li>
+                    <div>
+                        <h2>@chat.Id</h2>
+                    </div>
+                </li>
+            }
+        </ul>
+    	</aside>
+        break;
+	}
 </div>
+
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script>
   "use strict";
