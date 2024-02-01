@@ -9,11 +9,8 @@ namespace SPU.Domain.Entites
 
         //[ForeignKey(nameof(UtilisateurId))]
         //public virtual Utilisateur utilisateur { get; set; }
-        public Guid idChat { get; set; }
 
-
-        [ForeignKey(nameof(idChat))]
-        public virtual Chat chat { get; set; }
+        public List<Chat> chats = new List<Chat>();
         public List<Stagiaire> stagiaires = new();
 
         public Enseignant(string userName) : base(userName)
