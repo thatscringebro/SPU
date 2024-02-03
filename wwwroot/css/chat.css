@@ -65,6 +65,9 @@ aside li{
 aside li:hover{
 	background-color:#5e616a;
 }
+aside li .activeChat{
+  background-color: #5e616a;
+}
 h2,h3{
 	margin:0;
 }
