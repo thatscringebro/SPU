@@ -10,7 +10,5 @@ namespace SPU.Domain.Entites
         public string NomComplet => $"{Prenom} {Nom}";
         public override string PhoneNumber { get => base.PhoneNumber; set => base.PhoneNumber = value; }
 
-
-        
     }
 }
