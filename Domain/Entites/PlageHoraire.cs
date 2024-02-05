@@ -6,14 +6,15 @@ namespace SPU.Domain.Entites
     {
         public Guid Id { get; set; }
 
-        public DateTime dateDebut { get; set; }
-        public DateTime dateFin { get; set; }
+        public DateTime DateDebut { get; set; }
+        public DateTime DateFin { get; set; }
 
-        public bool confirmationPresence { get; set; }
+        public bool ConfirmationPresence { get; set; }
+        public string Commentaire { get; set; }
 
-        public Guid idHoraire { get; set; }
+        public Guid HoraireId { get; set; }
 
-        [ForeignKey(nameof(idHoraire))]
-        public virtual Horaire Horaire { get; set; }
+        //[ForeignKey(nameof(idHoraire))] virtual
+        public Horaire horaire { get; set; }
     }
 }
