@@ -1,12 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SPU.Domain;
 using SPU.ViewModels;
+using System.Security.Claims;
 
 namespace SPU.ViewComponents
 {
     public class ScheduleDay : ViewComponent
     {
+        private readonly string _loggedUserId;
+        private readonly SpuContext _context;
+        public ScheduleDay(SpuContext context, IHttpContextAccessor httpContextAccessor)
+        {
+            _context = context;
+            var claim = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            _loggedUserId = claim?.Value;
+        }
+
         public async Task<IViewComponentResult> InvokeAsync()
         {
+            List<JourneeTravailleVM> journeeTravailles = _context.PlageHoraires.Include(x => x.horaire).Where(x => x.horaire.StagiaireId.ToString() == _loggedUserId).Select(x => new JourneeTravailleVM { 
+                DateDebutQuart = x.DateDebut,
+                DateFinQuart = x.DateFin,
+                Id = x.Id,
+                Present = x.ConfirmationPresence
+            }).ToList();
+
+
+
             // Aller chercher toutes les journées où la personne connectée travaille
             List<JourneeTravailleVM> donneesTest = new List<JourneeTravailleVM>();
 
@@ -41,7 +62,7 @@ namespace SPU.ViewComponents
                 Present = true
             });
             // Renvoyer la vue avec les données
-            return View(donneesTest);
+            return View(journeeTravailles);
         }
 
     }

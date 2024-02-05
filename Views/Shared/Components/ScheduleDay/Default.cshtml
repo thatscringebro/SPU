@@ -15,7 +15,30 @@
                 <li>
                     <div class="colonne">
                         <div class="date">
-                            @journee.DayOfWeek
+                            @switch (journee.DayOfWeek.ToString())
+                            {
+                                case "Monday":
+                                    <p>Lundi</p>
+                                    break;
+                                case "Tuesday":
+                                    <p>Mardi</p>
+                                    break;
+                                case "Wednesday":
+                                    <p>Mercredi</p>
+                                    break;
+                                case "Thursday":
+                                    <p>Jeudi</p>
+                                    break;
+                                case "Friday":
+                                    <p>Vendredi</p>
+                                    break;
+                                case "Saturday":
+                                    <p>Samedi</p>
+                                    break;
+                                case "Sunday":
+                                    <p>Dimanche</p>
+                                    break;
+                            }
 
                             @switch (journee.Month)
                             {
