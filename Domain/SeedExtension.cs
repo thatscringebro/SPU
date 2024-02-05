@@ -1,89 +1,166 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SPU.Domain.Entites;
+using SPU.Enum;
 
 namespace SPU.Domain
 {
     public static class SeedExtension
     {
-
 		public static readonly PasswordHasher<Utilisateur> PASSWORD_HASHER = new();
 
 		public static void Seed(this ModelBuilder builder)
 		{
-			var Coordinateur = AddRole(builder, "Coordinateur");
-			var Enseignant = AddRole(builder, "Enseignant");
-			var MaitreDeStage = AddRole(builder, "MaitreDeStage");
-			var Stagiaire = AddRole(builder, "Stagiaire");
-			var Employeur = AddRole(builder, "Employeur");
+			var user0 = AddUser(builder, "user0", "Qwerty123!", "Liam", "O'Brien", "user0@gmail.com", "1234567899");
+			var user1 = AddUser(builder, "enseignant0", "Password123!", "Emma", "Dupont", "enseignant0@gmail.com", "1234567891");
 
-			var user0 = AddUser(builder, "user0", "user0@gmail.com", "Qwerty123!", "Liam", "O'Brien", "1234567899", new DateTime(1989, 10, 10));
-			AddUserToRole(builder, user0, Stagiaire);
-			var user1 = AddUser(builder, "user1", "user1@gmail.com", "password1", "John", "Doe", "1234567890", new DateTime(1980, 1, 1));
-			AddUserToRole(builder, user1, Stagiaire);
-			var user2 = AddUser(builder, "user2", "user2@gmail.com", "password2", "Jane", "Smith", "1234567891", new DateTime(1981, 2, 2));
-			AddUserToRole(builder, user2 , Stagiaire);
+			Guid ecoleId = Guid.NewGuid();
+			var enseignant0 = AddEnseignant(builder, user1/*, ecoleId*/);
 
-			var user3 = AddUser(builder, "user3", "user3@gmail.com", "Pass123!", "Aarav", "Patel", "1234567892", new DateTime(1982, 3, 3));
-			AddUserToRole (builder, user3, Employeur);
+			var user2 = AddUser(builder, "employeur0", "Passw0rd!", "Lucas", "Martin", "employeur0@gmail.com", "1234567892");
+			var employeur0 = AddEmployeur(builder, user2, "j2om0t", "125", "LaBelle", "St-Boire", "Ici");
 
-			var user4 = AddUser(builder, "user4", "user4@gmail.com", "W0rld4me", "Ying", "Li", "1234567893", new DateTime(1983, 4, 4));
-			AddUserToRole(builder, user4 , Coordinateur);
-			var user5 = AddUser(builder, "user5", "user5@gmail.com", "S3cur1ty$", "Olivia", "Garcia", "1234567894", new DateTime(1984, 5, 5));
-			AddUserToRole(builder, user5 , Coordinateur);
+			var user3 = AddUser(builder, "coordo0", "Coord1234!", "Chloe", "Leroy", "coordo0@gmail.com", "1234567893");
+			var coordo0 = AddCoordo(builder, user3);
 
-			var user6 = AddUser(builder, "user6", "user6@gmail.com", "Chang3m3", "Mohamed", "Hassan", "1234567895", new DateTime(1985, 6, 6));
-			AddUserToRole(builder , user6 , Enseignant);
-			var user7 = AddUser(builder, "user7", "user7@gmail.com", "Passw0rd7", "Ivan", "Ivanov", "1234567896", new DateTime(1986, 7, 7));
-			AddUserToRole(builder, user7 , Enseignant);
+			// Remarque : Les Guid pour idEnseignant, idHoraire, et idChat doivent être définis.
+			Guid idEnseignant = Guid.NewGuid(); // Exemple d'ID
+			Guid idHoraire = Guid.NewGuid();     // Exemple d'ID
+			Guid idChat = Guid.NewGuid();        // Exemple d'ID
 
-			var user8 = AddUser(builder, "user8", "user8@gmail.com", "8LuckyNum", "Chloe", "Kim", "1234567897", new DateTime(1987, 8, 8));
-			AddUserToRole(builder, user8 , MaitreDeStage);
-			var user9 = AddUser(builder, "user9", "user9@gmail.com", "Nin3Lives", "Amelia", "Santos", "1234567898", new DateTime(1988, 9, 9));
-			AddUserToRole(builder, user9, MaitreDeStage);
+			var user4 = AddUser(builder, "stagiaire0", "Stagiaire123!", "Julien", "Moreau", "stagiaire0@gmail.com", "1234567894");
+			var stagiaire0 = AddIntern(builder, user4, idEnseignant, idHoraire, idChat);
 
-		}
+			// Remarque : Les Guid pour idStagiaire, idEmployeur, idHoraire, et idChat, ainsi que les autres champs spécifiques doivent être définis.
+			Guid idStagiaire = Guid.NewGuid(); // Exemple d'ID
+			Guid idEmployeur = Guid.NewGuid(); // Exemple d'ID
+			Guid id_Horaire = Guid.NewGuid();   // Exemple d'ID
+			Guid id_Chat = Guid.NewGuid();      // Exemple d'ID
+			Status status = Status.Accepté;     // Exemple de statut
+			Civilite civilite = Civilite.M;    // Exemple de civilité
+			TypeEmployeur typeEmployeur = TypeEmployeur.CIUSSS; // Exemple de type d'employeur
 
-		private static IdentityRole<Guid> AddRole(ModelBuilder builder, string name)
-		{
-			var newRole = new IdentityRole<Guid>
-			{
-				Id = Guid.NewGuid(),
-				Name = name,
-				NormalizedName = name.ToUpper()
-			};
-			builder.Entity<IdentityRole<Guid>>().HasData(newRole);
+			var user5 = AddUser(builder, "mds0", "Mds2024!", "Sarah", "Bernard", "mds0@gmail.com", "1234567895");
+			var mds0 = AddMds(builder, user5, "SPU123456",status, civilite, typeEmployeur, true, 
+				"0987654321", "AccreditationX", "Commentaire exemple", "Commentaire CIUSS",
+				"EmployeurX", idStagiaire, idEmployeur, id_Horaire, id_Chat);
 
-			return newRole;
-		}
-
-		private static void AddUserToRole(ModelBuilder builder, Utilisateur user, IdentityRole<Guid> adminRole)
-		{
-			builder.Entity<IdentityUserRole<Guid>>().HasData(new IdentityUserRole<Guid>
-			{
-				UserId = user.Id,
-				RoleId = adminRole.Id,
-			});
 		}
 
 		private static Utilisateur AddUser(ModelBuilder builder, string userName,
-			string email, string password, string prenom, string nom,
-			string phoneNumber, DateTime dateOfBirth)
+			string password, string prenom, string nom, string email,
+			string phoneNumber)
 		{
 			var newUser = new Utilisateur(userName)
 			{
 				Id = Guid.NewGuid(),
-				Email = email,
-				NormalizedEmail = email.ToUpper(),
 				UserName = userName,
 				NormalizedUserName = userName.ToUpper(),
 				Prenom = prenom,
 				Nom = nom,
 				PhoneNumber = phoneNumber,
+				Email = email,
+				NormalizedEmail = email,
 				SecurityStamp = Guid.NewGuid().ToString()
 			};
 			newUser.PasswordHash = PASSWORD_HASHER.HashPassword(newUser, password);
 			builder.Entity<Utilisateur>().HasData(newUser);
+
+			return newUser;
+		}
+
+		private static Enseignant AddEnseignant(ModelBuilder builder, Utilisateur user/*, Guid ecoleId*/)
+		{
+			var newUser = new Enseignant(user.UserName)
+			{
+				Id = user.Id,
+				//EcoleId = ecoleId,
+			};
+			//newUser.PasswordHash = PASSWORD_HASHER.HashPassword(newUser, password);
+			builder.Entity<Enseignant>().HasData(newUser);
+
+			return newUser;
+		}
+
+		private static Employeur AddEmployeur(ModelBuilder builder, Utilisateur user, 
+			string codeP, string numRue, string nomRue, string ville, string pays)
+		{
+			var newUser = new Employeur(user.UserName)
+			{
+				Id = user.Id,
+			};
+			
+			newUser.adresse = new Adresse()
+			{
+				Id = Guid.NewGuid(),
+				NumeroDeRue = numRue,
+				NomDeRue = nomRue,
+				codePostal = codeP,
+				ville = ville,
+				pays = pays
+			};
+			//newUser.PasswordHash = PASSWORD_HASHER.HashPassword(newUser, password);
+			builder.Entity<Employeur>().HasData(newUser);
+			//builder.Entity<Adresse>().HasData(newUser.adresse);
+			
+			return newUser;
+		}
+
+		private static Coordonateur AddCoordo(ModelBuilder builder, Utilisateur user)
+		{
+			var newUser = new Coordonateur(user.UserName)
+			{
+				Id = user.Id,
+			};
+			//newUser.PasswordHash = PASSWORD_HASHER.HashPassword(newUser, password);
+			builder.Entity<Coordonateur>().HasData(newUser);
+
+			return newUser;
+		}
+
+		private static Stagiaire AddIntern(ModelBuilder builder, Utilisateur user,
+			Guid idEnseignant, Guid idHoraire, Guid idChat)
+		{
+			var newUser = new Stagiaire(user.UserName)
+			{
+				Id = user.Id,
+				idEnseignant = idEnseignant,
+				idHoraire = idHoraire,
+				idChat = idChat,
+			};
+			//newUser.PasswordHash = PASSWORD_HASHER.HashPassword(newUser, password);
+			builder.Entity<Stagiaire>().HasData(newUser);
+
+			return newUser;
+		}
+
+		private static MDS AddMds(ModelBuilder builder, Utilisateur user, 
+			string idMatricule, Status status,
+			Civilite civilite, TypeEmployeur typeEmployeur, bool actif,
+			string telMaison, string accredication, string commentaire, 
+			string commentaireCIUSS, string nomEmployeur, Guid idStagiaire,
+			Guid idEmployeur, Guid idHoraire, Guid idChat)
+		{
+			var newUser = new MDS(user.UserName)
+			{
+				Id = user.Id,
+				idMatricule = idMatricule,
+				status = status,
+				civilite = civilite,
+				typeEmployeur = typeEmployeur,
+				actif = actif,
+				telMaison = telMaison,	
+				accreditation = accredication,
+				commentaire = commentaire,
+				commentaireCIUSS = commentaireCIUSS,
+				NomEmployeur = nomEmployeur,
+				idStagiaire = idStagiaire,
+				idEmployeur = idEmployeur,
+				idHoraire = idHoraire,
+				idChat = idChat,
+			};
+			//newUser.PasswordHash = PASSWORD_HASHER.HashPassword(newUser, password);
+			builder.Entity<MDS>().HasData(newUser);
 
 			return newUser;
 		}
