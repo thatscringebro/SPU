@@ -12,7 +12,7 @@ namespace SPU.Domain
         public DbSet<Utilisateur> Utilisateurs { get; set; }
         public DbSet<Adresse> Adresses { get; set; }
         public DbSet<Chat> Chats { get; set; }
-        public DbSet<ConfirmationTemps> ConfirmationTemps { get; set; }
+        //public DbSet<ConfirmationTemps> ConfirmationTemps { get; set; }
         //public DbSet<Contrat> Contrats { get; set; }
         public DbSet<Coordonateur> Coordonateurs { get; set; }
 

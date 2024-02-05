@@ -5,11 +5,12 @@ namespace SPU.Domain.Entites
     public class Adresse
     {
         public Guid Id { get; set; }
-        public string NumeroDeRue { get; set; }
-        public string NomDeRue { get; set; }
-        public string ville { get; set; }
-        public string pays { get; set; }
-        public string codePostal { get; set; }
+        public string NoCivique { get; set; }
+        public string Rue { get; set; }
+        public string Ville { get; set; }
+        public string Pays { get; set; }
+        public string Province { get; set; }
+        public string CodePostal { get; set; }
 
 
 

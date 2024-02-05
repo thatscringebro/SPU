@@ -113,72 +113,81 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Coordinateur")]
+        [HttpGet]
+        public IActionResult ChoisirRole(string role)
+        {
+           
+            ViewBag.SelectedRole = role;
 
-        //[Authorize(Roles = "Coordinateur")]
-        //[HttpPost]
-        //public async Task<IActionResult> Create(UtilisateurCreationVM vm)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(vm);
-        //    }
+            return View();
+        }
 
-        //    var roles = await _roleManager.Roles.ToListAsync();
+        [Authorize(Roles = "Coordinateur")]
+        [HttpPost]
+        public async Task<IActionResult> Creation(UtilisateurCreationVM vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
 
-        //   // var selectedRole = roles.FirstOrDefault(r => r.Id == vm.);
+            var roles = await _roleManager.Roles.ToListAsync();
 
-        //    //if (selectedRole == null)
-        //    //{
-        //    //    ModelState.AddModelError(string.Empty, "Invalid role selected. Please try again.");
-        //    //    return View(vm);
-        //    //}
+            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
 
-        //    //var existingUser = await _userManager.FindByNameAsync(vm.Nom);
-        //    //if (existingUser != null)
-        //    //{
-        //    //    ModelState.AddModelError(string.Empty, "Username already exists. Please choose a different username.");
-        //    //    return View(vm);
-        //    //}
+            if (selectedRole == null)
+            {
+                ModelState.AddModelError(string.Empty, "Rôle invalide. Veuillez réessayer.");
+                return View(vm);
+            }
 
-        //    //var toCreate = new Utilisateur(vm.);
-        //    //var result = await _userManager.CreateAsync(toCreate, vm.);
+            var existingUser = await _userManager.FindByNameAsync(vm.Nom);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError(string.Empty, "Nom d'utilisateur déjà utilisé. Veuillez utiliser un autre nom d'utilisateur.");
+                return View(vm);
+            }
 
-        //    //if (!result.Succeeded)
-        //    //{
-        //    //    ModelState.AddModelError(string.Empty, "User creation failed. Please try again.");
-        //    //    return View(vm);
-        //    //}
+            var toCreate = new Utilisateur(vm.Nom);
+            var result = await _userManager.CreateAsync(toCreate, vm.pwd);
 
-        //    //result = await _userManager.AddToRoleAsync(toCreate, selectedRole.Name);
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Création d'utilisateur échoué. Veuillez réessayer.");
+                return View(vm);
+            }
 
-        //    //if (!result.Succeeded)
-        //    //{
-        //    //    ModelState.AddModelError(string.Empty, $"Unable to add user to the role {selectedRole.Name}. Please try again.");
-        //    //    return View(vm);
-        //    //}
+            result = await _userManager.AddToRoleAsync(toCreate, selectedRole.Name);
 
-        //    //return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
-        //}
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, $"Impossible d'ajouter le rôle {selectedRole.Name}. Veuillez réessayer.");
+                return View(vm);
+            }
 
-        //    [Authorize(Roles = "Administrator")]
-        //    [HttpPost]
-        //    public async Task<IActionResult> Remove(Guid id)
-        //    {
-        //        var user = await _userManager.FindByIdAsync(id.ToString());
-        //        _asserts.Exists(user, "User not found. Please try again.");
+            return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
+        }
 
-        //        var result = await _userManager.DeleteAsync(user!);
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+         
 
-        //        if (!result.Succeeded)
-        //        {
-        //            ModelState.AddModelError(string.Empty, "Unable to remove user. Please try again or call emergency services if you are in danger.");
-        //            return View();
-        //        }
+            var result = await _userManager.DeleteAsync(user!);
 
-        //        return RedirectToAction(nameof(Manage), new { success = true, actionType = "Remove" });
-        //    }
-        //}
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Impossible de supprimer un utilisateur. Veuillez réessayer.");
+                return View();
+            }
 
-
+            return RedirectToAction(nameof(Manage), new { success = true, actionType = "Remove" });
+        }
     }
+
+
 }
+
