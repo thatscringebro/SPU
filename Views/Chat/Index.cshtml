@@ -43,7 +43,95 @@
             </a>
         </footer>
     </div>
-  }	
+  }
+  else if (mds != null){
+      <div class="main_noaside">
+        <ul id="chat">
+          @{
+            List<Message> messages = context.Message.Where(x => x.ChatId == mds.ChatId).ToList();
+      }
+          @foreach (var message in messages)
+          {
+              <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
+                  <div class="entete">
+                      <h2>@message.utilisateur.Nom</h2>
+                      <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                  </div>
+                  <div class="triangle"></div>
+                  <div class="message">
+                      @message.message
+                  </div>
+              </li>
+          }
+        </ul>
+        <footer>
+            <input type="text" placeholder="Votre message ici" id="messageInput" />
+            <a id="sendButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-send" viewBox="0 0 16 16">
+                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
+                </svg>
+            </a>
+        </footer>
+    </div>
+  }
+  else if (ens != null){
+<aside>
+        <header>
+            <input type="text" placeholder="search">
+        </header>
+        <ul>
+      @{
+        List<Chat> chats = context.Chats.Where(x => x.EnseignantId == Model.Id).ToList();
+      }
+            @foreach (var chat in chats)
+            {
+                string idSelect = chat.Id.ToString() + "Select";
+                <li onclick="setActiveChat('@chat.Id')" class="chatSelect" id="@idSelect">
+                    <div>
+                        <h2>@chat.Id</h2>
+                    </div>
+                </li>
+            }
+        </ul>
+    	</aside>
+  @foreach (var chat in chats) {
+      <div class="main"><h1>Veuillez choisir un chat</h1></div>
+      <div class="main hidden" id="@chat.Id">
+        <ul id="chat">
+      @{
+            List<Message> messages = context.Message.Where(x => x.ChatId == chat.Id).ToList();
+      }
+            @foreach (var message in messages)
+            {
+                <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
+                    <div class="entete">
+                        <h2>@message.utilisateur.Nom</h2>
+                        <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                    </div>
+                    <div class="triangle"></div>
+                    <div class="message">
+                        @message.message
+                    </div>
+                </li>
+            }
+        </ul>
+        <footer>
+            @{
+                string idMessageInput = chat.Id.ToString() + "messageInput";
+                string idSendButton = chat.Id.ToString() + "sendButton";
+            }
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" />
+            <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@chat.Id')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-send" viewBox="0 0 16 16">
+                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
+                </svg>
+            </a>
+        </footer>
+    </div>
+  }
+  }
   else if (coordo != null){
         <aside>
         <header>
