@@ -113,10 +113,19 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Coordinateur")]
+        [HttpGet]
+        public IActionResult ChoisirRole(string role)
+        {
+           
+            ViewBag.SelectedRole = role;
+
+            return View();
+        }
 
         //[Authorize(Roles = "Coordinateur")]
         //[HttpPost]
-        //public async Task<IActionResult> Create(UtilisateurCreationVM vm)
+        //public async Task<IActionResult> Creation(UtilisateurCreationVM vm, string selectedRole)
         //{
         //    if (!ModelState.IsValid)
         //    {
@@ -125,39 +134,39 @@ namespace SPU.Controllers
 
         //    var roles = await _roleManager.Roles.ToListAsync();
 
-        //   // var selectedRole = roles.FirstOrDefault(r => r.Id == vm.);
+        //    var RoleChoisi = roles.FirstOrDefault(r => r.Name == selectedRole);
 
-        //    //if (selectedRole == null)
-        //    //{
-        //    //    ModelState.AddModelError(string.Empty, "Invalid role selected. Please try again.");
-        //    //    return View(vm);
-        //    //}
+        //    if (selectedRole == null)
+        //    {
+        //        ModelState.AddModelError(string.Empty, "Invalid role selected. Please try again.");
+        //        return View(vm);
+        //    }
 
-        //    //var existingUser = await _userManager.FindByNameAsync(vm.Nom);
-        //    //if (existingUser != null)
-        //    //{
-        //    //    ModelState.AddModelError(string.Empty, "Username already exists. Please choose a different username.");
-        //    //    return View(vm);
-        //    //}
+        //    var existingUser = await _userManager.FindByNameAsync(vm.Nom);
+        //    if (existingUser != null)
+        //    {
+        //        ModelState.AddModelError(string.Empty, "Username already exists. Please choose a different username.");
+        //        return View(vm);
+        //    }
 
-        //    //var toCreate = new Utilisateur(vm.);
-        //    //var result = await _userManager.CreateAsync(toCreate, vm.);
+        //    var toCreate = new Utilisateur(vm.userName);
+        //    var result = await _userManager.CreateAsync(toCreate, vm.userName);
 
-        //    //if (!result.Succeeded)
-        //    //{
-        //    //    ModelState.AddModelError(string.Empty, "User creation failed. Please try again.");
-        //    //    return View(vm);
-        //    //}
+        //    if (!result.Succeeded)
+        //    {
+        //        ModelState.AddModelError(string.Empty, "User creation failed. Please try again.");
+        //        return View(vm);
+        //    }
 
-        //    //result = await _userManager.AddToRoleAsync(toCreate, selectedRole.Name);
+        //    result = await _userManager.AddToRoleAsync(toCreate, RoleChoisi);
 
-        //    //if (!result.Succeeded)
-        //    //{
-        //    //    ModelState.AddModelError(string.Empty, $"Unable to add user to the role {selectedRole.Name}. Please try again.");
-        //    //    return View(vm);
-        //    //}
+        //    if (!result.Succeeded)
+        //    {
+        //        ModelState.AddModelError(string.Empty, $"Unable to add user to the role {RoleChoisi}. Please try again.");
+        //        return View(vm);
+        //    }
 
-        //    //return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
+        //    return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         //}
 
         //    [Authorize(Roles = "Administrator")]

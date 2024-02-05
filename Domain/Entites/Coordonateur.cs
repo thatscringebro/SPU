@@ -2,21 +2,20 @@
 
 namespace SPU.Domain.Entites
 {
-    public class Coordonateur : Utilisateur
+    public class Coordonateur 
     {
 
-        //public Guid Id { get; set; }
-        //public Guid UtilisateurId { get; set; }
+        public Guid Id { get; set; }
+        public Guid UtilisateurId { get; set; }
+        public Guid EcoleId { get; set; }
 
-        //[ForeignKey(nameof(UtilisateurId))]
-        //public virtual Utilisateur utilisateur { get; set; }
+        //[ForeignKey(nameof(UtilisateurId))] virtual
+        public Utilisateur utilisateur { get; set; }
+        public Ecole ecole { get; set; }
+        //public List<Enseignant> enseignants = new();
+        //public List<Stagiaire> stagiaires = new();
+        //public List<Chat> chats = new();
 
-        public List<Enseignant> enseignants = new();
-        public List<Stagiaire> stagiaires = new();
-        public List<Chat> chats = new();
-
-        public Coordonateur(string userName) : base(userName)
-        {
-        }
+     
     }
 }
