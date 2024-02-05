@@ -1,0 +1,76 @@
+﻿@using SPU.ViewModels
+@model PlageHoraireMdsVM
+
+@{
+    ViewData["Title"] = "Ajout Plage horaire";
+}
+
+<style>
+
+    body {
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        
+    }
+
+    form {
+        max-width: 400px; /* Limitez la largeur maximale si nécessaire */
+    }
+    
+</style>
+
+<form method="post" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">
+    <div>
+        <label for="selectedDay">Choix de journée : </label>
+        <select asp-for="ChoixJournee" class="form-control">
+            <option value="1">Lundi</option>
+            <option value="2">Mardi</option>
+            <option value="3">Mercredi</option>
+            <option value="4">Jeudi</option>
+            <option value="5">Vendredi</option>
+            <option value="6">Samedi</option>
+            <option value="7">Dimanche</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="selectedDay">Choix de la semaine : </label>
+        <select asp-for="ChoixSemaine" class="form-control">
+            <option value="1">Semaine 1</option>
+            <option value="2">Semaine 2</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="selectedStartTime">Heure de début :</label>
+        <select asp-for="HeureDebut" class="form-control">
+            @for (int hours = 0; hours < 24; hours++)
+            {
+                for (int minutes = 0; minutes < 60; minutes += 30)
+                {
+                    var time = $"{hours:D2}:{minutes:D2}";
+                    <option value="@time">@time</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div>
+        <label for="selectedEndTime">Heure de fin :</label>
+        <select asp-for="HeureFin" class="form-control">
+            @for (int hours = 0; hours < 24; hours++)
+            {
+                for (int minutes = 0; minutes < 60; minutes += 30)
+                {
+                    var time = $"{hours:D2}:{minutes:D2}";
+                    <option value="@time">@time</option>
+                }
+            }
+        </select>
+    </div>
+
+    @*Passer en paramètre les données*@
+    <button type="submit" class="btn btn-primary">Confirmer</button>
+</form>
