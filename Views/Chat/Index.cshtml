@@ -52,9 +52,7 @@
         <ul>
             @foreach (var chat in coordoUser.chats)
             {
-                @{
-                    string idSelect = chat.Id.ToString() + "Select";
-                }
+                string idSelect = chat.Id.ToString() + "Select";
                 <li onclick="setActiveChat('@chat.Id')" class="chatSelect" id="@idSelect">
                     <div>
                         <h2>@chat.Id</h2>
