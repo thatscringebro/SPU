@@ -4,6 +4,32 @@
     int anneeEnCours = DateTime.Today.Year;
 }
 
+<div>
+    <a id="horaire-ajoutPlageHoraire-button" asp-area="" asp-controller="Horaire" asp-action="PlageHoraireMDS">Ajout plage horaire</a>
+</div>
 <div class="horizontal-list">
         <vc:schedule-day></vc:schedule-day>
 </div>
+<div>
+    <a id="horaire-confirmationPlageHoraire-button" asp-area="">Confirmation de l'horaire</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    document.getElementById('horaire-confirmationPlageHoraire-button').addEventListener('click', function () {
+        event.preventDefault();
+
+        Swal.fire({
+            title: "Confirmation",
+            text: "Etes-vous sûr de vouloir confirmer le choix des 2 semaines de l'horaire? Il ne sera pas possible de modifier cette récurrence des 2 semaines. Par contre, vous allez pouvoir gérer manuellement chaque plage horaire et les modifier à votre guise.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Oui, confirmer',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/Horaire/ConfirmationHoraireMDS";
+            }
+        });
+    });
+</script>
