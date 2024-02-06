@@ -4,6 +4,7 @@ namespace SPU.ViewModels
 {
     public class UtilisateurEditVM
     {
+        public string role { get; set; }
         public Guid id { get; set; }
         [Display(Name = "Nom d'utilisateur")]
         public string userName { get; set; }

@@ -52,3 +52,4 @@ obj/
 /.vs
 /Migrations
 ~$SPU.docx
+/node_modules
