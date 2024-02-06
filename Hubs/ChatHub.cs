@@ -15,13 +15,15 @@ namespace SignalRChat.Hubs
 
         public async Task SendMessage(string user, string room, string message)
         {
+            Console.WriteLine("------------------------------");
             Message m = new Message{
                 message = message,
-                DateHeure = DateTime.Now,
+                DateHeure = DateTime.UtcNow,
                 UtilisateurId = Guid.Parse(user),
                 ChatId = Guid.Parse(room), 
             };
 
+            _context.Message.Add(m);
             _context.SaveChanges();
 
             await Clients.All.SendAsync("ReceiveMessage", user, room, message);
