@@ -113,6 +113,14 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+		[AllowAnonymous]
+		[HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+
         [Authorize(Roles = "Coordinateur")]
         [HttpGet]
         public IActionResult ChoisirRole(string role)
@@ -125,8 +133,9 @@ namespace SPU.Controllers
 
         [Authorize(Roles = "Coordinateur")]
         [HttpPost]
-        public async Task<IActionResult> Creation(UtilisateurCreationVM vm)
+        public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
         {
+            //CREATION POUR TOUS LES USER SAUF ENTREPRISE ET MDS
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -149,6 +158,7 @@ namespace SPU.Controllers
                 return View(vm);
             }
 
+
             var toCreate = new Utilisateur(vm.Nom);
             var result = await _userManager.CreateAsync(toCreate, vm.pwd);
 
@@ -169,7 +179,164 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Coordinateur")]
+        [HttpPost]
+        public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
+        {
+            //CREATION POUR MDS
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            var roles = await _roleManager.Roles.ToListAsync();
+
+            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
+
+            if (selectedRole == null)
+            {
+                ModelState.AddModelError(string.Empty, "Rôle invalide. Veuillez réessayer.");
+                return View(vm);
+            }
+
+            var existingUser = await _userManager.FindByNameAsync(vm.Nom);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError(string.Empty, "Nom d'utilisateur déjà utilisé. Veuillez utiliser un autre nom d'utilisateur.");
+                return View(vm);
+            }
+
+           
+
+            var toCreate = new Utilisateur(vm.Nom);
+            var result = await _userManager.CreateAsync(toCreate, vm.pwd);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Création d'utilisateur échoué. Veuillez réessayer.");
+                return View(vm);
+            }
+
+            result = await _userManager.AddToRoleAsync(toCreate, selectedRole.Name);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, $"Impossible d'ajouter le rôle {selectedRole.Name}. Veuillez réessayer.");
+                return View(vm);
+            }
+
+            return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
+        }
+
+
+        [Authorize(Roles = "Coordinateur")]
+        [HttpPost]
+        public async Task<IActionResult> CreationEntreprise(EntrepriseCreationVM vm)
+        {
+            //CREATION POUR ENTREPRISE 
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            var roles = await _roleManager.Roles.ToListAsync();
+
+            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
+
+            if (selectedRole == null)
+            {
+                ModelState.AddModelError(string.Empty, "Rôle invalide. Veuillez réessayer.");
+                return View(vm);
+            }
+
+            var existingUser = await _userManager.FindByNameAsync(vm.Nom);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError(string.Empty, "Nom d'utilisateur déjà utilisé. Veuillez utiliser un autre nom d'utilisateur.");
+                return View(vm);
+            }
+
+
+            var toCreate = new Utilisateur(vm.Nom);
+            var result = await _userManager.CreateAsync(toCreate, vm.pwd);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Création d'utilisateur échoué. Veuillez réessayer.");
+                return View(vm);
+            }
+
+            result = await _userManager.AddToRoleAsync(toCreate, selectedRole.Name);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, $"Impossible d'ajouter le rôle {selectedRole.Name}. Veuillez réessayer.");
+                return View(vm);
+            }
+
+            return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
+        }
+
+        [Authorize(Roles = "Coordinateur")]
+     
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+
+            if(user == null)
+            {
+                return NotFound();
+            }
+          
+                var modifUser = new UtilisateurEditVM
+                {
+                    id = user.Id,
+                    Nom = user.Nom,
+                    Prenom = user.Prenom,
+                    PhoneNumber = user.PhoneNumber,
+                    userName = user.UserName
+
+                };
+     
+
+            return View(modifUser);
+        }
+
+        [Authorize(Roles = "Coordinateur")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(Guid id, UtilisateurEditVM vm)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            var aEditer = await _userManager.FindByIdAsync(id.ToString());
+            if(aEditer == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id));
+            }
+
+            aEditer.Nom = vm.Nom;
+            aEditer.Prenom = vm.Prenom;
+            aEditer.PhoneNumber = vm.PhoneNumber;
+            //COURRIEL ? 
+            aEditer.UserName = vm.userName;
+
+           var works = _userManager.UpdateAsync(aEditer);
+            if(works != null) 
+                TempData["SuccessMessage"] = "Modifications succeeded";
+            else
+                TempData["ErrorMessage"] = "Request failed";
+           
+
+            return RedirectToAction(nameof(Manage));
+        }
+
+
+
+        [Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> Remove(Guid id)
         {

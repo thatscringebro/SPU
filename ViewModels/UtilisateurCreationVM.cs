@@ -4,8 +4,7 @@ namespace SPU.ViewModels
 {
     public class UtilisateurCreationVM
     {
-        //Pour tous les utilisateurs
-        //MDS et Employeur hérite de cette classe-ci
+
         [Display(Name = "Nom d'utilisateur")]
         public string userName { get; set; }
         [Display(Name = "Prénom")]

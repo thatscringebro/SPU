@@ -4,44 +4,15 @@
     ViewData["Title"] = "S'enregistrer";
 }
 
+<h1>Register</h1>
 
-<div>
-    <h1>S'inscrire</h1>
-    <button onclick="showForm('entreprise')">Entreprise</button>
-    <button onclick="showForm('mds')">Maître de Stage</button>
-</div>
-
-<div id="form-entreprise" style="display:none;">
-    @Html.Partial("Partials/Entreprise/InscriptionEntreprise")
-</div>
-<div id="form-mds" style="display:none;">
-    @Html.Partial("Partials/MDS/InscriptionMDS")
-</div>
-
-@section Scripts {
-    <script>
-        function showForm(formType) {
-            document.getElementById('form-entreprise').style.display = 'none';
-            document.getElementById('form-mds').style.display = 'none';
-
-            var formToShow = document.getElementById('form-' + formType);
-            if (formToShow) {
-                formToShow.style.display = 'block';
-            }
-        }
-    </script>
-}
-
-
-
-
-@* 
 <div class="mt-2 mb-2">
     @Html.ActionLink("Back", "Index", "Home",
-    new {}, new { @class = "btn btn-secondary" })
+            new { }, new { @class = "btn btn-secondary" })
 </div>
 
-<form asp-action="Creation">
+<form asp-action="CreationMDS">@* method="post" *@
+    <h1>Inscription Maître de Stage</h1>
     <hr />
     <div class="row">
         <div class="col-md-4">
@@ -83,5 +54,10 @@
             </div>
         </div>
     </div>
-</form> *@
+</form>
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
