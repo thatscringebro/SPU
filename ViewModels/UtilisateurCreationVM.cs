@@ -26,7 +26,5 @@ namespace SPU.ViewModels
         public int ecoleSelectionne { get; set; }
         public List<SelectListItem> Ecoles { get; set; } = new List<SelectListItem>();
 
-        public string role {  get; set; }
-
     }
 }
