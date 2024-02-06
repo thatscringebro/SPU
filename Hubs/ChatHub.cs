@@ -15,7 +15,6 @@ namespace SignalRChat.Hubs
 
         public async Task SendMessage(string user, string room, string message)
         {
-            Console.WriteLine("------------------------------");
             Message m = new Message{
                 message = message,
                 DateHeure = DateTime.UtcNow,
@@ -23,10 +22,12 @@ namespace SignalRChat.Hubs
                 ChatId = Guid.Parse(room), 
             };
 
+            string username = _context.Utilisateurs.Find(Guid.Parse(user)).Nom;
+
             _context.Message.Add(m);
             _context.SaveChanges();
 
-            await Clients.All.SendAsync("ReceiveMessage", user, room, message);
+            await Clients.All.SendAsync("ReceiveMessage", user, room, message, username, DateTime.Now.ToString("h:mmtt, MMM d"));
         }
     }
 }

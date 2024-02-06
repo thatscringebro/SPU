@@ -25,7 +25,7 @@
               <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
                   <div class="entete">
                       <h2>@message.utilisateur.Nom</h2>
-                      <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                      <h3>@message.DateHeure.ToLocalTime().ToString("h:mmtt, MMM d")</h3>
                   </div>
                   <div class="triangle"></div>
                   <div class="message">
@@ -60,7 +60,7 @@
               <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
                   <div class="entete">
                       <h2>@message.utilisateur.Nom</h2>
-                      <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                      <h3>@message.DateHeure.ToLocalTime().ToString("h:mmtt, MMM d")</h3>
                   </div>
                   <div class="triangle"></div>
                   <div class="message">
@@ -116,7 +116,7 @@
                 <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
                     <div class="entete">
                         <h2>@message.utilisateur.Nom</h2>
-                        <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                        <h3>@message.DateHeure.ToLocalTime().ToString("h:mmtt, MMM d")</h3>
                     </div>
                     <div class="triangle"></div>
                     <div class="message">
@@ -173,7 +173,7 @@
                 <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
                     <div class="entete">
                         <h2>@message.utilisateur.Nom</h2>
-                        <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                        <h3>@message.DateHeure.ToLocalTime().ToString("h:mmtt, MMM d")</h3>
                     </div>
                     <div class="triangle"></div>
                     <div class="message">
@@ -209,15 +209,15 @@
 
   var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-  connection.on("ReceiveMessage", function (user, room, message) {
+  connection.on("ReceiveMessage", function (user, room, message, username, date) {
     var li = document.createElement("li");
     li.classList.add("me");
-    document.getElementById("chat").appendChild(li);
+    document.getElementById(room).appendChild(li);
     // We can assign user-supplied strings to an element's textContent because it
     // is not interpreted as markup. If you're assigning in any other way, you 
     // should be aware of possible script injection concerns.
     //li.textContent = `${user} says ${message} in room ${room}`;
-    li.innerHTML = "<div class=\"entete\">Allo</div>";
+    li.innerHTML = "<div class=\"entete\"><h2>"+ username + "</h2><h3>" + date + "</h3></div><div class\"triangle\"></div><div class\"mesage\">"+ message + "</div>";
   });
 
   connection.start().then(function () {
@@ -226,7 +226,6 @@
   }); 
 
   function sendMessage(user, message, room){
-    debugger;
     if(message != null && message != ""){
       connection.invoke("SendMessage", user, room, message).catch(function (err) {
         return console.error(err.toString());
