@@ -83,7 +83,7 @@
                             }
                         </div>
                         <div class="heures">
-                            @for (int i = 0; i < 48; i++)
+                            @for (int i = 0; i < 96; i++)
                             {
                                 bool isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
                                 Guid IdPlageHoraire = new Guid();
@@ -97,7 +97,7 @@
                                     if (item.DateDebutQuart.Date == item.DateFinQuart.Date)
                                     {
                                         // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
-                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 30 && i * 30 < finQuartMinutes)
+                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15 && i * 15 < finQuartMinutes)
                                         {
                                             isWorkingHour = true;
                                             IdPlageHoraire = item.Id;
@@ -108,7 +108,7 @@
                                     else // Si le quart de travail commence un jour et se termine le lendemain
                                     {
                                         // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
-                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 30)
+                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15)
                                         {
                                             isWorkingHour = true;
                                             IdPlageHoraire = item.Id;
@@ -116,7 +116,7 @@
                                             break;
                                         }
                                         // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
-                                        if (item.DateFinQuart.Date == journee.Date && i * 30 < finQuartMinutes)
+                                        if (item.DateFinQuart.Date == journee.Date && i * 15 < finQuartMinutes)
                                         {
                                             isWorkingHour = true;
                                             IdPlageHoraire = item.Id;
@@ -127,7 +127,7 @@
                                 }
 
                                 // Appliquer le style en fonction de la condition isWorkingHour
-                                <div class="demiHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 10.533333px; @(isWorkingHour ? "background-color: lightblue;" : "") @(i % 2 == 1 ? "border-bottom: 1px solid lightgrey;" : "")">
+                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? "background-color: lightblue;" : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
                                 </div>
                             }
                         </div>
@@ -157,7 +157,7 @@
         border-radius: 5px;
         margin: 3px;
         display: flex;
-        flex-direction: column; /* Afficher les éléments en colonne */
+        flex-direction: column;
     }
 
     .horizontal-list {
@@ -182,41 +182,38 @@
 </style>
 
 <script>
-    function afficherAlerte() {
+    function afficherAlerte(idPlageHoraire) {
         Swal.fire({
             title: 'Vous serez absent ?',
-            text: 'Voulez vous cocher absent pour cette journée de travail ?',
+            text: 'Voulez-vous cocher absent pour cette journée de travail ?',
             icon: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Je serai absent',
             cancelButtonText: 'Annuler',
-        })).then((result) => {
+        }).then((result) => {
             if (result.isConfirmed) {
-                
-            } 
+                // Envoyer une requête au contrôleur avec l'ID de la plage horaire
+            }
         });
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        var divsDemiHeure = document.querySelectorAll('.demiHeure');
+        var divsQuartHeure = document.querySelectorAll('.quartHeure');
 
-        divsDemiHeure.forEach(function (div) {
+        divsQuartHeure.forEach(function (div) {
             var classes = div.classList;
             for (var i = 0; i < classes.length; i++) {
                 var match = classes[i].match(/^idPlageHoraire-(.*)$/);
                 if (match) {
                     var idPlageHoraire = match[1];
                     div.addEventListener("click", function () {
-                        console.log(match[1]);
-                        afficherAlerte();
+                        afficherAlerte(idPlageHoraire);
                     });
                     break;
                 }
             }
         });
     });
-
-
 </script>
