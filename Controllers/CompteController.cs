@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SPU.Domain;
 using SPU.Domain.Entites;
@@ -123,7 +124,18 @@ namespace SPU.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            var model = new UtilisateurCreationVM();
+
+            var lstEcoles = _spuContext.Stagiaires.Select(x => x.ecole).ToList();
+
+
+            model.Ecoles = lstEcoles.Select( e => new SelectListItem
+            {
+                Value = e.id.ToString(),
+                Text = e.Nom
+            }).ToList();
+
+            return View(model);
         }
 
         //peux-être a enlever, a voir avec la suite des vues
@@ -139,11 +151,11 @@ namespace SPU.Controllers
 
 
         //CREATION STAGIAIRE/COORDO/ENSEIGNANT
-        [Authorize(Roles = "Coordinateur")]
+        //[Authorize(Roles = "Coordinateur")]
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
         {
-
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -151,7 +163,7 @@ namespace SPU.Controllers
 
             var roles = await _roleManager.Roles.ToListAsync();
 
-            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
+            var selectedRole = roles.FirstOrDefault(r => r.Name == vm.role);
 
             if (selectedRole == null)
             {
@@ -274,7 +286,7 @@ namespace SPU.Controllers
             {
                 utilisateur = toCreate,
                 UtilisateurId = toCreate.Id,
-                MatriculeId = vm.MatriculeId,
+                //MatriculeId = vm.MatriculeId,
                 civilite = vm.civilite,
                 typeEmployeur = vm.TypeEmployeur,
                 telMaison = vm.telMaison,
@@ -334,7 +346,7 @@ namespace SPU.Controllers
             {
                 Ville = vm.ville,
                 Pays = vm.pays,
-                Province = vm.province,
+                // = vm.province,
                 CodePostal = vm.codePostal,
                 NoCivique = vm.NumeroDeRue,
                 Rue = vm.NomDeRue

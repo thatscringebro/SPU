@@ -10,7 +10,7 @@
             new { }, new { @class = "btn btn-secondary" })
 </div>
 
-<form asp-action="CreationNormal">@* method="post" *@
+<form asp-action="CreationNormal">
     <h1>Inscription d'utilisateurs</h1>
     <hr />
     <div class="row">
@@ -37,6 +37,12 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="ecoleSelectionne" class="control-label">École</label>
+                <select asp-for="ecoleSelectionne" asp-items="Model.Ecoles" class="form-control">
+                    <option value="">Sélectionnez une école</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label asp-for="pwd" class="control-label"></label>
                 <input asp-for="pwd" class="form-control" />
                 <span asp-validation-for="pwd" class="text-danger"></span>
@@ -46,7 +52,7 @@
                 <input asp-for="confirmationpwd" class="form-control" />
                 <span asp-validation-for="confirmationpwd" class="text-danger"></span>
             </div>
-
+            <input asp-for="role" class="form-control" type="hidden" value="Stagiaire" />
             <div class="form-group">
                 <div class="form-group mt-2 mb-2">
                     <input type="submit" value="Créer" class="btn btn-primary" />

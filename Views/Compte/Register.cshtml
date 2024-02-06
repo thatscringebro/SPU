@@ -8,6 +8,7 @@
 <div>
     <h1>S'inscrire</h1>
     <button onclick="showForm('coordo')">Coordinateur</button>
+    <button onclick="showForm('enseignant')">Enseignant</button>
     <button onclick="showForm('stagiaire')">Stagiaire</button>
     <button onclick="showForm('normal')">Normal</button>
     <button onclick="showForm('entreprise')">Entreprise</button>
@@ -22,7 +23,7 @@
     @Html.Partial("Partials/Stagiaire/InscriptionStagiaire")
 </div>
 <div id="form-normal" style="display:none;">
-    @Html.Partial("Partials/Normal/InscriptionNormal")
+    @Html.Partial("CreationNormal")
 </div>
 <div id="form-entreprise" style="display:none;">
     @Html.Partial("Partials/Entreprise/InscriptionEntreprise")
