@@ -128,7 +128,6 @@ namespace SPU.Controllers
 
             var lstEcoles = _spuContext.Stagiaires.Select(x => x.ecole).ToList();
 
-
             model.Ecoles = lstEcoles.Select( e => new SelectListItem
             {
                 Value = e.id.ToString(),
