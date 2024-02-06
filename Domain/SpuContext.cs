@@ -27,12 +27,25 @@ namespace SPU.Domain
 
         public SpuContext(DbContextOptions<SpuContext> options) : base(options) { }
 
-        public SpuContext() {}
+        public SpuContext() : base(GetOptions()) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); 
             modelBuilder.Seed();
+        }
+
+        private static DbContextOptions<SpuContext> GetOptions()
+        {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                                                    .SetBasePath(Directory.GetCurrentDirectory())
+                                                    .AddJsonFile("appsettings.json")
+                                                    .Build();
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var optionsBuilder = new DbContextOptionsBuilder<SpuContext>();
+            optionsBuilder.UseNpgsql(connectionString);
+            return optionsBuilder.Options;
         }
     }
       

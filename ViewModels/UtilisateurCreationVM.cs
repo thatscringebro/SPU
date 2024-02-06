@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SPU.Domain.Entites;
+using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
 {
@@ -17,6 +18,8 @@ namespace SPU.ViewModels
         public string pwd { get; set; }
         [Display(Name = "Confirmation mot de passe")]
         public string confirmationpwd { get; set; }
+        [Display(Name = "Veuillez choisir un établissement")]
+        public Ecole Ecole { get; set; }
 
         public string role {  get; set; }
 

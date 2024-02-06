@@ -17,14 +17,17 @@ namespace SignalRChat.Hubs
         {
             Message m = new Message{
                 message = message,
-                DateHeure = DateTime.Now,
+                DateHeure = DateTime.UtcNow,
                 UtilisateurId = Guid.Parse(user),
                 ChatId = Guid.Parse(room), 
             };
 
+            string username = _context.Utilisateurs.Find(Guid.Parse(user)).Nom;
+
+            _context.Message.Add(m);
             _context.SaveChanges();
 
-            await Clients.All.SendAsync("ReceiveMessage", user, room, message);
+            await Clients.All.SendAsync("ReceiveMessage", user, room, message, username, DateTime.Now.ToString("h:mmtt, MMM d"));
         }
     }
 }

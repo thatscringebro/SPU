@@ -23,6 +23,8 @@ namespace SPU.ViewModels
         public string NomDeRue { get; set; }
         [Display(Name = "Ville")]
         public string ville { get; set; }
+        [Display(Name = "Province")]
+        public string province { get; set; }
         [Display(Name = "Pays")]
         public string pays { get; set; }
         [Display(Name = "Code postal")]
