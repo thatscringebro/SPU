@@ -62,7 +62,7 @@ namespace SPU.ViewComponents
                 Present = true
             });
             // Renvoyer la vue avec les données
-            return View(journeeTravailles);
+            return View(donneesTest);
         }
 
     }
