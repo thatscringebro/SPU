@@ -120,9 +120,9 @@ namespace SPU.Controllers
             return View();
         }
 
-
-        [Authorize(Roles = "Coordinateur")]
-        [HttpGet]
+        [AllowAnonymous]
+        //[Authorize(Roles = "Coordinateur")]
+        [HttpPost]
         public IActionResult ChoisirRole(string role)
         {
            
@@ -229,7 +229,8 @@ namespace SPU.Controllers
         }
 
 
-        [Authorize(Roles = "Coordinateur")]
+        [AllowAnonymous]
+        //[Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> CreationEntreprise(EntrepriseCreationVM vm)
         {

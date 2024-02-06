@@ -18,5 +18,7 @@ namespace SPU.ViewModels
         [Display(Name = "Confirmation mot de passe")]
         public string confirmationpwd { get; set; }
 
+        public string role {  get; set; }
+
     }
 }
