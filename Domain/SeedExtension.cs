@@ -4,11 +4,11 @@ using SPU.Domain.Entites;
 using SPU.Enum;
 using System.Net;
 
-namespace SPU.Domain
-{
-    public static class SeedExtension
-    {
-		public static readonly PasswordHasher<Utilisateur> PASSWORD_HASHER = new();
+//namespace SPU.Domain
+//{
+//    public static class SeedExtension
+//    {
+//		public static readonly PasswordHasher<Utilisateur> PASSWORD_HASHER = new();
 
 		public static void Seed(this ModelBuilder builder)
 		{
@@ -88,8 +88,8 @@ namespace SPU.Domain
 			newUser.PasswordHash = PASSWORD_HASHER.HashPassword(newUser, password);
 			builder.Entity<Utilisateur>().HasData(newUser);
 
-			return newUser;
-		}
+//			return newUser;
+//		}
 
 		private static Enseignant AddEnseignant(ModelBuilder builder, Utilisateur user, Ecole ecole)
 		{
@@ -101,8 +101,8 @@ namespace SPU.Domain
 			newUser.EcoleId = ecole.id;
 			builder.Entity<Enseignant>().HasData(newUser);
 
-			return newUser;
-		}
+//			return newUser;
+//		}
 
 		private static Employeur AddEmployeur(ModelBuilder builder, Utilisateur user, Adresse adresse)
 		{
@@ -145,8 +145,8 @@ namespace SPU.Domain
             };
 			builder.Entity<Coordonateur>().HasData(newUser);
 
-			return newUser;
-		}
+//			return newUser;
+//		}
 
 		private static Stagiaire AddStagiaire(ModelBuilder builder, Utilisateur user,
 			Enseignant enseignant, Guid idHoraire, Chat chat, Employeur employeur, Ecole ecole)
@@ -164,8 +164,8 @@ namespace SPU.Domain
 			//newUser.ChatId = chat.Id;
 			builder.Entity<Stagiaire>().HasData(newUser);
 
-			return newUser;
-		}
+//			return newUser;
+//		}
 
 		private static MDS AddMds(ModelBuilder builder, Utilisateur user, 
 			string idMatricule, Status status, Civilite civilite, TypeEmployeur 
