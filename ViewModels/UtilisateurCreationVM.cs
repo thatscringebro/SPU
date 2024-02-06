@@ -5,6 +5,7 @@ namespace SPU.ViewModels
 {
     public class UtilisateurCreationVM
     {
+        public string role { get; set; }
 
         [Display(Name = "Nom d'utilisateur")]
         public string userName { get; set; }

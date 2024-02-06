@@ -2,10 +2,9 @@
 
 namespace SPU.ViewModels
 {
-    public class UtilisateurEditVM
+    public class EntrepriseEditVM
     {
-        public string role { get; set; }
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         [Display(Name = "Nom d'utilisateur")]
         public string userName { get; set; }
         [Display(Name = "Prénom")]
@@ -18,5 +17,18 @@ namespace SPU.ViewModels
         public string pwd { get; set; }
         [Display(Name = "Confirmation mot de passe")]
         public string confirmationpwd { get; set; }
+        [Display(Name = "Numéro de rue")]
+        public string NumeroDeRue { get; set; }
+        [Display(Name = "Nom de rue")]
+        public string NomDeRue { get; set; }
+        [Display(Name = "Ville")]
+        public string ville { get; set; }
+        [Display(Name = "Province")]
+        public string province { get; set; }
+        [Display(Name = "Pays")]
+        public string pays { get; set; }
+        [Display(Name = "Code postal")]
+        public string codePostal { get; set; }
+
     }
 }
