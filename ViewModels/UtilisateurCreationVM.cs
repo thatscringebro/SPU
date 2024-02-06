@@ -1,4 +1,5 @@
-﻿using SPU.Domain.Entites;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SPU.Domain.Entites;
 using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
@@ -21,6 +22,9 @@ namespace SPU.ViewModels
         public string confirmationpwd { get; set; }
         [Display(Name = "Veuillez choisir un établissement")]
         public Ecole Ecole { get; set; }
+
+        public int ecoleSelectionne { get; set; }
+        public List<SelectListItem> Ecoles { get; set; } = new List<SelectListItem>();
 
     }
 }
