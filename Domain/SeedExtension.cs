@@ -4,16 +4,22 @@ using SPU.Domain.Entites;
 using SPU.Enum;
 using System.Net;
 
-//namespace SPU.Domain
-//{
-//    public static class SeedExtension
-//    {
-//		public static readonly PasswordHasher<Utilisateur> PASSWORD_HASHER = new();
+namespace SPU.Domain
+{
+	public static class SeedExtension
+	{
+		public static readonly PasswordHasher<Utilisateur> PASSWORD_HASHER = new();
 
 		public static void Seed(this ModelBuilder builder)
 		{
-            var adresse = AddAdress(builder, "j2om0t", "125", "LaBelle", "St-Boire", "Canada", "Ici");
-            var adresse1 = AddAdress(builder, "h0h2h2", "1258", "Boeuf", "St-LaVoire", "Canada", "Ici");
+			var coordonateur = AddRole(builder, "Coordonateur");
+            var employeur = AddRole(builder, "Employeur");
+            var enseignant = AddRole(builder, "Enseignant");
+            var mds = AddRole(builder, "MDS");
+            var stagiaire = AddRole(builder, "Stagiaire");
+
+            var adresse = AddAdresse(builder, "j2om0t", "125", "LaBelle", "St-Boire", "Canada", "Ici");
+            var adresse1 = AddAdresse(builder, "h0h2h2", "1258", "Boeuf", "St-LaVoire", "Canada", "Ici");
 
 			var ecole = AddEcole(builder, "LaFonte", "1255647894", adresse1);
 
@@ -23,6 +29,12 @@ using System.Net;
 			var user3 = AddUser(builder, "coordo0", "Coord1234!", "Chloe", "Leroy", "coordo0@gmail.com", "1234567893");
 			var user4 = AddUser(builder, "stagiaire0", "Stagiaire123!", "Julien", "Moreau", "stagiaire0@gmail.com", "1234567894");
 			var user5 = AddUser(builder, "mds0", "Mds2024!", "Sarah", "Bernard", "mds0@gmail.com", "1234567895");
+
+			AddUserToRole(builder, user1, enseignant);
+			AddUserToRole(builder, user2, employeur);
+			AddUserToRole(builder, user3, coordonateur);
+			AddUserToRole(builder, user4, stagiaire);
+			AddUserToRole(builder, user5, mds);
 			
 			var enseignant0 = AddEnseignant(builder, user1, ecole);
 
@@ -32,15 +44,15 @@ using System.Net;
 
             var chat = AddChat(builder, user0, enseignant0, coordo0);
 
-   //         var stagiaire0 = AddStagiaire(builder, user4, enseignant0, horaire, chat, employeur0, ecole);
+			var stagiaire0 = AddStagiaire(builder, user4, enseignant0, chat, employeur0, ecole);
 
-			//var mds0 = AddMds(builder, user5, "SPU123456", Status.Accepté, Civilite.M, TypeEmployeur.CIUSSS, true, 
-			//	"0987654321", "AccreditationX", "Commentaire exemple", "Commentaire CIUSS",
-			//	"EmployeurX", stagiaire0, employeur0, horaire, chat);***
+			var mds0 = AddMds(builder, user5, "SPU123456", Status.Accepté, Civilite.M, TypeEmployeur.CIUSSS, true,
+				"0987654321", "AccreditationX", "Commentaire exemple", "Commentaire CIUSS",
+				"EmployeurX", stagiaire0, employeur0, chat);
 
-   //         var horaire = AddHoraire(builder, stagiaire0, mds0, ecole);
+			//var horaire = AddHoraire(builder, stagiaire0, mds0, ecole);
 
-        }
+		}
 
         private static Ecole AddEcole(ModelBuilder builder, string nom, string numTel, Adresse adresse)
         {
@@ -88,8 +100,8 @@ using System.Net;
 			newUser.PasswordHash = PASSWORD_HASHER.HashPassword(newUser, password);
 			builder.Entity<Utilisateur>().HasData(newUser);
 
-//			return newUser;
-//		}
+			return newUser;
+		}
 
 		private static Enseignant AddEnseignant(ModelBuilder builder, Utilisateur user, Ecole ecole)
 		{
@@ -97,12 +109,12 @@ using System.Net;
 			{
 				Id = Guid.NewGuid(), 
 				UtilisateurId = user.Id,
-			};
-			newUser.EcoleId = ecole.id;
+                EcoleId = ecole.id
+            };
 			builder.Entity<Enseignant>().HasData(newUser);
 
-//			return newUser;
-//		}
+			return newUser;
+		}
 
 		private static Employeur AddEmployeur(ModelBuilder builder, Utilisateur user, Adresse adresse)
 		{
@@ -117,7 +129,7 @@ using System.Net;
 			return newUser;
         }
 
-        private static Adresse AddAdress(ModelBuilder builder, string codeP, 
+        private static Adresse AddAdresse(ModelBuilder builder, string codeP, 
 			string numRue, string nomRue, string ville, string pays, string province)
         {
             var newAddress = new Adresse()
@@ -144,12 +156,11 @@ using System.Net;
 				EcoleId = ecole.id,
             };
 			builder.Entity<Coordonateur>().HasData(newUser);
-
-//			return newUser;
-//		}
+			return newUser;
+		}
 
 		private static Stagiaire AddStagiaire(ModelBuilder builder, Utilisateur user,
-			Enseignant enseignant, Guid idHoraire, Chat chat, Employeur employeur, Ecole ecole)
+			Enseignant enseignant, Chat chat, Employeur employeur, Ecole ecole)
 		{
 			var newUser = new Stagiaire()
 			{
@@ -160,18 +171,16 @@ using System.Net;
 				EmployeurId = employeur.Id,
 				EcoleId = ecole.id,
 			};
-			//newUser.EcoleId = ecole.id;
-			//newUser.ChatId = chat.Id;
 			builder.Entity<Stagiaire>().HasData(newUser);
 
-//			return newUser;
-//		}
+			return newUser;
+		}
 
 		private static MDS AddMds(ModelBuilder builder, Utilisateur user, 
 			string idMatricule, Status status, Civilite civilite, TypeEmployeur 
 			typeEmployeur, bool actif, string telMaison, string accredication, 
 			string commentaire, string commentaireCIUSS, string nomEmployeur, 
-			Stagiaire stagiaire, Employeur employeur, Guid idHoraire, Guid idChat)
+			Stagiaire stagiaire, Employeur employeur, Chat chat)
 		{
 			var newUser = new MDS()
 			{
@@ -187,11 +196,10 @@ using System.Net;
 				commentaire = commentaire,
 				commentaireCIUSS = commentaireCIUSS,
 				NomEmployeur = nomEmployeur,
-				ChatId = idChat,
+                StagiaireId = stagiaire.Id,
+				EmployeurId = employeur.Id,
+				ChatId = chat.Id,
 			};
-			newUser.StagiaireId = stagiaire.Id;
-			newUser.EmployeurId = employeur.Id;
-
 			builder.Entity<MDS>().HasData(newUser);
 
 			return newUser;
@@ -208,6 +216,28 @@ using System.Net;
             builder.Entity<Chat>().HasData(newChat);
 
             return newChat;
+        }
+
+        private static void AddUserToRole(ModelBuilder builder, Utilisateur user, IdentityRole<Guid> role)
+        {
+            builder.Entity<IdentityUserRole<Guid>>().HasData(new IdentityUserRole<Guid>
+            {
+                UserId = user.Id,
+                RoleId = role.Id,
+            });
+        }
+
+        private static IdentityRole<Guid> AddRole(ModelBuilder builder, string name)
+        {
+            var newRole = new IdentityRole<Guid>
+            {
+                Id = Guid.NewGuid(),
+                Name = name,
+                NormalizedName = name.ToUpper()
+            };
+            builder.Entity<IdentityRole<Guid>>().HasData(newRole);
+
+            return newRole;
         }
     }
 }
