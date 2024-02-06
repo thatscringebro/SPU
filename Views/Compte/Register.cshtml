@@ -10,34 +10,38 @@
     <button onclick="showForm('coordo')">Coordinateur</button>
     <button onclick="showForm('enseignant')">Enseignant</button>
     <button onclick="showForm('stagiaire')">Stagiaire</button>
-    <button onclick="showForm('normal')">Normal</button>
+    @* <button onclick="showForm('normal')">Normal</button> *@
     <button onclick="showForm('entreprise')">Entreprise</button>
     <button onclick="showForm('mds')">Maître de Stage</button>
 </div>
 
 
 <div id="form-coordo" style="display:none;">
-    @Html.Partial("Partials/Coordo/InscriptionCoordo")
+    @Html.Partial("CreationCoordo")
+</div>
+<div id="form-enseignant" style="display:none;">
+    @Html.Partial("CreationEnseignant")
 </div>
 <div id="form-stagiaire" style="display:none;">
-    @Html.Partial("Partials/Stagiaire/InscriptionStagiaire")
+    @Html.Partial("CreationStagiaire")
 </div>
-<div id="form-normal" style="display:none;">
+@* <div id="form-normal" style="display:none;">
     @Html.Partial("CreationNormal")
-</div>
+</div> *@
 <div id="form-entreprise" style="display:none;">
-    @Html.Partial("Partials/Entreprise/InscriptionEntreprise")
+    @Html.Partial("CreationEntreprise")
 </div>
 <div id="form-mds" style="display:none;">
-    @Html.Partial("Partials/MDS/InscriptionMDS")
+    @Html.Partial("CreationMDS")
 </div>
 
 @section Scripts {
     <script>
         function showForm(formType) {
             document.getElementById('form-coordo').style.display = 'none';
+            document.getElementById('form-enseignant').style.display = 'none';
             document.getElementById('form-stagiaire').style.display = 'none';
-            document.getElementById('form-normal').style.display = 'none';
+            // document.getElementById('form-normal').style.display = 'none';
             document.getElementById('form-entreprise').style.display = 'none';
             document.getElementById('form-mds').style.display = 'none';
 
