@@ -22,5 +22,7 @@ namespace SPU.ViewModels
         [Display(Name = "Veuillez choisir un établissement")]
         public Ecole Ecole { get; set; }
 
+        public string role {  get; set; }
+
     }
 }

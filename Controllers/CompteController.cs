@@ -285,7 +285,7 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
 
-        //CREATION ENTREPRISE
+
         [Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> CreationEntreprise(EntrepriseCreationVM vm)

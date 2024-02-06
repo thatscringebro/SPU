@@ -7,10 +7,23 @@
 
 <div>
     <h1>S'inscrire</h1>
+    <button onclick="showForm('coordo')">Coordinateur</button>
+    <button onclick="showForm('stagiaire')">Stagiaire</button>
+    <button onclick="showForm('normal')">Normal</button>
     <button onclick="showForm('entreprise')">Entreprise</button>
     <button onclick="showForm('mds')">Maître de Stage</button>
 </div>
 
+
+<div id="form-coordo" style="display:none;">
+    @Html.Partial("Partials/Coordo/InscriptionCoordo")
+</div>
+<div id="form-stagiaire" style="display:none;">
+    @Html.Partial("Partials/Stagiaire/InscriptionStagiaire")
+</div>
+<div id="form-normal" style="display:none;">
+    @Html.Partial("Partials/Normal/InscriptionNormal")
+</div>
 <div id="form-entreprise" style="display:none;">
     @Html.Partial("Partials/Entreprise/InscriptionEntreprise")
 </div>
@@ -21,6 +34,9 @@
 @section Scripts {
     <script>
         function showForm(formType) {
+            document.getElementById('form-coordo').style.display = 'none';
+            document.getElementById('form-stagiaire').style.display = 'none';
+            document.getElementById('form-normal').style.display = 'none';
             document.getElementById('form-entreprise').style.display = 'none';
             document.getElementById('form-mds').style.display = 'none';
 
@@ -31,57 +47,4 @@
         }
     </script>
 }
-
-
-
-
-@* 
-<div class="mt-2 mb-2">
-    @Html.ActionLink("Back", "Index", "Home",
-    new {}, new { @class = "btn btn-secondary" })
-</div>
-
-<form asp-action="Creation">
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="userName" class="control-label"></label>
-                <input asp-for="userName" class="form-control" />
-                <span asp-validation-for="userName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Prenom" class="control-label"></label>
-                <input asp-for="Prenom" class="form-control" />
-                <span asp-validation-for="Prenom" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Nom" class="control-label"></label>
-                <input asp-for="Nom" class="form-control" />
-                <span asp-validation-for="Nom" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="pwd" class="control-label"></label>
-                <input asp-for="pwd" class="form-control" />
-                <span asp-validation-for="pwd" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="confirmationpwd" class="control-label"></label>
-                <input asp-for="confirmationpwd" class="form-control" />
-                <span asp-validation-for="confirmationpwd" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <div class="form-group mt-2 mb-2">
-                    <input type="submit" value="Créer" class="btn btn-primary" />
-                </div>
-            </div>
-        </div>
-    </div>
-</form> *@
 
