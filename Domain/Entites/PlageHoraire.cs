@@ -10,7 +10,7 @@ namespace SPU.Domain.Entites
         public DateTime DateFin { get; set; }
 
         public bool ConfirmationPresence { get; set; }
-        public string Commentaire { get; set; }
+        public string? Commentaire { get; set; }
 
         public Guid HoraireId { get; set; }
 

@@ -10,8 +10,11 @@
             new { }, new { @class = "btn btn-secondary" })
 </div>
 
-<form asp-action="CreationEntreprise">
-    <h1>Inscription d'Entreprise</h1>
+<form id="role" asp-action="ChoisirRole" asp-controller="Compte" method="post">
+    <input type="hidden" name="role" id="roleName" value="Coordonateur" />
+</form>
+<form id="user" asp-action="CreationEntreprise">
+    <h1>Inscription Coordinateur</h1>
     <hr />
     <div class="row">
         <div class="col-md-4">
@@ -56,7 +59,12 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script>
+        document.getElementById('user').addEventListener('submit', function (event) {
+            event.preventDefault();
+            document.getElementById('role').submit();
+            event.currentTarget.submit();
+        });
+    </script>
+
 }
