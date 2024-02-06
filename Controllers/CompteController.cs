@@ -113,6 +113,14 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+		[AllowAnonymous]
+		[HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+
         [Authorize(Roles = "Coordinateur")]
         [HttpGet]
         public IActionResult ChoisirRole(string role)
@@ -269,9 +277,66 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
 
+        [Authorize(Roles = "Coordinateur")]
+     
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
 
 
-        [Authorize(Roles = "Administrator")]
+            if(user == null)
+            {
+                return NotFound();
+            }
+          
+                var modifUser = new UtilisateurEditVM
+                {
+                    id = user.Id,
+                    Nom = user.Nom,
+                    Prenom = user.Prenom,
+                    PhoneNumber = user.PhoneNumber,
+                    userName = user.UserName
+
+                };
+     
+
+            return View(modifUser);
+        }
+
+        [Authorize(Roles = "Coordinateur")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(Guid id, UtilisateurEditVM vm)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            var aEditer = await _userManager.FindByIdAsync(id.ToString());
+            if(aEditer == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id));
+            }
+
+            aEditer.Nom = vm.Nom;
+            aEditer.Prenom = vm.Prenom;
+            aEditer.PhoneNumber = vm.PhoneNumber;
+            //COURRIEL ? 
+            aEditer.UserName = vm.userName;
+
+           var works = _userManager.UpdateAsync(aEditer);
+            if(works != null) 
+                TempData["SuccessMessage"] = "Modifications succeeded";
+            else
+                TempData["ErrorMessage"] = "Request failed";
+           
+
+            return RedirectToAction(nameof(Manage));
+        }
+
+
+
+        [Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> Remove(Guid id)
         {

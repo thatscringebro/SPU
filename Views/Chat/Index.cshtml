@@ -15,7 +15,7 @@
 <div id="container">
 	@if(stag != null) {
       <div class="main_noaside">
-        <ul id="chat">
+        <ul id="@stag.ChatId">
           @{
             List<Message> messages = context.Message.Where(x => x.ChatId == stag.ChatId).ToList();
       }
@@ -46,7 +46,7 @@
   }
   else if (mds != null){
       <div class="main_noaside">
-        <ul id="chat">
+        <ul id="@mds.ChatId">
           @{
             List<Message> messages = context.Message.Where(x => x.ChatId == mds.ChatId).ToList();
       }
@@ -97,8 +97,8 @@
     	</aside>
   @foreach (var chat in chats) {
       <div class="main"><h1>Veuillez choisir un chat</h1></div>
-      <div class="main hidden" id="@chat.Id">
-        <ul id="chat">
+  <div class="main hidden">
+        <ul id="@chat.Id">
       @{
             List<Message> messages = context.Message.Where(x => x.ChatId == chat.Id).ToList();
       }
@@ -154,8 +154,8 @@
     	</aside>
   @foreach (var chat in chats) {
       <div class="main"><h1>Veuillez choisir un chat</h1></div>
-      <div class="main hidden" id="@chat.Id">
-        <ul id="chat">
+      <div class="main hidden">
+        <ul id="@chat.Id">
       @{
             List<Message> messages = context.Message.Where(x => x.ChatId == chat.Id).ToList();
       }
@@ -190,7 +190,7 @@
   }
   }
   else {
-    <h1>Vous n'avez pas les permissions nécéssaire pour voir ce contenu</h1>
+    <h1>Aucun utilisateur n'a été trouvé</h1>
 	}
 </div>
 
