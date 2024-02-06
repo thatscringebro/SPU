@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SPU.Domain;
+using SPU.Domain.Entites;
 using SPU.ViewModels;
 using System.Security.Claims;
 
@@ -26,7 +27,7 @@ namespace SPU.Controllers
         public IActionResult PlageHoraireMDS()
         {
             //PlageHoraireMdsVM vmPlageHoraireTest = new PlageHoraireMdsVM();
-            
+
             //vmPlageHoraireTest.id = Guid.NewGuid();
             //vmPlageHoraireTest.HeureDebut
 
@@ -49,7 +50,7 @@ namespace SPU.Controllers
 
         public async Task<IActionResult> ObtenirInfoPlageHoraire(string Id)
         {
-            JourneeTravailleVM? journeeTravailles = _context.PlageHoraires.Where(x => x.horaire.Id.ToString() == Id).Select(x => new JourneeTravailleVM
+            JourneeTravailleVM? journeeTravailles = _context.PlageHoraires.Where(x => x.Id.ToString() == Id).Select(x => new JourneeTravailleVM
             {
                 DateDebutQuart = x.DateDebut,
                 DateFinQuart = x.DateFin,
@@ -61,6 +62,25 @@ namespace SPU.Controllers
                 return Ok(journeeTravailles);
             return NotFound("Erreur, la plage horaire n'est pas valide");
 
+        }
+
+        public IActionResult MettreAbsent(string Id)
+        {
+            PlageHoraire? plage = _context.PlageHoraires.Where(x => x.horaire.Id.ToString() == Id).FirstOrDefault();
+
+            if (plage == null)
+                return BadRequest("Erreur, la plage horaire n'est pas valide");
+
+            plage.ConfirmationPresence = false;
+            try
+            {
+                _context.PlageHoraires.Update(plage);
+                _context.SaveChanges();
+                return Ok();
+            }
+            catch {
+                return BadRequest("Erreur, la plage horraire n'a pas pu être modifiée");
+            }
         }
     }
 }
