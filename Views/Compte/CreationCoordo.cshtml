@@ -64,12 +64,7 @@
 </form>
 
 @section Scripts {
-    <script>
-        document.getElementById('user').addEventListener('submit', function (event) {
-            event.preventDefault();
-            document.getElementById('role').submit();
-            event.currentTarget.submit();
-        });
-    </script>
-
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

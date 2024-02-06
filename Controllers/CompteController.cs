@@ -137,17 +137,6 @@ namespace SPU.Controllers
             return View(model);
         }
 
-        //peux-être a enlever, a voir avec la suite des vues
-        [Authorize(Roles = "Coordinateur")]
-        [HttpGet]
-        public IActionResult ChoisirRole(string role)
-        {
-
-            ViewBag.SelectedRole = role;
-
-            return View();
-        }
-
 
         //CREATION STAGIAIRE/COORDO/ENSEIGNANT
         //[Authorize(Roles = "Coordinateur")]
