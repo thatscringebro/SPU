@@ -113,6 +113,14 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+		[AllowAnonymous]
+		[HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+
         [Authorize(Roles = "Coordinateur")]
         [HttpGet]
         public IActionResult ChoisirRole(string role)
