@@ -23,10 +23,7 @@ namespace SPU.Controllers
             return View();
         }
 
-        public IActionResult AjoutPlageHoraireMDS()
-        {
-            return View();
-        }
+        
 
         [HttpPost]
         public IActionResult AjoutNouvelHoraireMDS()
@@ -46,6 +43,8 @@ namespace SPU.Controllers
                 nouvelleHoraire.MDSId = mds.Id;
                 nouvelleHoraire.Id = Guid.NewGuid();
 
+                ViewBag.horaireId = nouvelleHoraire.Id;
+
                 _context.Add(nouvelleHoraire); 
                 _context.SaveChanges();
             }
@@ -57,8 +56,26 @@ namespace SPU.Controllers
             return RedirectToAction("Index", "Horaire");
         }
 
+        public IActionResult AjoutPlageHoraireMDS()
+        {
+            Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
+
+            Coordonateur? coordo = _context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+            if (mds != null)
+            {
+                Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
+                ViewBag.horaireId = horaire.Id;
+            }
+
+            return View();
+        }
+
         [HttpPost]
-        public IActionResult AjoutPlageHoraireMDS(PlageHoraireMdsVM vm)
+        public IActionResult AjoutPlageHoraireMDS(PlageHoraireMdsVM vm, Guid horaireId)
         {
             vm.id = Guid.NewGuid();
 

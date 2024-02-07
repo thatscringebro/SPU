@@ -117,7 +117,7 @@
                 <button type="submit" asp-action="Index" asp-controller="Horaire" class="btn btn-secondary btn-pageHoraireMds-Annuler">Annuler</button>
             </div>
             <div class="col-6">
-                <button type="submit" asp-action="AjoutPlageHoraireMDS" asp-controller="Horaire" class="btn btn-primary btn-pageHoraireMds-Confirmer">Confirmer</button>
+                <button type="submit" asp-action="AjoutPlageHoraireMDS" asp-route-category="@ViewBag.horaireId" asp-controller="Horaire" class="btn btn-primary btn-pageHoraireMds-Confirmer">Confirmer</button>
             </div>
         </div>
     </form>
