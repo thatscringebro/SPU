@@ -14,7 +14,7 @@ namespace SPU.Domain.Entites
 
         public Guid HoraireId { get; set; }
 
-        //[ForeignKey(nameof(idHoraire))] virtual
+        [ForeignKey(nameof(Id))] virtual
         public Horaire horaire { get; set; }
     }
 }

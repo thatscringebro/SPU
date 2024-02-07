@@ -20,13 +20,41 @@ namespace SPU.Controllers
         }
         public IActionResult Index()
         {
-
             return View();
         }
 
         public IActionResult AjoutPlageHoraireMDS()
         {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult AjoutNouvelHoraireMDS()
+        {
+            //Doit entrer le id de la personne
+            Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
+
+            Coordonateur? coordo = _context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+            if(mds != null)
+            {
+                Horaire nouvelleHoraire = new Horaire();
+                nouvelleHoraire.mds = mds;
+                nouvelleHoraire.MDSId = mds.Id;
+                nouvelleHoraire.Id = Guid.NewGuid();
+
+                _context.Add(nouvelleHoraire); 
+                _context.SaveChanges();
+            }
+
+            //nouvelleHoraire.mds = user.Id;
+                
+            //
+
+            return RedirectToAction("Index", "Horaire");
         }
 
         [HttpPost]

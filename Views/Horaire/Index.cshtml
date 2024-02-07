@@ -4,8 +4,14 @@
     int anneeEnCours = DateTime.Today.Year;
 }
 
+
 <div>
     <a id="horaire-ajoutPlageHoraire-button" asp-area="" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout plage horaire</a>
+</div>
+<form asp-controller="Horaire" asp-action="AjoutNouvelHoraireMDS" method="post">
+    <button id="horaire-ajoutnouvelhorairemds-button" type="submit" class="btn btn-primary">Ajout nouvel horaire maître de stage</button>
+</form>
+<div>
 </div>
 <div class="horizontal-list">
         <vc:schedule-day></vc:schedule-day>

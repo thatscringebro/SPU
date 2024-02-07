@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SPU.Domain;
+using SPU.Domain.Entites;
 using SPU.ViewModels;
 using System.Security.Claims;
 
@@ -20,14 +21,33 @@ namespace SPU.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            List<JourneeTravailleVM> journeeTravailles = _context.PlageHoraires.Include(x => x.horaire).Where(x => x.horaire.StagiaireId.ToString() == _loggedUserId).Select(x => new JourneeTravailleVM { 
-                DateDebutQuart = x.DateDebut,
-                DateFinQuart = x.DateFin,
-                Id = x.Id,
-                Present = x.ConfirmationPresence
-            }).ToList();
+            Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
 
+            Coordonateur? coordo = _context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
+            if (mds != null)
+            {
+                List<JourneeTravailleVM> journeeTravailles = _context.PlageHoraires.Include(x => x.horaire).Where(x => x.horaire.MDSId.ToString() == _loggedUserId).Select(x => new JourneeTravailleVM
+                {
+                    DateDebutQuart = x.DateDebut,
+                    DateFinQuart = x.DateFin,
+                    Id = x.Id,
+                    Present = x.ConfirmationPresence
+                }).ToList();
+            }
+            else if (stag != null)
+            {
+                List<JourneeTravailleVM> journeeTravailles = _context.PlageHoraires.Include(x => x.horaire).Where(x => x.horaire.StagiaireId.ToString() == _loggedUserId).Select(x => new JourneeTravailleVM
+                {
+                    DateDebutQuart = x.DateDebut,
+                    DateFinQuart = x.DateFin,
+                    Id = x.Id,
+                    Present = x.ConfirmationPresence
+                }).ToList();
+            }
 
             // Aller chercher toutes les journées où la personne connectée travaille
             List<JourneeTravailleVM> donneesTest = new List<JourneeTravailleVM>();
