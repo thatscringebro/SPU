@@ -143,6 +143,28 @@ namespace SPU.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult CreationNormal(string vue)
+        {
+            ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
+            {
+                Value = e.id.ToString(),
+                Text = e.Nom
+            }).ToList();
+
+            switch (vue)
+            {
+                case "CreationCoordonateur": //Creation coordo
+                    return View("CreationCoordonateur");
+                case "CreationEnseignant": //Creation enseignant
+                    return View("CreationEnseignant");
+                default:
+                    // Retourne la vue principale si aucun paramètre spécifique n'est fourni
+                    return View();
+            }
+        }
+
 
         //CREATION STAGIAIRE/COORDO/ENSEIGNANT
         //[Authorize(Roles = "Coordinateur")]

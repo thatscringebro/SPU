@@ -11,7 +11,11 @@
 </div>
 
 
-<form id="user-form" asp-action="CreationNormal">
+@Html.ActionLink("Coordinateur", "CreationNormal", "Compte", new { vue = "CreationCoordonateur" }, null)
+@Html.ActionLink("Enseignant", "CreationNormal", "Compte", new { vue = "CreationEnseignant" }, null)
+
+<form id="user-form" asp-action="CreationNormal" asp-controller="Compte" method="post">
+    <h1>st</h1>
     <hr />
     <div class="row">
         <div class="col-md-4">
@@ -62,7 +66,7 @@
                 <input asp-for="confirmationpwd" class="form-control" />
                 <span asp-validation-for="confirmationpwd" class="text-danger"></span>
             </div>
-            <input id="role-reginput" asp-for="role" class="form-control" type="hidden" />
+            <input id="role-reginput" asp-for="role" class="form-control" type="hidden" value="Stagiaire" />
             <div class="form-group">
                 <div class="form-group mt-2 mb-2">
                     <input type="submit" value="Créer" class="btn btn-primary" />
