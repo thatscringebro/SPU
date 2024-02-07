@@ -1,0 +1,203 @@
+﻿@using SPU.ViewModels
+@model ModifierPlageHoraireVM
+
+@{
+    ViewData["Title"] = "Modifier Plage horaire";
+
+}
+
+<style>
+    .modifierplagehoraire-fullpage-class {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+        .modifierplagehoraire-fullpage-class::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("/images/pexels-denniz-futalan-3452997.jpg");
+            background-size: cover;
+            filter: blur(12px);
+            z-index: -1;
+        }
+
+    form {
+        position: relative;
+        margin: auto;
+        border: 3px solid blue;
+        padding: 10px;
+        max-width: 500px;
+        background-color: white !important;
+        z-index: 1;
+    }
+</style>
+
+<div class="modifierplagehoraire-fullpage-class">
+    <form id="horaire-modifierplagehoraire-form" method="post" asp-controller="Horaire" asp-action="ModifierPlageHoraire">
+        <h1>Modification plage horaire</h1>
+
+        <br />
+        <div>
+            <h2 style="font-size:20px;">Plage horaire début</h2>
+        </div>
+        <div>
+            Date : <input class="form-control" type="date" asp-for="DateDebutPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label for="heure">Heure :</label>
+                <select asp-for="HeureDebutPlageHoraire" class="form-control">
+                    @for (int i = 0; i < 24; i++)
+                    {
+                        <option value="@i">@i.ToString("00")</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6">
+                <label for="minutes">Minutes :</label>
+                <select asp-for="MinutesDebutPlageHoraire" class="form-control">
+                    <option value="00">0</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                </select>
+            </div>
+        </div>
+        <br />
+
+        <div>
+            <h2 style="font-size:20px;">Plage horaire fin</h2>
+        </div>
+        <div>
+            Date : <input class="form-control" type="date" asp-for="DateFinPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label for="heure">Heure :</label>
+                <select asp-for="HeureFinPlageHoraire" class="form-control">
+                    @for (int i = 0; i < 24; i++)
+                    {
+                        <option value="@i">@i.ToString("00")</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6">
+                <label for="minutes">Minutes :</label>
+                <select asp-for="MinutesFinPlageHoraire" class="form-control">
+                    <option value="00">0</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                </select>
+            </div>
+        </div>
+        <br />
+        <div class="row" style="font-size:20px">
+            <div class="col-6">
+                <label>
+                    <input id="presentCheckbox" asp-for="EstPresent" type="checkbox" value="true" checked="checked" style="transform: scale(1.5);" />
+                    Présent
+                </label>
+            </div>
+            <div class="col-6">
+                <label>
+                    <input id="absentCheckbox" asp-for="EstPresent" type="checkbox" value="false" style="transform: scale(1.5);" />
+                    Absent
+                </label>
+            </div>
+        </div>
+        <br />
+
+        <div id="commentaire">
+            Commentaire : <input id="commentaireInput" type="text" class="form-control" asp-for="Commentaire" disabled style="height:60px;" />
+        </div>
+
+        <br />
+        <input type="hidden" id="actionType" name="actionType" value="modifier" />
+
+        <div class="row">
+            <div class="col-4">
+                <button id="horaire-modifierplagehoraire-buttonsupprimer" class="btn btn-danger">Supprimer</button>
+            </div>
+            <div class="col-4">
+                <button type="submit" style="margin-left:40px" class="btn btn-secondary">Annuler</button>
+            </div>
+            <div class="col-4">
+                <button id="horaire-modifierplagehoraire-ajoutbutton" style="margin-left:40px" class="btn btn-primary">Confirmer</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    const confirmButton = document.getElementById("horaire-modifierplagehoraire-ajoutbutton");
+    const deleteButton = document.getElementById("horaire-modifierplagehoraire-buttonsupprimer");
+
+    const presentCheckbox = document.getElementById("presentCheckbox");
+    const absentCheckbox = document.getElementById("absentCheckbox");
+    const commentaireInput = document.getElementById("commentaireInput");
+
+    presentCheckbox.addEventListener("change", function () {
+        if (presentCheckbox.checked) {
+            absentCheckbox.checked = false;
+            commentaireInput.disabled = true;
+        } else {
+            commentaireInput.disabled = false;
+        }
+    });
+
+    absentCheckbox.addEventListener("change", function () {
+        if (absentCheckbox.checked) {
+            presentCheckbox.checked = false;
+            commentaireInput.disabled = false;
+        }
+    });
+
+    //Swal.fire("SweetAlert2 is working!");
+
+    confirmButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        Swal.fire({
+            title: "Êtes-vous sûr de vouloir modifier cette plage horaire?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Oui, modifier",
+            cancelButtonText: "Annuler"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Mettre à jour le champ caché pour indiquer la modification
+                document.getElementById("actionType").value = "modifier";
+                // Soumettre le formulaire principal
+                document.getElementById("horaire-modifierplagehoraire-form").submit();
+            }
+        });
+    });
+
+    deleteButton.addEventListener("click", function () {
+        event.preventDefault();
+        Swal.fire({
+            title: "Êtes-vous sûr de vouloir supprimer cette plage horaire?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Oui, supprimer",
+            cancelButtonText: "Annuler"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Mettre à jour le champ caché pour indiquer la suppression
+                document.getElementById("actionType").value = "supprimer";
+                // Soumettre le formulaire principal
+                document.getElementById("horaire-modifierplagehoraire-form").submit();
+            }
+        });
+    });
+</script>

@@ -3,12 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
 {
-    public class PlageHoraireMdsVM
+    public class ModifierPlageHoraireVM
     {
         public Guid id { get; set; }
-
-        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
-        public DateTime DateTimeDebutStage { get; set; }
 
         [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime DateDebutPlageHoraire { get; set; }
@@ -20,5 +17,8 @@ namespace SPU.ViewModels
         public int MinutesDebutPlageHoraire { get; set; }
         public int HeureFinPlageHoraire { get; set; }
         public int MinutesFinPlageHoraire { get; set; }
+
+        public bool EstPresent { get; set; }
+        public string? Commentaire { get; set; }
     }
 }
