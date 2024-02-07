@@ -7,23 +7,26 @@
 
 <div>
     <h1>S'inscrire</h1>
-    <button onclick="showForm('coordo')">Coordinateur</button>
-    <button onclick="showForm('enseignant')">Enseignant</button>
-    <button onclick="showForm('stagiaire')">Stagiaire</button>
+    <button onclick="showForm('coordo', 'Coordonateur')">Coordinateur</button>
+    <button onclick="showForm('enseignant', 'Enseignant')">Enseignant</button>
+    <button onclick="showForm('stagiaire', 'Stagiaire')">Stagiaire</button>
     @* <button onclick="showForm('normal')">Normal</button> *@
-    <button onclick="showForm('entreprise')">Entreprise</button>
-    <button onclick="showForm('mds')">Maître de Stage</button>
+    <button onclick="showForm('entreprise', 'Entreprise')">Entreprise</button>
+    <button onclick="showForm('mds', 'MDS')">Maître de Stage</button>
 </div>
 
 
 <div id="form-coordo" style="display:none;">
-    @Html.Partial("CreationCoordo")
+    <h1 id="form-regtitle">Inscription Coordinateur</h1>
+    @Html.Partial("CreationNormal")
 </div>
 <div id="form-enseignant" style="display:none;">
-    @Html.Partial("CreationEnseignant")
+    <h1>Inscription Enseignant</h1>
+    @Html.Partial("CreationNormal")
 </div>
 <div id="form-stagiaire" style="display:none;">
-    @Html.Partial("CreationStagiaire")
+    <h1>Inscription Stagiaire</h1>
+    @Html.Partial("CreationNormal")
 </div>
 @* <div id="form-normal" style="display:none;">
     @Html.Partial("CreationNormal")

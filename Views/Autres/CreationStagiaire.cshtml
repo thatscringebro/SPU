@@ -11,7 +11,6 @@
 </div>
 
 <form asp-action="CreationNormal">
-    <h1>Inscription Enseignant</h1>
     <hr />
     <div class="row">
         <div class="col-md-4">
@@ -52,7 +51,7 @@
                 <input asp-for="confirmationpwd" class="form-control" />
                 <span asp-validation-for="confirmationpwd" class="text-danger"></span>
             </div>
-            <input asp-for="role" class="form-control" type="hidden" value="Enseignant" />
+            <input asp-for="role" class="form-control" type="hidden" value="Stagiaire" />
             <div class="form-group">
                 <div class="form-group mt-2 mb-2">
                     <input type="submit" value="Créer" class="btn btn-primary" />
