@@ -3,50 +3,68 @@
 hide circle
 
 class "Coordonateur" AS co {
-    + id : int 
+    + id : Guid 
     + nom : string
     + prenom : string
     + courriel : string 
-    + telephone : int
+    + telephone : string
+
+    + *ecoleId : Guid
+    + *idutilisateur : Guid 
 }
 
 class "Enseignant" AS enseignant {
-    + id : int
+    + id : Guid
     + nom : string
     + prenom : string
     + courriel : string
-    + telephone : int
+    + telephone : string
+
+    + *ecoleId : Guid
+    + *idutilisateur : Guid 
 }
 
 class "Stagiaire" AS stagiaire {
-    + id : int 
+    + id : Guid 
     + nom : string
     + prenom : string
     + courriel : string
     + telephone : int
 
-    + *idEnseignant : int
-    + *idMds : int
+    + *chatId : Guid
+    + *employeurId : Guid
+    + *idEnseignant : Guid
+    + *ecoleId : Guid
+    + *idutilisateur : Guid 
 }
 
+class "Ecole" AS ecole{
+    + id : Guid
+    + Nom : string
+    + NumDeTel : string
+    
+    + *AdresseId : Guid
+}
+
+
 class "Message" AS message {
-    + id : int
+    + id : Guid
     + message : string
-    + date&heure : string
-    + *idutilisateur : int
+    + date&heure : datetime
+    + *idutilisateur : Guid
+    + *chatId : Guid
 }
 
 class "Chat" as chat {
-    + id : int
+    + id : Guid
 
-    + *idStagiaire
-    + *idMds
-    + *idEnseignant
+    + *idCoordonateur: Guid
+    + *idEnseignant : Guid
 }
 
 
 class "MDS" AS Mds {
-    + id : int
+    + id : Guid
     + idMatricule : string
     + nom : string
     + prenom : string
@@ -64,52 +82,60 @@ class "MDS" AS Mds {
     + commentairesPRIVÉ : string
     + commentairesCIUSSPRIVÉ : string
 
-    + *idStagiaire : int
-    + *idEntreprise : int
+    ' A verifié ici, on est des enums
+
+    + *idutilisateur : Guid
+    + *idChat : Guid
+    + *idStagiaire : Guid
+    + *idStagiaire : Guid
+    + *idEmployeur : Guid
 }
 
+class Notifications {
+   + id : Guid
 
-
-' Un entreprise peut avoir plusieurs maitre de stage
-' Un maitre de stage peut avoir plusieurs entreprise
-
-class EntrepriseMDS {
-    + *idEntreprise : int
-    + *idMDS : int
 }
 
-class "Entreprise" AS ent {
-    + id : int
+' Un Employeur peut avoir plusieurs maitre de stage
+' Un maitre de stage peut avoir plusieurs Employeur
+
+class EmployeurMDS {
+    + *idEntreprise : Guid
+    + *idMDS : Guid
+}
+
+class "Employeur" AS ent {
+    + id : Guid
     + nom : string
     + adresse : string
-    + telephone : int
-
-    + *idMds : int
+    + telephone : string
+    + *adresseid : Guid
+    + *idutilisateur : Guid
 }
 
 class Horaire {
-    + id : int
+    + id : Guid
 
-    + *idMds : int
-    + *idStagiaire : int
+    + *idMds : Guid
+    + *idStagiaire : Guid
 }
 
 class Evaluation {
-    + id : int
+    + id : Guid
     + LienGoogleForms : string
     + EstStagiaire : bool
     + Actif : bool
     + Consulte : bool
     
 
-    + *idStagiaire : int
-    + *idMds : int
+    + *idStagiaire : Guid
+    + *idMds : Guid
 }
 
 
 
 class PlageHoraire {
-    id : int
+    id : Guid
     ' heureDebut : int
     ' minutesDebut : int
     ' heureFin : int
@@ -117,38 +143,39 @@ class PlageHoraire {
     ' journeeSemaine : string
     DateDebut : DateTime
     DateFin : DateTime
-    
+    ConfirmationPresence : bool 
+    Commentaire : string
 
-    + *idHoraire : int
+    + *idHoraire : Guid
 }
 
-class ConfirmationTemps {
-    + id : int
-    + ConfirmationPrésence : bool
-    + CommentaireAbsence : string
-    + EstStagiaire : bool
+' class ConfirmationTemps {
+'     + id : Guid
+'     + ConfirmationPrésence : bool
+'     + CommentaireAbsence : string
+'     + EstStagiaire : bool
 
-    + *idPlageHoraire
-    ' Entreprise : string
-    ' Nom&PrénomStagiaire : string
-    ' ConfirmationPrésence : bool
-    ' CommentaireAbsence : string
-    ' date : dateTime
-    ' durée : int
-    ' MatriculeTAP1 : string
-    ' MatriculeTAP2 : string
-}
+'     + *idPlageHoraire
+'     ' Entreprise : string
+'     ' Nom&PrénomStagiaire : string
+'     ' ConfirmationPrésence : bool
+'     ' CommentaireAbsence : string
+'     ' date : dateTime
+'     ' durée : int
+'     ' MatriculeTAP1 : string
+'     ' MatriculeTAP2 : string
+' }
 
 class Contract {
-    + id : int
+    + id : Guid
     + Forms : Forms
 
-    + *idStagiaire : int
-    + *idMds : int
+    + *idStagiaire : Guid
+    + *idMds : Guid
 }
 
 class Stage {
-    - idStage : int
+    - idStage : Guid
     - milieuStage : string
     - titre : string
     - fonction : string 
@@ -161,14 +188,14 @@ class Stage {
     - superviseurCollège : Enseignant
     - poste : string
 
-    - *idEntreprise : int
-    - *idMds : int
-    - *idStagiaire : int
+    - *idEntreprise : Guid
+    - *idMds : Guid
+    - *idStagiaire : Guid
 }
 
 class StageMds {
-    - *idMds
-    - *idStagiaire
+    - *idMds : Guid
+    - *idStagiaire : Guid
 }
 
 

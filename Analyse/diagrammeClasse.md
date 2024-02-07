@@ -17,20 +17,24 @@ class "Utilisateur" AS User {
 
 class "Coordinateur" AS Co {
     - id : Guid 
-
+    - utilisateurId : Guid
+    - ecoleId : Guid
     + Affecter(Stagiaire, mds : Mds) : void
 }
 
 class "Enseignant" AS Ens {
     - id : Guid 
-
+    - utilisateurId : Guid
+    - ecoleId : Guid
     + SuivreStagiaire(Stagiaire) : void
 }
 
 class "Maitre de stage" AS Mds {
+    - id : Guid
     - idMatricule : string
     - statut : enum(Incomplet_EnAttente, Accepte, Refuse)
     - civilite : enum(M, Mme)
+    - typeEmployeur : enum(CISSS, CIUSSS)
     - telMaison : string
     - accreditation : string
     - renouvellement : string 
@@ -38,8 +42,10 @@ class "Maitre de stage" AS Mds {
     - commentaires : string 
     - commentairesCISSS : string
     - nomEmployeur : string
-    - idStagiaire : int
-    - idEmployeur : int
+    - idStagiaire : Guid
+    - idEmployeur : Guid
+    - chatId : Guid
+    - utilisateurId : Guid
     
     + Evaluer(Stagiaire) : void
 }
@@ -47,6 +53,10 @@ class "Maitre de stage" AS Mds {
 class "Stagiaire" AS St{
     - id : Guid 
     - idEnseignant : Guid 
+    - chatId : Guid
+    - utilisateurId : Guid
+    - ecoleId : Guid
+    - employeurId : Guid
 }
 
 class Stage {
@@ -71,11 +81,17 @@ class Stage {
     - idEntreprise : Guid 
     - description : string
 }
+class "Ecole" AS Ec {
+    - id : Guid
+    - Nom : string
+    - NumDeTel : string
+    - adresseId : Guid
+}
 
 class Adresse {
     - id : Guid 
-    - numRue : string
-    - nomRue : string
+    - noCivique : string
+    - rue : string
     - ville : string
     - province : string 
     - codePostal : string
@@ -85,7 +101,12 @@ class Adresse {
 class "Employeur" AS Emp {
     - id : Guid 
     - adresse : Adresse
-    - typeEmployeur : enum(CISSS, CIUSSS)
+    - typeEmployeur : enum(CISSS, CIUSSS) 
+    'Ca c'est pas dans la bd mais ca devrait p-t ^ 
+
+    - adresseId : Guid
+    - utilisateurid : Guid
+    
     + ConsulterLstSesStagiaires() : LstStagiaires
     + ConsulterHoraireSesMds(Mds) : LstHoraireMds
 }
@@ -100,17 +121,19 @@ class Horaire {
 
 class PlageHoraire {
     - id : Guid 
-    - dateDebut : int
-    - dateFin : int
+    - dateDebut : DataeTime
+    - dateFin : DataeTime
     - confirmationPresence : bool
+    - commentaire : string
     - idHoraire : Guid 
 }
 
 class Message {
     - id : Guid 
-    - contenu : string
+    - message : string
     - dateHeure : dateTime
-    - idUser : string
+    - utilisateurId : Guid
+    - chatId : Guid
 }
 
 class Evaluation {
@@ -119,7 +142,9 @@ class Evaluation {
     - idStagiaire : Guid 
     - idMds : string
 
-    - isAutoEvaluation : bool
+    - consulter : bool
+    - actif : bool 
+    - estStagiaire : bool 
 }
 
 class Contrat {
@@ -136,23 +161,29 @@ class EmployeurMds {
 
 class Chat {
     - id : Guid
-    - idStagiaire : Guid
+    - idCoordonateur: Guid
     - idEnseignant : Guid
 
     + ObtenirListMessages() : void
     + ObtenirListMds() : void
 }
 
+class Notifications {
+    id : Guid
+
+}
+
 User <|-- Co
 User <|-- Ens
 User <|-- Mds
 User <|-- St
-'User <|-- Emp
+User <|-- Emp
+Ec <|-- User
 
 St -- Stage
 Emp -- Adresse
 Stage -- Emp 
-
+Ec -- Adresse
 Message "0..*" -- "1" Mds
 Message "0..*" -- "1" Stagiaire
 Message "0..*" -- "1" Enseignant
