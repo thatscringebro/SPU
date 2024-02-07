@@ -6,7 +6,7 @@
 
 
 <div>
-    <a id="horaire-ajoutPlageHoraire-button" asp-area="" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout plage horaire</a>
+    <a id="horaire-ajoutPlageHoraire-button" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout plage horaire</a>
 </div>
 <form asp-controller="Horaire" asp-action="AjoutNouvelHoraireMDS" method="post">
     <button id="horaire-ajoutnouvelhorairemds-button" type="submit" class="btn btn-primary">Ajout nouvel horaire maître de stage</button>
@@ -15,6 +15,9 @@
 </div>
 <div class="horizontal-list">
         <vc:schedule-day></vc:schedule-day>
+</div>
+<div>
+    <a id="horaire-modifierPlageHoraire-button" asp-route-horaireId="@ViewBag.horaireId" asp-controller="Horaire" asp-action="ModifierPlageHoraire">Modifier plage horaire</a>
 </div>
 <div>
     <a id="horaire-confirmationPlageHoraire-button" asp-area="">Confirmation de l'horaire</a>

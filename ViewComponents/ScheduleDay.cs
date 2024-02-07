@@ -29,10 +29,13 @@ namespace SPU.ViewComponents
             MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
             List<JourneeTravailleVM> journeeTravailles = new List<JourneeTravailleVM>();
+            List<PlageHoraire> listePlageHoraire = new List<PlageHoraire>();
 
             if (mds != null)
             {
-                journeeTravailles = _context.PlageHoraires.Include(x => x.horaire).Where(x => x.horaire.MDSId.ToString() == _loggedUserId).Select(x => new JourneeTravailleVM
+                Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
+
+                journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaire.Id).ToList().Select(x => new JourneeTravailleVM
                 {
                     DateDebutQuart = x.DateDebut,
                     DateFinQuart = x.DateFin,
@@ -42,7 +45,10 @@ namespace SPU.ViewComponents
             }
             else if (stag != null)
             {
-                journeeTravailles = _context.PlageHoraires.Include(x => x.horaire).Where(x => x.horaire.StagiaireId.ToString() == _loggedUserId).Select(x => new JourneeTravailleVM
+                //À vérfier ici
+                Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
+
+                journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaire.Id).ToList().Select(x => new JourneeTravailleVM
                 {
                     DateDebutQuart = x.DateDebut,
                     DateFinQuart = x.DateFin,
