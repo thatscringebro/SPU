@@ -182,8 +182,7 @@
 </style>
 
 <script>
-    function afficherAlerte(idPlageHoraire) {
-
+    async function afficherAlerte(idPlageHoraire) {
         try {
             const response = await fetch('/Horaire/ObtenirInfoPlageHoraire?Id=' + idPlageHoraire);
             if (!response.ok) {
@@ -202,7 +201,7 @@
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Je serai absent',
                 cancelButtonText: 'Annuler',
-            }).then((result) => {
+            }).then(async (result) => {
                 if (result.isConfirmed) {
                     const response = await fetch('/Horaire/MettreAbsent?Id=' + idPlageHoraire);
                     if (!response.ok) {
