@@ -223,7 +223,7 @@ namespace SPU.Controllers
                     EcoleId = vm.Ecole.id
                 };
                 _spuContext.Stagiaires.Add(Stagiaire);
-                _spuContext.SaveChanges();
+                
             }
             else if(selectedRole.Name == "Coordonateur")
             {
@@ -235,7 +235,7 @@ namespace SPU.Controllers
                     EcoleId = vm.Ecole.id
                 };
                 _spuContext.Coordonateurs.Add(Coordo);
-                _spuContext.SaveChanges();
+              
             }
             else if( selectedRole.Name == "Enseignant")
             {
@@ -247,9 +247,9 @@ namespace SPU.Controllers
                     EcoleId = vm.Ecole.id
                 };
                 _spuContext.Enseignants.Add(Enseignant);
-                _spuContext.SaveChanges();
+               
             }
-
+            await _spuContext.SaveChangesAsync();
 
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
@@ -320,6 +320,8 @@ namespace SPU.Controllers
 
             };
 
+            _spuContext.Add(MDs);
+            await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
 
@@ -386,7 +388,7 @@ namespace SPU.Controllers
                 Rue = vm.NomDeRue
             };
             _spuContext.Adresses.Add(ToAddadresse);
-            _spuContext.SaveChanges();
+            await _spuContext.SaveChangesAsync();
 
             var Entreprise = new Employeur
             {
@@ -396,7 +398,7 @@ namespace SPU.Controllers
                 AdresseId = ToAddadresse.Id,
             };
             _spuContext.Employeurs.Add(Entreprise);
-            _spuContext.SaveChanges();
+            await _spuContext.SaveChangesAsync();
 
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
@@ -451,8 +453,8 @@ namespace SPU.Controllers
                 TempData["ErrorMessage"] = "Request failed";
 
 
-                
 
+            await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage));
         }
 
@@ -525,7 +527,7 @@ namespace SPU.Controllers
                 TempData["ErrorMessage"] = "Request failed";
            
             _spuContext.MDS.Update(MdsaEditer);
-            _spuContext.SaveChanges();
+            await _spuContext.SaveChangesAsync();
 
             return RedirectToAction(nameof(Manage));
         }
@@ -600,7 +602,7 @@ namespace SPU.Controllers
                 TempData["ErrorMessage"] = "Request failed";
 
             _spuContext.Employeurs.Update(userEmployeur);
-            _spuContext.SaveChanges();
+            await _spuContext.SaveChangesAsync();
 
             return RedirectToAction(nameof(Manage));
         }
@@ -622,7 +624,7 @@ namespace SPU.Controllers
                 ModelState.AddModelError(string.Empty, "Impossible de supprimer un utilisateur. Veuillez réessayer.");
                 return View();
             }
-
+            await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Remove" });
         }
     }
