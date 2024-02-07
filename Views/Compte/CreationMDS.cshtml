@@ -1,0 +1,109 @@
+﻿@model SPU.ViewModels.MDSCreationVM
+@using SPU.Enum
+@{
+    ViewData["Title"] = "S'enregistrer";
+}
+
+
+<div class="mt-2 mb-2">
+    @Html.ActionLink("Back", "Index", "Home",
+            new { }, new { @class = "btn btn-secondary" })
+</div>
+
+<form asp-action="CreationMDS">
+    <h1>Inscription Maître de Stage</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="userName" class="control-label"></label>
+                <input asp-for="userName" class="form-control" />
+                <span asp-validation-for="userName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Prenom" class="control-label"></label>
+                <input asp-for="Prenom" class="form-control" />
+                <span asp-validation-for="Prenom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nom" class="control-label"></label>
+                <input asp-for="Nom" class="form-control" />
+                <span asp-validation-for="Nom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="pwd" class="control-label"></label>
+                <input asp-for="pwd" class="form-control" />
+                <span asp-validation-for="pwd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="confirmationpwd" class="control-label"></label>
+                <input asp-for="confirmationpwd" class="form-control" />
+                <span asp-validation-for="confirmationpwd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MatriculeId" class="control-label"></label>
+                <input asp-for="MatriculeId" class="form-control" />
+                <span asp-validation-for="MatriculeId" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="civilite" class="control-label"></label>
+                <select asp-for="civilite" class="form-control">
+                    <option value="">Sélectionnez...</option>
+                    <!-- Ajouter les options ici -->
+                </select>
+                <span asp-validation-for="civilite" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TypeEmployeur" class="control-label"></label>
+                <select asp-for="TypeEmployeur" class="form-control">
+                    <option value="">Sélectionnez...</option>
+                    <!-- Ajouter les options ici -->
+                </select>
+                <span asp-validation-for="TypeEmployeur" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="civilite" class="control-label"></label>
+                <select asp-for="civilite" asp-items="Html.GetEnumSelectList<Civilite>()" class="form-control">
+                    <option value="">Sélectionnez...</option>
+                </select>
+                <span asp-validation-for="civilite" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TypeEmployeur" class="control-label"></label>
+                <select asp-for="TypeEmployeur" asp-items="Html.GetEnumSelectList<TypeEmployeur>()" class="form-control">
+                    <option value="">Sélectionnez...</option>
+                </select>
+                <span asp-validation-for="TypeEmployeur" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="telMaison" class="control-label"></label>
+                <input asp-for="telMaison" class="form-control" />
+                <span asp-validation-for="telMaison" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NomEmployeur" class="control-label"></label>
+                <input asp-for="NomEmployeur" class="form-control" />
+                <span asp-validation-for="NomEmployeur" class="text-danger"></span>
+            </div>
+            <input asp-for="role" class="form-control" type="hidden" value="MDS" />
+            <div class="form-group">
+                <div class="form-group mt-2 mb-2">
+                    <input type="submit" value="Créer" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

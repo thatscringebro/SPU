@@ -4,15 +4,21 @@
     ViewData["Title"] = "S'enregistrer";
 }
 
-<h1>Register</h1>
 
 <div class="mt-2 mb-2">
     @Html.ActionLink("Back", "Index", "Home",
             new { }, new { @class = "btn btn-secondary" })
 </div>
 
-<form asp-action="CreationEntreprise">
-    <h1>Inscription d'Entreprise' </h1>
+<h1>Pas un stagiaire, sélectionnz le rôle approprié</h1>
+@Html.ActionLink("Coordinateur", "CreationNormal", "Compte", new { vue = "CreationCoordonateur" }, null)
+@Html.ActionLink("Enseignant", "CreationNormal", "Compte", new { vue = "CreationEnseignant" }, null)
+@Html.ActionLink("Maître de stage", "CreationMDS", "Compte", null, new { @class = "btn btn-link" })
+@Html.ActionLink("Entreprise", "CreationEntreprise", "Compte", new { }, new { @class = "btn btn-primary" })
+
+
+<form id="user-form" asp-action="CreationNormal" asp-controller="Compte" method="post">
+    <h1>Stagiaire</h1>
     <hr />
     <div class="row">
         <div class="col-md-4">
@@ -38,6 +44,16 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="idEcoleSelectionne" class="control-label"></label>
+                <select asp-for="idEcoleSelectionne" class="form-control">
+                    <option value="">Sélectionnez une école</option>
+                    @foreach (var ecole in ViewBag.Ecoles)
+                    {
+                        <option value="@ecole.Value">@ecole.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
                 <label asp-for="pwd" class="control-label"></label>
                 <input asp-for="pwd" class="form-control" />
                 <span asp-validation-for="pwd" class="text-danger"></span>
@@ -47,6 +63,7 @@
                 <input asp-for="confirmationpwd" class="form-control" />
                 <span asp-validation-for="confirmationpwd" class="text-danger"></span>
             </div>
+            <input id="role-reginput" asp-for="role" class="form-control" type="hidden" value="Stagiaire" />
             <div class="form-group">
                 <div class="form-group mt-2 mb-2">
                     <input type="submit" value="Créer" class="btn btn-primary" />

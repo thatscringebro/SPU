@@ -1,0 +1,93 @@
+﻿@model SPU.ViewModels.EntrepriseCreationVM
+
+@{
+    ViewData["Title"] = "S'enregistrer";
+}
+
+
+<div class="mt-2 mb-2">
+    @Html.ActionLink("Back", "Index", "Home",
+            new { }, new { @class = "btn btn-secondary" })
+</div>
+
+<form asp-action="CreationEntreprise">
+    <h1>Inscription d'Entreprise</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="userName" class="control-label"></label>
+                <input asp-for="userName" class="form-control" />
+                <span asp-validation-for="userName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Prenom" class="control-label"></label>
+                <input asp-for="Prenom" class="form-control" />
+                <span asp-validation-for="Prenom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nom" class="control-label"></label>
+                <input asp-for="Nom" class="form-control" />
+                <span asp-validation-for="Nom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="pwd" class="control-label"></label>
+                <input asp-for="pwd" class="form-control" />
+                <span asp-validation-for="pwd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="confirmationpwd" class="control-label"></label>
+                <input asp-for="confirmationpwd" class="form-control" />
+                <span asp-validation-for="confirmationpwd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumeroDeRue" class="control-label"></label>
+                <input asp-for="NumeroDeRue" class="form-control" />
+                <span asp-validation-for="NumeroDeRue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NomDeRue" class="control-label"></label>
+                <input asp-for="NomDeRue" class="form-control" />
+                <span asp-validation-for="NomDeRue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ville" class="control-label"></label>
+                <input asp-for="ville" class="form-control" />
+                <span asp-validation-for="ville" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="province" class="control-label"></label>
+                <input asp-for="province" class="form-control" />
+                <span asp-validation-for="province" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="pays" class="control-label"></label>
+                <input asp-for="pays" class="form-control" />
+                <span asp-validation-for="pays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="codePostal" class="control-label"></label>
+                <input asp-for="codePostal" class="form-control" />
+                <span asp-validation-for="codePostal" class="text-danger"></span>
+            </div>
+            <input asp-for="role" class="form-control" type="hidden" value="Entreprise" />
+            <div class="form-group">
+                <div class="form-group mt-2 mb-2">
+                    <input type="submit" value="Créer" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

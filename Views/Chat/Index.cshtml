@@ -1,6 +1,7 @@
 @model SPU.Domain.Entites.Utilisateur
 @using SPU.Domain.Entites
 @using SPU.Domain
+@using Microsoft.EntityFrameworkCore 
 @{
     ViewData["Title"] = "Home Page";
     SpuContext context = new SpuContext();
@@ -15,16 +16,16 @@
 <div id="container">
 	@if(stag != null) {
       <div class="main_noaside">
-        <ul id="chat">
+        <ul id="@stag.ChatId">
           @{
-            List<Message> messages = context.Message.Where(x => x.ChatId == stag.ChatId).ToList();
+      List<Message> messages = context.Message.Include(x => x.utilisateur).Where(x => x.ChatId == stag.ChatId).ToList();
       }
           @foreach (var message in messages)
           {
               <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
                   <div class="entete">
                       <h2>@message.utilisateur.Nom</h2>
-                      <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                      <h3>@message.DateHeure.ToLocalTime().ToString("h:mmtt, MMM d")</h3>
                   </div>
                   <div class="triangle"></div>
                   <div class="message">
@@ -34,8 +35,12 @@
           }
         </ul>
         <footer>
-            <input type="text" placeholder="Votre message ici" id="messageInput" />
-            <a id="sendButton">
+            @{
+                string idMessageInput = stag.ChatId.ToString() + "messageInput";
+                string idSendButton = stag.ChatId.ToString() + "sendButton";
+            }
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" />
+            <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@stag.ChatId')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-send" viewBox="0 0 16 16">
                     <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
@@ -46,7 +51,7 @@
   }
   else if (mds != null){
       <div class="main_noaside">
-        <ul id="chat">
+        <ul id="@mds.ChatId">
           @{
             List<Message> messages = context.Message.Where(x => x.ChatId == mds.ChatId).ToList();
       }
@@ -55,7 +60,7 @@
               <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
                   <div class="entete">
                       <h2>@message.utilisateur.Nom</h2>
-                      <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                      <h3>@message.DateHeure.ToLocalTime().ToString("h:mmtt, MMM d")</h3>
                   </div>
                   <div class="triangle"></div>
                   <div class="message">
@@ -65,8 +70,12 @@
           }
         </ul>
         <footer>
-            <input type="text" placeholder="Votre message ici" id="messageInput" />
-            <a id="sendButton">
+            @{
+                string idMessageInput = mds.ChatId.ToString() + "messageInput";
+                string idSendButton = mds.ChatId.ToString() + "sendButton";
+            }
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" />
+            <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@mds.ChatId')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-send" viewBox="0 0 16 16">
                     <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
@@ -97,8 +106,8 @@
     	</aside>
   @foreach (var chat in chats) {
       <div class="main"><h1>Veuillez choisir un chat</h1></div>
-      <div class="main hidden" id="@chat.Id">
-        <ul id="chat">
+  <div class="main hidden">
+        <ul id="@chat.Id">
       @{
             List<Message> messages = context.Message.Where(x => x.ChatId == chat.Id).ToList();
       }
@@ -107,7 +116,7 @@
                 <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
                     <div class="entete">
                         <h2>@message.utilisateur.Nom</h2>
-                        <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                        <h3>@message.DateHeure.ToLocalTime().ToString("h:mmtt, MMM d")</h3>
                     </div>
                     <div class="triangle"></div>
                     <div class="message">
@@ -154,8 +163,8 @@
     	</aside>
   @foreach (var chat in chats) {
       <div class="main"><h1>Veuillez choisir un chat</h1></div>
-      <div class="main hidden" id="@chat.Id">
-        <ul id="chat">
+      <div class="main hidden">
+        <ul id="@chat.Id">
       @{
             List<Message> messages = context.Message.Where(x => x.ChatId == chat.Id).ToList();
       }
@@ -164,7 +173,7 @@
                 <li class="@((message.UtilisateurId == Model.Id) ? "me" : "you")">
                     <div class="entete">
                         <h2>@message.utilisateur.Nom</h2>
-                        <h3>@message.DateHeure.ToString("h:mmtt, MMM d")</h3>
+                        <h3>@message.DateHeure.ToLocalTime().ToString("h:mmtt, MMM d")</h3>
                     </div>
                     <div class="triangle"></div>
                     <div class="message">
@@ -190,7 +199,7 @@
   }
   }
   else {
-    <h1>Vous n'avez pas les permissions nécéssaire pour voir ce contenu</h1>
+    <h1>Aucun utilisateur n'a été trouvé</h1>
 	}
 </div>
 
@@ -200,22 +209,18 @@
 
   var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-  //Disable the send button until connection is established.
-  document.getElementById("sendButton").disabled = true;
-
-  connection.on("ReceiveMessage", function (user, room, message) {
+  connection.on("ReceiveMessage", function (user, room, message, username, date) {
     var li = document.createElement("li");
     li.classList.add("me");
-    document.getElementById("chat").appendChild(li);
+    document.getElementById(room).appendChild(li);
     // We can assign user-supplied strings to an element's textContent because it
     // is not interpreted as markup. If you're assigning in any other way, you 
     // should be aware of possible script injection concerns.
     //li.textContent = `${user} says ${message} in room ${room}`;
-    li.innerHTML = "<div class=\"entete\">Allo</div>";
+    li.innerHTML = "<div class=\"entete\"><h2>"+ username + "</h2><h3>" + date + "</h3></div><div class\"triangle\"></div><div class\"mesage\">"+ message + "</div>";
   });
 
   connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
   }).catch(function (err) {
     return console.error(err.toString());
   }); 

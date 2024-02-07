@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
 {
-    public class MDSCreationVM 
+    public class MDSEditVM
     {
+        public Guid Id { get; set; }
+
         [Display(Name = "Nom d'utilisateur")]
         public string userName { get; set; }
         [Display(Name = "Prénom")]
@@ -27,7 +29,5 @@ namespace SPU.ViewModels
         public string telMaison { get; set; }
         [Display(Name = "Nom de l'employeur")]
         public string NomEmployeur { get; set; }
-        public string role { get; set; }
-
     }
 }

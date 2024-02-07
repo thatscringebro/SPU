@@ -21,7 +21,8 @@ namespace SPU.Domain
             var adresse = AddAdresse(builder, "j2om0t", "125", "LaBelle", "St-Boire", "Canada", "Ici");
             var adresse1 = AddAdresse(builder, "h0h2h2", "1258", "Boeuf", "St-LaVoire", "Canada", "Ici");
 
-			var ecole = AddEcole(builder, "LaFonte", "1255647894", adresse1);
+            var ecole1 = AddEcole(builder, "Forest", "1255647894", adresse);
+            var ecole = AddEcole(builder, "LaFonte", "1255647894", adresse1);
 
             var user0 = AddUser(builder, "user0", "Qwerty123!", "Liam", "O'Brien", "user0@gmail.com", "1234567899");
 			var user1 = AddUser(builder, "enseignant0", "Password123!", "Emma", "Dupont", "enseignant0@gmail.com", "1234567891");

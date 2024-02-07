@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SPU.Domain.Entites;
+using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
 {
     public class UtilisateurCreationVM
     {
+        public string role { get; set; }
 
         [Display(Name = "Nom d'utilisateur")]
         public string userName { get; set; }
@@ -17,6 +20,11 @@ namespace SPU.ViewModels
         public string pwd { get; set; }
         [Display(Name = "Confirmation mot de passe")]
         public string confirmationpwd { get; set; }
+        [Display(Name = "Veuillez choisir un établissement")]
+        public Ecole Ecole { get; set; }
+
+        public int idEcoleSelectionne { get; set; }
+        public List<SelectListItem> Ecoles { get; set; } = new List<SelectListItem>();
 
     }
 }

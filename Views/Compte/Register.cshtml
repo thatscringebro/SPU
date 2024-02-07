@@ -7,81 +7,60 @@
 
 <div>
     <h1>S'inscrire</h1>
-    <button onclick="showForm('entreprise')">Entreprise</button>
-    <button onclick="showForm('mds')">Maître de Stage</button>
+    <button onclick="showForm('coordo', 'Coordonateur')">Coordinateur</button>
+    <button onclick="showForm('enseignant', 'Enseignant')">Enseignant</button>
+    <button onclick="showForm('stagiaire', 'Stagiaire')">Stagiaire</button>
+    @* <button onclick="showForm('normal')">Normal</button> *@
+    <button onclick="showForm('entreprise', 'Entreprise')">Entreprise</button>
+    <button onclick="showForm('mds', 'MDS')">Maître de Stage</button>
 </div>
 
+
+<div id="form-coordo" style="display:none;">
+    <h1 id="form-regtitle">Inscription Coordinateur</h1>
+    @Html.Partial("CreationNormal")
+</div>
+<div id="form-enseignant" style="display:none;">
+    <h1>Inscription Enseignant</h1>
+    @Html.Partial("CreationNormal")
+</div>
+<div id="form-stagiaire" style="display:none;">
+    <h1>Inscription Stagiaire</h1>
+    @Html.Partial("CreationNormal")
+</div>
+@* <div id="form-normal" style="display:none;">
+    @Html.Partial("CreationNormal")
+</div> *@
 <div id="form-entreprise" style="display:none;">
-    @Html.Partial("Partials/Entreprise/InscriptionEntreprise")
+    @Html.Partial("CreationEntreprise")
 </div>
 <div id="form-mds" style="display:none;">
-    @Html.Partial("Partials/MDS/InscriptionMDS")
+    @Html.Partial("CreationMDS")
 </div>
 
 @section Scripts {
     <script>
-        function showForm(formType) {
-            document.getElementById('form-entreprise').style.display = 'none';
-            document.getElementById('form-mds').style.display = 'none';
+        function showForm(formType, role) {
+            // Cachez tous les formulaires
+            var forms = ['coordo', 'enseignant', 'stagiaire', 'entreprise', 'mds'];
+            forms.forEach(function (form) {
+                document.getElementById('form-' + form).style.display = 'none';
+            });
 
+            // Affichez le formulaire sélectionné
             var formToShow = document.getElementById('form-' + formType);
             if (formToShow) {
                 formToShow.style.display = 'block';
             }
+
+            // Affectez la valeur du rôle au champ caché
+            var roleInput = document.getElementById('role-reginput');
+            if (roleInput) {
+                roleInput.value = role;
+            }
+
+            //var roleInput = document.getElementById('user-form').value
         }
     </script>
 }
-
-
-
-
-@* 
-<div class="mt-2 mb-2">
-    @Html.ActionLink("Back", "Index", "Home",
-    new {}, new { @class = "btn btn-secondary" })
-</div>
-
-<form asp-action="Creation">
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="userName" class="control-label"></label>
-                <input asp-for="userName" class="form-control" />
-                <span asp-validation-for="userName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Prenom" class="control-label"></label>
-                <input asp-for="Prenom" class="form-control" />
-                <span asp-validation-for="Prenom" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Nom" class="control-label"></label>
-                <input asp-for="Nom" class="form-control" />
-                <span asp-validation-for="Nom" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="pwd" class="control-label"></label>
-                <input asp-for="pwd" class="form-control" />
-                <span asp-validation-for="pwd" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="confirmationpwd" class="control-label"></label>
-                <input asp-for="confirmationpwd" class="form-control" />
-                <span asp-validation-for="confirmationpwd" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <div class="form-group mt-2 mb-2">
-                    <input type="submit" value="Créer" class="btn btn-primary" />
-                </div>
-            </div>
-        </div>
-    </div>
-</form> *@
 

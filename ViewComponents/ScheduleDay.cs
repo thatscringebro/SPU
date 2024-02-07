@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SPU.Domain;
 using SPU.ViewModels;
@@ -62,7 +63,7 @@ namespace SPU.ViewComponents
                 Present = true
             });
             // Renvoyer la vue avec les données
-            return View(journeeTravailles);
+            return View(donneesTest);
         }
 
     }
