@@ -11,7 +11,7 @@
 </div>
 
 
-<form asp-action="CreationNormal">
+<form id="user-form" asp-action="CreationNormal">
     <hr />
     <div class="row">
         <div class="col-md-4">
@@ -36,10 +36,20 @@
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ecoleSelectionne" class="control-label">École</label>
-                <select asp-for="ecoleSelectionne" asp-items="Model.Ecoles" class="form-control">
+            @* <div class="form-group">
+                <label asp-for="idEcoleSelectionne" class="control-label"></label>
+                <select asp-for="idEcoleSelectionne" asp-items="Model.Ecoles" class="form-control">
                     <option value="">Sélectionnez une école</option>
+                </select>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="idEcoleSelectionne" class="control-label"></label>
+                <select asp-for="idEcoleSelectionne" class="form-control">
+                    <option value="">Sélectionnez une école</option>
+                    @foreach (var ecole in ViewBag.Ecoles)
+                    {
+                        <option value="@ecole.Value">@ecole.Text</option>
+                    }
                 </select>
             </div>
             <div class="form-group">
@@ -53,7 +63,6 @@
                 <span asp-validation-for="confirmationpwd" class="text-danger"></span>
             </div>
             <input id="role-reginput" asp-for="role" class="form-control" type="hidden" />
-            @* <input asp-for="role" class="form-control" type="hidden" value="Coordonateur" /> *@
             <div class="form-group">
                 <div class="form-group mt-2 mb-2">
                     <input type="submit" value="Créer" class="btn btn-primary" />

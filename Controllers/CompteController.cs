@@ -124,17 +124,23 @@ namespace SPU.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            var model = new UtilisateurCreationVM();
+            //var model = new UtilisateurCreationVM();
 
-            var lstEcoles = _spuContext.Stagiaires.Select(x => x.ecole).ToList();
+            //model.Ecoles = _spuContext.Ecole.Select( e => new SelectListItem
+            //{
+            //    Value = e.id.ToString(),
+            //    Text = e.Nom
+            //}).ToList();
 
-            model.Ecoles = lstEcoles.Select( e => new SelectListItem
+            //return View(model);
+
+            ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
             {
                 Value = e.id.ToString(),
                 Text = e.Nom
             }).ToList();
 
-            return View(model);
+            return View();
         }
 
 

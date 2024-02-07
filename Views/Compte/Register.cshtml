@@ -40,18 +40,26 @@
 
 @section Scripts {
     <script>
-        function showForm(formType) {
-            document.getElementById('form-coordo').style.display = 'none';
-            document.getElementById('form-enseignant').style.display = 'none';
-            document.getElementById('form-stagiaire').style.display = 'none';
-            // document.getElementById('form-normal').style.display = 'none';
-            document.getElementById('form-entreprise').style.display = 'none';
-            document.getElementById('form-mds').style.display = 'none';
+        function showForm(formType, role) {
+            // Cachez tous les formulaires
+            var forms = ['coordo', 'enseignant', 'stagiaire', 'entreprise', 'mds'];
+            forms.forEach(function (form) {
+                document.getElementById('form-' + form).style.display = 'none';
+            });
 
+            // Affichez le formulaire sélectionné
             var formToShow = document.getElementById('form-' + formType);
             if (formToShow) {
                 formToShow.style.display = 'block';
             }
+
+            // Affectez la valeur du rôle au champ caché
+            var roleInput = document.getElementById('role-reginput');
+            if (roleInput) {
+                roleInput.value = role;
+            }
+
+            //var roleInput = document.getElementById('user-form').value
         }
     </script>
 }

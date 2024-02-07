@@ -23,7 +23,8 @@ namespace SPU.Domain
         public DbSet<MDS> MDS { get; set; }
         public DbSet<Message> Message { get; set; }
         public DbSet<PlageHoraire> PlageHoraires { get; set; }
-        public DbSet<Stagiaire> Stagiaires { get; set; } 
+        public DbSet<Stagiaire> Stagiaires { get; set; }
+        public DbSet<Ecole> Ecole { get; set; }
 
         public SpuContext(DbContextOptions<SpuContext> options) : base(options) { }
 
