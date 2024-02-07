@@ -27,5 +27,7 @@ namespace SPU.ViewModels
         public string telMaison { get; set; }
         [Display(Name = "Nom de l'employeur")]
         public string NomEmployeur { get; set; }
+        public string role { get; set; }
+
     }
 }

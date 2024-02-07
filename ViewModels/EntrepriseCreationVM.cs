@@ -29,5 +29,6 @@ namespace SPU.ViewModels
         public string pays { get; set; }
         [Display(Name = "Code postal")]
         public string codePostal { get; set; }
+        public string role { get; set; }
     }
 }

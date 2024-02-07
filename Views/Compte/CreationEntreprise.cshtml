@@ -1,4 +1,4 @@
-﻿@model SPU.ViewModels.UtilisateurCreationVM
+﻿@model SPU.ViewModels.EntrepriseCreationVM
 
 @{
     ViewData["Title"] = "S'enregistrer";
@@ -45,6 +45,36 @@
                 <label asp-for="confirmationpwd" class="control-label"></label>
                 <input asp-for="confirmationpwd" class="form-control" />
                 <span asp-validation-for="confirmationpwd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumeroDeRue" class="control-label"></label>
+                <input asp-for="NumeroDeRue" class="form-control" />
+                <span asp-validation-for="NumeroDeRue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NomDeRue" class="control-label"></label>
+                <input asp-for="NomDeRue" class="form-control" />
+                <span asp-validation-for="NomDeRue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ville" class="control-label"></label>
+                <input asp-for="ville" class="form-control" />
+                <span asp-validation-for="ville" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="province" class="control-label"></label>
+                <input asp-for="province" class="form-control" />
+                <span asp-validation-for="province" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="pays" class="control-label"></label>
+                <input asp-for="pays" class="form-control" />
+                <span asp-validation-for="pays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="codePostal" class="control-label"></label>
+                <input asp-for="codePostal" class="form-control" />
+                <span asp-validation-for="codePostal" class="text-danger"></span>
             </div>
             <input asp-for="role" class="form-control" type="hidden" value="Entreprise" />
             <div class="form-group">

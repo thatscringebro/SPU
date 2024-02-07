@@ -120,6 +120,8 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+
+        //A ENLEVER???? À REFLECHIRRRR
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Register()
@@ -160,7 +162,7 @@ namespace SPU.Controllers
                 case "CreationEnseignant": //Creation enseignant
                     return View("CreationEnseignant");
                 default:
-                    // Retourne la vue principale si aucun paramètre spécifique n'est fourni
+                    //Retourne STAGIAIRE si aucun choix
                     return View();
             }
         }
@@ -253,8 +255,16 @@ namespace SPU.Controllers
         }
 
 
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult CreationMDS()
+        {
+             return View(); 
+        }
+
         //CREATION MDS
-        [Authorize(Roles = "Coordinateur")]
+        //[Authorize(Roles = "Coordinateur")]
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
         {
@@ -314,7 +324,15 @@ namespace SPU.Controllers
         }
 
 
-        [Authorize(Roles = "Coordinateur")]
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult CreationEntreprise()
+        {
+            return View();
+        }
+
+        //[Authorize(Roles = "Coordinateur")]
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationEntreprise(EntrepriseCreationVM vm)
         {
