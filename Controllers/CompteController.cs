@@ -82,40 +82,48 @@ namespace SPU.Controllers
 
 
         //CRUD pour utilisateur 
-        [Authorize(Roles = "Coordonateur")]
+        //[Authorize(Roles = "Coordonateur")]
+        [AllowAnonymous] // A ENLEVER APRES LES TESTS
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
         {
             var vm = new List<UtilisateurDetailVM>();
-
+            
             try
             {
-                foreach (var user in _userManager.Users)
+                foreach (var user in await _userManager.Users.ToListAsync())
                 {
-                    var userRoles = await _userManager.GetRolesAsync(user);
-                    vm.Add(new UtilisateurDetailVM
+                   foreach (var userRoles in await _userManager.GetRolesAsync(user))
                     {
-                        role = userRoles.SingleOrDefault(),
-                        Prenom = user.Prenom,
-                        Nom = user.Nom
-                    });
+
+                        vm.Add(new UtilisateurDetailVM
+                        {
+                            role = userRoles,
+                            Prenom = user.Prenom,
+                            Nom = user.Nom
+                        });
+
+                    }
+
                 }
+
+            
             }
             catch (Exception ex)
             {
                 ViewBag.UserListErrorMessage = "Erreur d'affichage des utilisateurs. Veuillez réessayé." + ex.Message;
             }
 
-            if (success)
-            {
-                if (actionType == "Remove")
-                {
-                    ViewBag.RemoveSuccessMessage = "L'utilisateur est retiré.";
-                }
-                else if (actionType == "Create")
-                {
-                    ViewBag.CreateSuccessMessage = "L'utilisateur est créer";
-                }
-            }
+            //if (success)
+            //{
+            //    if (actionType == "Remove")
+            //    {
+            //        ViewBag.RemoveSuccessMessage = "L'utilisateur est retiré.";
+            //    }
+            //    else if (actionType == "Create")
+            //    {
+            //        ViewBag.CreateSuccessMessage = "L'utilisateur est créer";
+            //    }
+            //}
 
             return View(vm);
         }
