@@ -57,7 +57,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}"); //Mettre le login au lieu de l'index quand on va être prêts pour Identity
+    pattern: "{controller=Home}/{action=Index}/{id?}"); 
 app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

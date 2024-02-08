@@ -213,14 +213,15 @@ namespace SPU.Controllers
                 ModelState.AddModelError(string.Empty, $"Impossible d'ajouter le rôle {selectedRole.Name}. Veuillez réessayer.");
                 return View(vm);
             }
+            var ecole = _spuContext.Ecole.Where(x => x.id == vm.idEcoleSelectionne).FirstOrDefault();
 
             if(selectedRole.Name == "Stagiaire")
             {
                 var Stagiaire = new Stagiaire{
                     utilisateur = toCreate,
                     UtilisateurId = toCreate.Id,
-                    ecole = vm.Ecole,
-                    EcoleId = vm.Ecole.id
+                    ecole = ecole,
+                    EcoleId = vm.idEcoleSelectionne
                 };
                 _spuContext.Stagiaires.Add(Stagiaire);
                 
@@ -231,8 +232,8 @@ namespace SPU.Controllers
                 {
                     UtilisateurId = toCreate.Id,
                     utilisateur = toCreate,
-                    ecole = vm.Ecole,
-                    EcoleId = vm.Ecole.id
+                    ecole = ecole,
+                    EcoleId = vm.idEcoleSelectionne
                 };
                 _spuContext.Coordonateurs.Add(Coordo);
               
@@ -243,8 +244,8 @@ namespace SPU.Controllers
                 {
                     UtilisateurId = toCreate.Id,
                     utilisateur = toCreate,
-                    ecole = vm.Ecole,
-                    EcoleId = vm.Ecole.id
+                    ecole = ecole,
+                    EcoleId = vm.idEcoleSelectionne
                 };
                 _spuContext.Enseignants.Add(Enseignant);
                
