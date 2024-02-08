@@ -1,0 +1,69 @@
+﻿@model IEnumerable<SPU.ViewModels.UtilisateurDetailVM>
+
+@{
+    ViewData["Title"] = "Gestion Utilisateurs";
+}
+
+<h1>Gérer les utilisateurs<br></h1>
+
+<div class="mt-2 mb-2">
+    @Html.ActionLink("Créer un nouvel utilisateur", "CreationNormal", "Compte",
+            new { }, new { @class = "btn btn-primary" })
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.role)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Prenom)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.role)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Prenom)
+                </td>
+                <td>
+                    <button>Modifier</button>
+                    @* 
+                    <form asp-action="Remove" asp-route-id="@item.ID" class="d-inline-block">
+                        <button type="button" class="btn btn-danger delete-button" data-name="@item.NomUtilisateur">
+                            Supprimer
+                        </button>
+                    </form> *@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    @* <script>
+        $(function() {
+            $('.delete-button').click(function() {
+                const name = $(this).data('name') || "this item";
+
+                const message = `Voulez-vous vraiment supprimer ${name}?`;
+
+                if(confirm(message)) {
+                    $(this).parent("form").submit();
+                }
+            });
+        });
+    </script> *@
+}
