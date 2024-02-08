@@ -408,7 +408,13 @@
                     var idPlageHoraire = match[1];
                     div.addEventListener("click", function () {
 
-                        afficherAlerte(idPlageHoraire);
+                        //Maître de stage
+                        console.log(idPlageHoraire);
+                        console.debug;
+                        window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
+
+                        //Stagiaire
+                        //afficherAlerte(idPlageHoraire);
                     });
                     break;
                 }
