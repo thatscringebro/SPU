@@ -293,7 +293,7 @@ namespace SPU.Controllers
 
             var roles = await _roleManager.Roles.ToListAsync();
 
-            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
+            var selectedRole = roles.FirstOrDefault(r => r.Name == vm.role);
 
             if (selectedRole == null)
             {
@@ -366,7 +366,7 @@ namespace SPU.Controllers
 
             var roles = await _roleManager.Roles.ToListAsync();
 
-            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
+            var selectedRole = roles.FirstOrDefault(r => r.Name == vm.role);
 
             if (selectedRole == null)
             {
