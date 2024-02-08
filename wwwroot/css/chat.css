@@ -25,12 +25,8 @@ aside{
 	font-size:15px;
 	vertical-align:top;
 }
-.main_noaside{
-  height: 100%;
-  width: 100%;
-	display:inline-block;
-	font-size:15px;
-	vertical-align:top;
+.noaside{
+  width: 100% !important;
 }
 aside header{
 	padding:30px 20px;
@@ -135,30 +131,28 @@ aside li h2{
 	color:#7e818a;
 }
 
-#chat{
+.chat{
 	padding-left:0;
 	margin:0;
 	list-style-type:none;
 	overflow-y:scroll;
 	height:90%;
-	border-top:2px solid #fff;
-	border-bottom:2px solid #fff;
 }
-#chat li{
+.chat li{
 	padding:10px 30px;
 }
-#chat h2,#chat h3{
+.chat h2,.chat h3{
 	display:inline-block;
 	font-size:13px;
 	font-weight:normal;
 }
-#chat h3{
+.chat h3{
 	color:#bbb;
 }
-#chat .entete{
+.chat .entete{
 	margin-bottom:5px;
 }
-#chat .message{
+.chat .message{
 	padding:20px;
 	color:#fff;
 	line-height:25px;
@@ -167,26 +161,26 @@ aside li h2{
 	text-align:left;
 	border-radius:5px;
 }
-#chat .me{
+.chat .me{
 	text-align:right;
 }
-#chat .you .message{
+.chat .you .message{
 	background-color:#58b666;
 }
-#chat .me .message{
+.chat .me .message{
 	background-color:#6fbced;
 }
-#chat .triangle{
+.chat .triangle{
 	width: 0;
 	height: 0;
 	border-style: solid;
 	border-width: 0 10px 10px 10px;
 }
-#chat .you .triangle{
+.chat .you .triangle{
 		border-color: transparent transparent #58b666 transparent;
 		margin-left:15px;
 }
-#chat .me .triangle{
+.chat .me .triangle{
 		border-color: transparent transparent #6fbced transparent;
 		margin-left:95%;
 }
@@ -222,7 +216,7 @@ aside li h2{
 }
 
 @media (max-width: 1050px) {
-  #chat .me .triangle{
+  .chat .me .triangle{
     margin-left:85%;
   }
 }

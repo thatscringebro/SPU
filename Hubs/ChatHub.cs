@@ -22,6 +22,7 @@ namespace SignalRChat.Hubs
 
         public override async Task OnConnectedAsync()
         {
+            Console.WriteLine("--------Connected--------");
             var connectionId = Context.ConnectionId;
             var userId = _loggedUserId;
             lock(ConnectedUsers)
@@ -68,12 +69,16 @@ namespace SignalRChat.Hubs
             List<string> mds = _context.MDS.Where(x => x.ChatId.ToString() == room).Select(x => x.Id.ToString()).ToList();
 
             List<string> clientsToSend = ConnectedUsers[user];
-            clientsToSend.AddRange(ConnectedUsers[coordo]);
-            clientsToSend.AddRange(ConnectedUsers[enseignant]);
-            clientsToSend.AddRange(ConnectedUsers[stag]);
+            if(ConnectedUsers.ContainsKey(coordo))
+                clientsToSend.AddRange(ConnectedUsers[coordo]);
+            if(ConnectedUsers.ContainsKey(enseignant))
+                clientsToSend.AddRange(ConnectedUsers[enseignant]);
+            if(ConnectedUsers.ContainsKey(stag))
+                clientsToSend.AddRange(ConnectedUsers[stag]);
             foreach (string id in mds)
             {
-                clientsToSend.AddRange(ConnectedUsers[id]);
+                if(ConnectedUsers.ContainsKey(id))
+                    clientsToSend.AddRange(ConnectedUsers[id]);
             }
 
             await Clients.Clients(clientsToSend).SendAsync("ReceiveMessage", user, room, message, username, DateTime.Now.ToString("h:mmtt, MMM d"));

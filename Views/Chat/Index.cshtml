@@ -15,8 +15,8 @@
 
 <div id="container">
 	@if(stag != null) {
-      <div class="main_noaside">
-        <ul id="@stag.ChatId">
+      <div class="main noaside">
+        <ul id="@stag.ChatId" class="chat">
           @{
       List<Message> messages = context.Message.Include(x => x.utilisateur).Where(x => x.ChatId == stag.ChatId).ToList();
       }
@@ -39,7 +39,7 @@
                 string idMessageInput = stag.ChatId.ToString() + "messageInput";
                 string idSendButton = stag.ChatId.ToString() + "sendButton";
             }
-            <input type="text" placeholder="Votre message ici" id="@idMessageInput" />
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" class="inputChat" onkeypress="handleKeyPressInput(event, '@idSendButton')"/>
             <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@stag.ChatId')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-send" viewBox="0 0 16 16">
@@ -50,8 +50,8 @@
     </div>
   }
   else if (mds != null){
-      <div class="main_noaside">
-        <ul id="@mds.ChatId">
+      <div class="main noaside">
+        <ul id="@mds.ChatId" class="chat">
           @{
             List<Message> messages = context.Message.Where(x => x.ChatId == mds.ChatId).ToList();
       }
@@ -74,7 +74,7 @@
                 string idMessageInput = mds.ChatId.ToString() + "messageInput";
                 string idSendButton = mds.ChatId.ToString() + "sendButton";
             }
-            <input type="text" placeholder="Votre message ici" id="@idMessageInput" />
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" onkeypress="handleKeyPressInput(event, '@idSendButton')"/>
             <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@mds.ChatId')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-send" viewBox="0 0 16 16">
@@ -107,7 +107,7 @@
   @foreach (var chat in chats) {
       <div class="main"><h1>Veuillez choisir un chat</h1></div>
   <div class="main hidden">
-        <ul id="@chat.Id">
+        <ul id="@chat.Id" class="chat">
       @{
             List<Message> messages = context.Message.Where(x => x.ChatId == chat.Id).ToList();
       }
@@ -130,7 +130,7 @@
                 string idMessageInput = chat.Id.ToString() + "messageInput";
                 string idSendButton = chat.Id.ToString() + "sendButton";
             }
-            <input type="text" placeholder="Votre message ici" id="@idMessageInput" />
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" onkeypress="handleKeyPressInput(event, '@idSendButton')"/>
             <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@chat.Id')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-send" viewBox="0 0 16 16">
@@ -164,7 +164,7 @@
   @foreach (var chat in chats) {
       <div class="main"><h1>Veuillez choisir un chat</h1></div>
       <div class="main hidden">
-        <ul id="@chat.Id">
+        <ul id="@chat.Id" class="chat">
       @{
             List<Message> messages = context.Message.Where(x => x.ChatId == chat.Id).ToList();
       }
@@ -187,7 +187,7 @@
                 string idMessageInput = chat.Id.ToString() + "messageInput";
                 string idSendButton = chat.Id.ToString() + "sendButton";
             }
-            <input type="text" placeholder="Votre message ici" id="@idMessageInput" />
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" onkeypress="handleKeyPressInput(event, '@idSendButton')" />
             <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@chat.Id')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-send" viewBox="0 0 16 16">
@@ -205,6 +205,10 @@
 
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script>
+  document.addEventListener("DOMContentLoaded", () => {
+      $(".chat").scrollTop($(".chat")[0].scrollHeight);
+  });
+
   "use strict";
 
   var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
@@ -217,7 +221,9 @@
     // is not interpreted as markup. If you're assigning in any other way, you 
     // should be aware of possible script injection concerns.
     //li.textContent = `${user} says ${message} in room ${room}`;
-    li.innerHTML = "<div class=\"entete\"><h2>"+ username + "</h2><h3>" + date + "</h3></div><div class\"triangle\"></div><div class\"mesage\">"+ message + "</div>";
+    li.innerHTML = "<div class=\"entete\"><h2>"+ username + "&nbsp;</h2><h3>" + date + "</h3></div><div class=\"triangle\"></div><div class=\"message\">"+ message + "</div>";
+
+    $(".chat").scrollTop($(".chat")[0].scrollHeight);
   });
 
   connection.start().then(function () {
@@ -231,6 +237,8 @@
         return console.error(err.toString());
       }); 
     }
+
+    $('.inputChat').val(''); 
   } 
 
   function setActiveChat(chatId) {
@@ -239,5 +247,11 @@
 
       $(".chatSelect").removeClass("activeChat");
       $("#" + chatId + "Select").addClass("activeChat");
+  }
+
+  function handleKeyPressInput(event, buttonId) {
+    if (event.key === "Enter") {
+        document.getElementById(buttonId).click(); 
+    }
   }
 </script>
