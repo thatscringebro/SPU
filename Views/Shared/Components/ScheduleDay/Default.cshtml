@@ -21,7 +21,7 @@
             @for (DateTime journee = dateDebut; journee < dateFin; journee = journee.AddDays(1))
             {
                 <li>
-                    <div class="colonne">
+                    <div class="colonne @(journee.DayOfWeek == DayOfWeek.Saturday || journee.DayOfWeek == DayOfWeek.Sunday ? "fin-de-semaine" : "")">
                         <div class="date">
                             @switch (journee.DayOfWeek.ToString())
                             {
@@ -150,21 +150,30 @@
         </ul>
     </div>
 </div>
-<div>
-    <button onclick="precedent()">Semaine précédente</button>
-    <button onclick="suivant()">Semaine suivante</button>
+<div style="width:100%; text-align:center;">
+    <button class="btn-precedent" onclick="precedent()">Semaine précédente</button>
+    <button class="btn-suivant" onclick="suivant()">Semaine suivante</button>
 </div>
 
 <style>
+    .fin-de-semaine {
+        border: 3px solid black !important;
+    }
     .btn-precedent {
-        border-radius: 50% 0 0 50%;
+        border-radius: 20px 0 0 20px;
         border: none;
+        padding: 5px;
+        padding-left: 15px;
+        padding-right: 15px;
         background-color: lightblue;
     }
 
-    .btn-precedent {
-        border-radius: 0 50% 50% 0;
+    .btn-suivant {
+        border-radius: 0 15px 15px 0;
         border: none;
+        padding: 5px;
+        padding-left: 20px;
+        padding-right: 20px;
         background-color: lightblue;
     }
 
