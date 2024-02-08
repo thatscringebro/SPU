@@ -39,13 +39,7 @@
                     @Html.DisplayFor(modelItem => item.Prenom)
                 </td>
                 <td>
-                    <button>Modifier</button>
-                    @* 
-                    <form asp-action="Remove" asp-route-id="@item.ID" class="d-inline-block">
-                        <button type="button" class="btn btn-danger delete-button" data-name="@item.NomUtilisateur">
-                            Supprimer
-                        </button>
-                    </form> *@
+                    @Html.ActionLink("Modifier", "EditUtilisateur", "Compte", new { id = item.Id}, new { @class = "btn btn-primary" })
                 </td>
             </tr>
         }
@@ -53,17 +47,5 @@
 </table>
 
 @section Scripts {
-    @* <script>
-        $(function() {
-            $('.delete-button').click(function() {
-                const name = $(this).data('name') || "this item";
-
-                const message = `Voulez-vous vraiment supprimer ${name}?`;
-
-                if(confirm(message)) {
-                    $(this).parent("form").submit();
-                }
-            });
-        });
-    </script> *@
+    
 }

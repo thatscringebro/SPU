@@ -96,6 +96,7 @@ namespace SPU.Controllers
                         vm.Add(new UtilisateurDetailVM
                         {
                             role = userRoles,
+                            Id = user.Id,
                             Prenom = user.Prenom,
                             Nom = user.Nom
                         });
@@ -283,7 +284,6 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
         {
-
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -328,8 +328,6 @@ namespace SPU.Controllers
             }
 
             var Entreprise = _spuContext.Employeurs.Where(x => x.Id == vm.idEmployeurSelectionne).FirstOrDefault();
-            //Nom utilisateur pour l'entreprise = nom d'entreprise OBLIGATOIRE
-            
             
             var MDs = new MDS
             {
@@ -432,33 +430,33 @@ namespace SPU.Controllers
         }
 
 
+        [AllowAnonymous]
         //EDIT STAGIAIRE/COORDO/ENSEIGNANT
-        [Authorize(Roles = "Coordinateur")]
+        //[Authorize(Roles = "Coordinateur")]
+        [HttpGet]
         public async Task<IActionResult> EditUtilisateur(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
                 return NotFound();
 
-
-            var roles = await _roleManager.Roles.ToListAsync();
-            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
+            var roleCh = await _userManager.GetRolesAsync(user);
 
             var modifUser = new UtilisateurEditVM
             {
-
                 Nom = user.Nom,
                 Prenom = user.Prenom,
                 PhoneNumber = user.PhoneNumber,
                 userName = user.UserName,
-                role = selectedRole.Name
+                role = roleCh.FirstOrDefault()
             };
            
                 
             return View(modifUser);
         }
 
-        [Authorize(Roles = "Coordinateur")]
+        [AllowAnonymous]
+        //[Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> EditUtilisateur(Guid id, UtilisateurEditVM vm)
         {
@@ -486,9 +484,9 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(Manage));
         }
 
-
+        [AllowAnonymous]
         //EDIT MDS
-        [Authorize(Roles = "Coordinateur")]
+        //[Authorize(Roles = "Coordinateur")]
         public async Task<IActionResult> EditMDS(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
@@ -522,7 +520,9 @@ namespace SPU.Controllers
             return View(modifUser);
         }
 
-        [Authorize(Roles = "Coordinateur")]
+
+        [AllowAnonymous]
+        //[Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
         {
@@ -560,8 +560,9 @@ namespace SPU.Controllers
         }
 
 
+        [AllowAnonymous]
         //EDIT EMPLOYEUR
-        [Authorize(Roles = "Coordinateur")]
+        //[Authorize(Roles = "Coordinateur")]
         public async Task<IActionResult> EditEmployeur(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
@@ -598,7 +599,9 @@ namespace SPU.Controllers
             return View(modifUser);
         }
 
-        [Authorize(Roles = "Coordinateur")]
+
+        [AllowAnonymous]
+        //[Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> EditEmployeur(Guid id, EntrepriseEditVM vm)
         {
@@ -638,9 +641,9 @@ namespace SPU.Controllers
         }
 
 
-
+        [AllowAnonymous]
         //REMOVE POUR TOUS LE MONDE 
-        [Authorize(Roles = "Coordinateur")]
+        //[Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> Remove(Guid id)
         {
