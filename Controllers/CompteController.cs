@@ -322,19 +322,22 @@ namespace SPU.Controllers
                 return View(vm);
             }
 
+            var idEntreprise = _spuContext.Employeurs.Where(x => x.utilisateur.UserName == vm.NomEmployeur).FirstOrDefault();
+            //Nom utilisateur pour l'entreprise = nom d'entreprise OBLIGATOIRE
             var MDs = new MDS
             {
                 utilisateur = toCreate,
                 UtilisateurId = toCreate.Id,
-                //MatriculeId = vm.MatriculeId,
+                MatriculeId = vm.MatriculeId,
                 civilite = vm.civilite,
                 typeEmployeur = vm.TypeEmployeur,
                 telMaison = vm.telMaison,
                 NomEmployeur = vm.NomEmployeur,
+                EmployeurId = idEntreprise.Id
 
             };
 
-            _spuContext.Add(MDs);
+           _spuContext.Add(MDs);
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
