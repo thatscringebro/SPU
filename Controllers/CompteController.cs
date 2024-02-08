@@ -157,7 +157,6 @@ namespace SPU.Controllers
             }).ToList();
 
 
-
             switch (vue)
             {
                 case "CreationCoordonateur": //Creation coordo
@@ -269,6 +268,12 @@ namespace SPU.Controllers
         [HttpGet]
         public ActionResult CreationMDS()
         {
+            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.ToString()
+            }).ToList();
+
              return View(); 
         }
 
@@ -326,7 +331,7 @@ namespace SPU.Controllers
             {
                 utilisateur = toCreate,
                 UtilisateurId = toCreate.Id,
-                //MatriculeId = vm.MatriculeId,
+                MatriculeId = vm.MatriculeId,
                 civilite = vm.civilite,
                 typeEmployeur = vm.TypeEmployeur,
                 telMaison = vm.telMaison,

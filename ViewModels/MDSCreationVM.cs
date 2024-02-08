@@ -1,4 +1,5 @@
-﻿using SPU.Enum;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SPU.Enum;
 using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
@@ -30,6 +31,11 @@ namespace SPU.ViewModels
         public string role { get; set; }
         [Display(Name = " Courriel")]
         public string Email { get; set; }
+
+        [Display(Name = "Veuillez choisir une entreprise")]
+        public Guid idEmployeurSelectionne { get; set; }
+
+        public List<SelectListItem> Employeurs { get; set; } = new List<SelectListItem>();
 
     }
 }
