@@ -28,6 +28,8 @@ namespace SPU.ViewModels
         [Display(Name = "Nom de l'employeur")]
         public string NomEmployeur { get; set; }
         public string role { get; set; }
+        [Display(Name = " Courriel")]
+        public string Email { get; set; }
 
     }
 }

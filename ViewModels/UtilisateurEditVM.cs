@@ -18,5 +18,7 @@ namespace SPU.ViewModels
         public string pwd { get; set; }
         [Display(Name = "Confirmation mot de passe")]
         public string confirmationpwd { get; set; }
+        [Display(Name = " Courriel")]
+        public string Email { get; set; }
     }
 }

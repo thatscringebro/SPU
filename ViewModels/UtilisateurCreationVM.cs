@@ -22,7 +22,8 @@ namespace SPU.ViewModels
         public string confirmationpwd { get; set; }
         [Display(Name = "Veuillez choisir un établissement")]
         public Guid idEcoleSelectionne { get; set; }
-        //public Ecole Ecole { get; set; }
+        [Display(Name = " Courriel")]
+        public string Email { get; set; }
 
         public List<SelectListItem> Ecoles { get; set; } = new List<SelectListItem>();
 

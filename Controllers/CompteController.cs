@@ -200,6 +200,12 @@ namespace SPU.Controllers
 
 
             var toCreate = new Utilisateur(vm.Nom);
+
+            toCreate.Prenom = vm.Prenom;
+            toCreate.Nom = vm.Nom;
+            toCreate.PhoneNumber = vm.PhoneNumber;
+            toCreate.Email = vm.Email;
+            
             var result = await _userManager.CreateAsync(toCreate, vm.pwd);
 
             if (!result.Succeeded)
@@ -295,6 +301,10 @@ namespace SPU.Controllers
             }
 
             var toCreate = new Utilisateur(vm.Nom);
+            toCreate.Prenom = vm.Prenom;
+            toCreate.Nom = vm.Nom;
+            toCreate.PhoneNumber = vm.PhoneNumber;
+            toCreate.Email = vm.Email;
             var result = await _userManager.CreateAsync(toCreate, vm.pwd);
 
             if (!result.Succeeded)
@@ -365,6 +375,10 @@ namespace SPU.Controllers
 
 
             var toCreate = new Utilisateur(vm.Nom);
+            toCreate.Prenom = vm.Prenom;
+            toCreate.Nom = vm.Nom;
+            toCreate.PhoneNumber = vm.PhoneNumber;
+            toCreate.Email = vm.Email;
             var result = await _userManager.CreateAsync(toCreate, vm.pwd);
 
             if (!result.Succeeded)
@@ -385,7 +399,7 @@ namespace SPU.Controllers
             {
                 Ville = vm.ville,
                 Pays = vm.pays,
-                // = vm.province,
+                Province = vm.province,
                 CodePostal = vm.codePostal,
                 NoCivique = vm.NumeroDeRue,
                 Rue = vm.NomDeRue
@@ -446,7 +460,7 @@ namespace SPU.Controllers
             aEditer.Nom = vm.Nom;
             aEditer.Prenom = vm.Prenom;
             aEditer.PhoneNumber = vm.PhoneNumber;
-            //COURRIEL ? 
+            aEditer.Email = vm.Email; 
             aEditer.UserName = vm.userName;
 
             var works = _userManager.UpdateAsync(aEditer);
@@ -489,6 +503,7 @@ namespace SPU.Controllers
                 NomEmployeur = userMDS.NomEmployeur,
                 telMaison = userMDS.telMaison,
                 TypeEmployeur = userMDS.typeEmployeur,
+                Email = userMDS.utilisateur.Email,
                 
             };
 
@@ -510,7 +525,7 @@ namespace SPU.Controllers
             aEditer.Nom = vm.Nom;
             aEditer.Prenom = vm.Prenom;
             aEditer.PhoneNumber = vm.PhoneNumber;
-            //COURRIEL ? 
+            aEditer.Email = vm.Email;
             aEditer.UserName = vm.userName;
             MdsaEditer.MatriculeId = vm.MatriculeId;
             MdsaEditer.utilisateur = aEditer;
@@ -563,7 +578,10 @@ namespace SPU.Controllers
                 NumeroDeRue = userEmployeur.adresse.NoCivique,
                 pays = userEmployeur.adresse.Pays,
                 province = userEmployeur.adresse.Province,
-                ville = userEmployeur.adresse.Ville
+                ville = userEmployeur.adresse.Ville,
+                Email = userEmployeur.utilisateur.Email
+                
+               
 
             };
 
@@ -585,7 +603,7 @@ namespace SPU.Controllers
             aEditer.Nom = vm.Nom;
             aEditer.Prenom = vm.Prenom;
             aEditer.PhoneNumber = vm.PhoneNumber;
-            //COURRIEL ? 
+            aEditer.Email = vm.Email;
             aEditer.UserName = vm.userName;
             userEmployeur.adresse.Province = vm.province;
             userEmployeur.adresse.NoCivique = vm.NumeroDeRue;
