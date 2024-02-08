@@ -8,139 +8,147 @@
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<div style="display:flex">
 
-<div class="horizontal-list">
-    <ul>
-        @for (DateTime journee = dateDebut; journee < dateFin; journee = journee.AddDays(1))
+    <div style="padding-top: 38px">
+        @for (int i = 0; i <= 24; i++)
         {
-            <li>
-                <div class="colonne">
-                    <div class="date">
-                        @switch (journee.DayOfWeek.ToString())
-                        {
-                            case "Monday":
-                                <p>Lundi</p>
-                                break;
-                            case "Tuesday":
-                                <p>Mardi</p>
-                                break;
-                            case "Wednesday":
-                                <p>Mercredi</p>
-                                break;
-                            case "Thursday":
-                                <p>Jeudi</p>
-                                break;
-                            case "Friday":
-                                <p>Vendredi</p>
-                                break;
-                            case "Saturday":
-                                <p>Samedi</p>
-                                break;
-                            case "Sunday":
-                                <p>Dimanche</p>
-                                break;
-                        }
-
-                        @switch (journee.Month)
-                        {
-                            case 1:
-                                <p class="jour-mois">@journee.Day.ToString() Janvier</p>
-                                break;
-                            case 2:
-                                <p>@journee.Day.ToString() Février</p>
-                                break;
-                            case 3:
-                                <p>@journee.Day.ToString() Mars</p>
-                                break;
-                            case 4:
-                                <p>@journee.Day.ToString() Avril</p>
-                                break;
-                            case 5:
-                                <p>@journee.Day.ToString() Mai</p>
-                                break;
-                            case 6:
-                                <p>@journee.Day.ToString() Juin</p>
-                                break;
-                            case 7:
-                                <p>@journee.Day.ToString() Juillet</p>
-                                break;
-                            case 8:
-                                <p>@journee.Day.ToString() Août</p>
-                                break;
-                            case 9:
-                                <p>@journee.Day.ToString() Septembre</p>
-                                break;
-                            case 10:
-                                <p>@journee.Day.ToString() Octobre</p>
-                                break;
-                            case 11:
-                                <p>@journee.Day.ToString() Novembre</p>
-                                break;
-                            case 12:
-                                <p>@journee.Day.ToString() Décembre</p>
-                                break;
-                        }
-                    </div>
-                    <div class="heures">
-                        @for (int i = 0; i < 96; i++)
-                        {
-                            bool isWorkingHour = false;
-                            bool Present = true;
-                            Guid IdPlageHoraire = new Guid();
-                            foreach (var item in Model)
+            <p style="text-align:end; font-weight:bold; padding-right:5px;">@i:00 </p>
+        }
+    </div>
+    <div class="horizontal-list">
+        <ul>
+            @for (DateTime journee = dateDebut; journee < dateFin; journee = journee.AddDays(1))
+            {
+                <li>
+                    <div class="colonne">
+                        <div class="date">
+                            @switch (journee.DayOfWeek.ToString())
                             {
-                                // Convertir la date de début et de fin du quart en minutes
-                                int debutQuartMinutes = item.DateDebutQuart.Hour * 60 + item.DateDebutQuart.Minute;
-                                int finQuartMinutes = item.DateFinQuart.Hour * 60 + item.DateFinQuart.Minute;
-
-                                // Si le quart de travail commence et se termine le même jour
-                                if (item.DateDebutQuart.Date == item.DateFinQuart.Date)
-                                {
-                                    // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
-                                    if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15 && i * 15 < finQuartMinutes)
-                                    {
-                                        isWorkingHour = true;
-                                        IdPlageHoraire = item.Id;
-                                        if (item.Present == false)
-                                            Present = false;
-
-                                        break;
-                                    }
-                                }
-                                else // Si le quart de travail commence un jour et se termine le lendemain
-                                {
-                                    // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
-                                    if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15)
-                                    {
-                                        isWorkingHour = true;
-                                        IdPlageHoraire = item.Id;
-                                        if (item.Present == false)
-                                            Present = false;
-
-                                        break;
-                                    }
-                                    // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
-                                    if (item.DateFinQuart.Date == journee.Date && i * 15 < finQuartMinutes)
-                                    {
-                                        isWorkingHour = true;
-                                        IdPlageHoraire = item.Id;
-                                        if (item.Present == false)
-                                            Present = false;
-
-                                        break;
-                                    }
-                                }
+                                case "Monday":
+                                    <p>Lundi</p>
+                                    break;
+                                case "Tuesday":
+                                    <p>Mardi</p>
+                                    break;
+                                case "Wednesday":
+                                    <p>Mercredi</p>
+                                    break;
+                                case "Thursday":
+                                    <p>Jeudi</p>
+                                    break;
+                                case "Friday":
+                                    <p>Vendredi</p>
+                                    break;
+                                case "Saturday":
+                                    <p>Samedi</p>
+                                    break;
+                                case "Sunday":
+                                    <p>Dimanche</p>
+                                    break;
                             }
 
-                            // Appliquer le style en fonction de la condition isWorkingHour
-                            <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? (Present ? "background-color: lightblue;" : "background-color: lightgrey;") : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
-                            </div>
-                        }
+                            @switch (journee.Month)
+                            {
+                                case 1:
+                                    <p class="jour-mois">@journee.Day.ToString() Janvier</p>
+                                    break;
+                                case 2:
+                                    <p>@journee.Day.ToString() Février</p>
+                                    break;
+                                case 3:
+                                    <p>@journee.Day.ToString() Mars</p>
+                                    break;
+                                case 4:
+                                    <p>@journee.Day.ToString() Avril</p>
+                                    break;
+                                case 5:
+                                    <p>@journee.Day.ToString() Mai</p>
+                                    break;
+                                case 6:
+                                    <p>@journee.Day.ToString() Juin</p>
+                                    break;
+                                case 7:
+                                    <p>@journee.Day.ToString() Juillet</p>
+                                    break;
+                                case 8:
+                                    <p>@journee.Day.ToString() Août</p>
+                                    break;
+                                case 9:
+                                    <p>@journee.Day.ToString() Septembre</p>
+                                    break;
+                                case 10:
+                                    <p>@journee.Day.ToString() Octobre</p>
+                                    break;
+                                case 11:
+                                    <p>@journee.Day.ToString() Novembre</p>
+                                    break;
+                                case 12:
+                                    <p>@journee.Day.ToString() Décembre</p>
+                                    break;
+                            }
+                        </div>
+                        <div class="heures">
+                            @for (int i = 0; i < 96; i++)
+                            {
+                                bool isWorkingHour = false;
+                                bool Present = true;
+                                Guid IdPlageHoraire = new Guid();
+                                foreach (var item in Model)
+                                {
+                                    // Convertir la date de début et de fin du quart en minutes
+                                    int debutQuartMinutes = item.DateDebutQuart.Hour * 60 + item.DateDebutQuart.Minute;
+                                    int finQuartMinutes = item.DateFinQuart.Hour * 60 + item.DateFinQuart.Minute;
+
+                                    // Si le quart de travail commence et se termine le même jour
+                                    if (item.DateDebutQuart.Date == item.DateFinQuart.Date)
+                                    {
+                                        // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
+                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15 && i * 15 < finQuartMinutes)
+                                        {
+                                            isWorkingHour = true;
+                                            IdPlageHoraire = item.Id;
+                                            if (item.Present == false)
+                                                Present = false;
+
+                                            break;
+                                        }
+                                    }
+                                    else // Si le quart de travail commence un jour et se termine le lendemain
+                                    {
+                                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
+                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15)
+                                        {
+                                            isWorkingHour = true;
+                                            IdPlageHoraire = item.Id;
+                                            if (item.Present == false)
+                                                Present = false;
+
+                                            break;
+                                        }
+                                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
+                                        if (item.DateFinQuart.Date == journee.Date && i * 15 < finQuartMinutes)
+                                        {
+                                            isWorkingHour = true;
+                                            IdPlageHoraire = item.Id;
+                                            if (item.Present == false)
+                                                Present = false;
+
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                // Appliquer le style en fonction de la condition isWorkingHour
+                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? (Present ? "background-color: lightblue;" : "background-color: lightgrey;") : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
+                                </div>
+                            }
+                        </div>
                     </div>
-                </div>
-            </li>
-        }
-    </ul>
+                </li>
+            }
+        </ul>
+    </div>
 </div>
 <div>
     <button onclick="precedent()">Semaine précédente</button>
@@ -148,17 +156,18 @@
 </div>
 
 <style>
-    .btn-precedent{
+    .btn-precedent {
         border-radius: 50% 0 0 50%;
-        border:none;
+        border: none;
         background-color: lightblue;
     }
 
     .btn-precedent {
         border-radius: 0 50% 50% 0;
-        border:none;
+        border: none;
         background-color: lightblue;
     }
+
     .date {
         text-align: center;
         color: black;
