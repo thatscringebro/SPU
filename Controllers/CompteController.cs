@@ -155,6 +155,8 @@ namespace SPU.Controllers
                 Text = e.Nom
             }).ToList();
 
+
+
             switch (vue)
             {
                 case "CreationCoordonateur": //Creation coordo
