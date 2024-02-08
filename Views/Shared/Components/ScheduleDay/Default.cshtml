@@ -3,139 +3,141 @@
 
 @{
     int Annee = DateTime.Now.Year;
+    DateTime dateDebut = DateTime.Now.AddDays(-DateTime.Now.DayOfWeek.GetHashCode()).Date;
+    DateTime dateFin = DateTime.Now.AddDays(-DateTime.Now.DayOfWeek.GetHashCode() + 14).Date;
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="horizontal-list">
     <ul>
-        @for (int mois = 1; mois <= 12; mois++)
+        @for (DateTime journee = dateDebut; journee < dateFin; journee = journee.AddDays(1))
         {
-            @for (int jour = 1; jour <= DateTime.DaysInMonth(Annee, mois); jour++)
-            {
-                DateTime journee = new DateTime(Annee, mois, jour);
-                <li>
-                    <div class="colonne">
-                        <div class="date">
-                            @switch (journee.DayOfWeek.ToString())
-                            {
-                                case "Monday":
-                                    <p>Lundi</p>
-                                    break;
-                                case "Tuesday":
-                                    <p>Mardi</p>
-                                    break;
-                                case "Wednesday":
-                                    <p>Mercredi</p>
-                                    break;
-                                case "Thursday":
-                                    <p>Jeudi</p>
-                                    break;
-                                case "Friday":
-                                    <p>Vendredi</p>
-                                    break;
-                                case "Saturday":
-                                    <p>Samedi</p>
-                                    break;
-                                case "Sunday":
-                                    <p>Dimanche</p>
-                                    break;
-                            }
+            <li>
+                <div class="colonne">
+                    <div class="date">
+                        @switch (journee.DayOfWeek.ToString())
+                        {
+                            case "Monday":
+                                <p>Lundi</p>
+                                break;
+                            case "Tuesday":
+                                <p>Mardi</p>
+                                break;
+                            case "Wednesday":
+                                <p>Mercredi</p>
+                                break;
+                            case "Thursday":
+                                <p>Jeudi</p>
+                                break;
+                            case "Friday":
+                                <p>Vendredi</p>
+                                break;
+                            case "Saturday":
+                                <p>Samedi</p>
+                                break;
+                            case "Sunday":
+                                <p>Dimanche</p>
+                                break;
+                        }
 
-                            @switch (journee.Month)
+                        @switch (journee.Month)
+                        {
+                            case 1:
+                                <p class="jour-mois">@journee.Day.ToString() Janvier</p>
+                                break;
+                            case 2:
+                                <p>@journee.Day.ToString() Février</p>
+                                break;
+                            case 3:
+                                <p>@journee.Day.ToString() Mars</p>
+                                break;
+                            case 4:
+                                <p>@journee.Day.ToString() Avril</p>
+                                break;
+                            case 5:
+                                <p>@journee.Day.ToString() Mai</p>
+                                break;
+                            case 6:
+                                <p>@journee.Day.ToString() Juin</p>
+                                break;
+                            case 7:
+                                <p>@journee.Day.ToString() Juillet</p>
+                                break;
+                            case 8:
+                                <p>@journee.Day.ToString() Août</p>
+                                break;
+                            case 9:
+                                <p>@journee.Day.ToString() Septembre</p>
+                                break;
+                            case 10:
+                                <p>@journee.Day.ToString() Octobre</p>
+                                break;
+                            case 11:
+                                <p>@journee.Day.ToString() Novembre</p>
+                                break;
+                            case 12:
+                                <p>@journee.Day.ToString() Décembre</p>
+                                break;
+                        }
+                    </div>
+                    <div class="heures">
+                        @for (int i = 0; i < 96; i++)
+                        {
+                            bool isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
+                            Guid IdPlageHoraire = new Guid();
+                            foreach (var item in Model)
                             {
-                                case 1:
-                                    <p class="jour-mois">@journee.Day.ToString() Janvier</p>
-                                    break;
-                                case 2:
-                                    <p>@journee.Day.ToString() Février</p>
-                                    break;
-                                case 3:
-                                    <p>@journee.Day.ToString() Mars</p>
-                                    break;
-                                case 4:
-                                    <p>@journee.Day.ToString() Avril</p>
-                                    break;
-                                case 5:
-                                    <p>@journee.Day.ToString() Mai</p>
-                                    break;
-                                case 6:
-                                    <p>@journee.Day.ToString() Juin</p>
-                                    break;
-                                case 7:
-                                    <p>@journee.Day.ToString() Juillet</p>
-                                    break;
-                                case 8:
-                                    <p>@journee.Day.ToString() Août</p>
-                                    break;
-                                case 9:
-                                    <p>@journee.Day.ToString() Septembre</p>
-                                    break;
-                                case 10:
-                                    <p>@journee.Day.ToString() Octobre</p>
-                                    break;
-                                case 11:
-                                    <p>@journee.Day.ToString() Novembre</p>
-                                    break;
-                                case 12:
-                                    <p>@journee.Day.ToString() Décembre</p>
-                                    break;
-                            }
-                        </div>
-                        <div class="heures">
-                            @for (int i = 0; i < 96; i++)
-                            {
-                                bool isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
-                                Guid IdPlageHoraire = new Guid();
-                                foreach (var item in Model)
+                                // Convertir la date de début et de fin du quart en minutes
+                                int debutQuartMinutes = item.DateDebutQuart.Hour * 60 + item.DateDebutQuart.Minute;
+                                int finQuartMinutes = item.DateFinQuart.Hour * 60 + item.DateFinQuart.Minute;
+
+                                // Si le quart de travail commence et se termine le même jour
+                                if (item.DateDebutQuart.Date == item.DateFinQuart.Date)
                                 {
-                                    // Convertir la date de début et de fin du quart en minutes
-                                    int debutQuartMinutes = item.DateDebutQuart.Hour * 60 + item.DateDebutQuart.Minute;
-                                    int finQuartMinutes = item.DateFinQuart.Hour * 60 + item.DateFinQuart.Minute;
-
-                                    // Si le quart de travail commence et se termine le même jour
-                                    if (item.DateDebutQuart.Date == item.DateFinQuart.Date)
+                                    // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
+                                    if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15 && i * 15 < finQuartMinutes)
                                     {
-                                        // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
-                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15 && i * 15 < finQuartMinutes)
-                                        {
-                                            isWorkingHour = true;
-                                            IdPlageHoraire = item.Id;
+                                        isWorkingHour = true;
+                                        IdPlageHoraire = item.Id;
 
-                                            break;
-                                        }
-                                    }
-                                    else // Si le quart de travail commence un jour et se termine le lendemain
-                                    {
-                                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
-                                        if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15)
-                                        {
-                                            isWorkingHour = true;
-                                            IdPlageHoraire = item.Id;
-
-                                            break;
-                                        }
-                                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
-                                        if (item.DateFinQuart.Date == journee.Date && i * 15 < finQuartMinutes)
-                                        {
-                                            isWorkingHour = true;
-                                            IdPlageHoraire = item.Id;
-
-                                            break;
-                                        }
+                                        break;
                                     }
                                 }
+                                else // Si le quart de travail commence un jour et se termine le lendemain
+                                {
+                                    // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
+                                    if (item.DateDebutQuart.Date == journee.Date && debutQuartMinutes <= i * 15)
+                                    {
+                                        isWorkingHour = true;
+                                        IdPlageHoraire = item.Id;
 
-                                // Appliquer le style en fonction de la condition isWorkingHour
-                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? "background-color: lightblue;" : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
-                                </div>
+                                        break;
+                                    }
+                                    // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
+                                    if (item.DateFinQuart.Date == journee.Date && i * 15 < finQuartMinutes)
+                                    {
+                                        isWorkingHour = true;
+                                        IdPlageHoraire = item.Id;
+
+                                        break;
+                                    }
+                                }
                             }
-                        </div>
+
+                            // Appliquer le style en fonction de la condition isWorkingHour
+                            <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? "background-color: lightblue;" : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
+                            </div>
+                        }
                     </div>
-                </li>
-            }
+                </div>
+            </li>
         }
     </ul>
+</div>
+<div>
+    <button onclick="precedent()">Semaine précédente</button>
+    <button onclick="suivant()">Semaine suivante</button>
 </div>
 
 <style>
@@ -182,6 +184,98 @@
 </style>
 
 <script>
+    var dateDebut = new Date('@dateDebut.ToString("yyyy-MM-ddTHH:mm:ss")');
+    var dateFin = new Date('@dateFin.ToString("yyyy-MM-ddTHH:mm:ss")');
+
+    function afficherSemaine(dateDebut, dateFin) {
+        // Sélectionne l'élément <ul> dans lequel les jours seront affichés
+        var ulElement = document.querySelector('.horizontal-list ul');
+
+        // Vide le contenu de l'élément <ul> pour afficher les nouveaux jours
+        ulElement.innerHTML = '';
+
+        // Boucle à travers chaque jour entre dateDebut et dateFin
+        for (var currentDate = new Date(dateDebut); currentDate <= dateFin; currentDate.setDate(currentDate.getDate() + 1)) {
+            // Crée un nouvel élément <li> pour chaque jour
+            var liElement = document.createElement('li');
+
+            // Ajoute une classe "colonne" à l'élément <li>
+            liElement.classList.add('colonne');
+
+            // Crée un nouvel élément <div> pour afficher la date
+            var dateDiv = document.createElement('div');
+            dateDiv.classList.add('date');
+
+            // Ajoute le nom du jour de la semaine à la dateDiv
+            var dayName = currentDate.toLocaleDateString('fr-FR', { weekday: 'long' });
+            var dayParagraph = document.createElement('p');
+            dayParagraph.textContent = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+            dateDiv.appendChild(dayParagraph);
+
+            // Ajoute la date du mois à la dateDiv
+            var dateParagraph = document.createElement('p');
+            dateParagraph.textContent = currentDate.getDate() + ' ' + moisEnFrancais(currentDate.getMonth() + 1);
+            dateDiv.appendChild(dateParagraph);
+
+            // Ajoute la dateDiv à l'élément <li>
+            liElement.appendChild(dateDiv);
+
+            // Crée un nouvel élément <div> pour afficher les heures
+            var heuresDiv = document.createElement('div');
+            heuresDiv.classList.add('heures');
+
+            // Ajoute les 96 quarts d'heure à l'élément <div> des heures
+            for (var i = 0; i < 96; i++) {
+                var quartHeureDiv = document.createElement('div');
+                quartHeureDiv.classList.add('quartHeure');
+
+                if (i % 4 == 3)
+                    quartHeureDiv.style.borderBottom = '1px solid lightgrey';
+
+                quartHeureDiv.style.height = '5.266666px';
+                // Ajoute le quart d'heure à l'élément <div> des heures
+                heuresDiv.appendChild(quartHeureDiv);
+            }
+
+            // Ajoute les heuresDiv à l'élément <li>
+            liElement.appendChild(heuresDiv);
+
+            // Ajoute le <li> à l'élément <ul>
+            ulElement.appendChild(liElement);
+        }
+    }
+
+    // Fonction pour convertir un mois en français
+    function moisEnFrancais(mois) {
+        switch (mois) {
+            case 1: return 'Janvier';
+            case 2: return 'Février';
+            case 3: return 'Mars';
+            case 4: return 'Avril';
+            case 5: return 'Mai';
+            case 6: return 'Juin';
+            case 7: return 'Juillet';
+            case 8: return 'Août';
+            case 9: return 'Septembre';
+            case 10: return 'Octobre';
+            case 11: return 'Novembre';
+            case 12: return 'Décembre';
+            default: return '';
+        }
+    }
+
+    function precedent() {
+        dateDebut.setDate(dateDebut.getDate() - 14);
+        dateFin.setDate(dateFin.getDate() - 14);
+        afficherSemaine(dateDebut, dateFin);
+    }
+
+    function suivant() {
+        dateDebut.setDate(dateDebut.getDate() + 14);
+        dateFin.setDate(dateFin.getDate() + 14);
+        afficherSemaine(dateDebut, dateFin);
+    }
+
     async function afficherAlerte(idPlageHoraire) {
         try {
             const response = await fetch('/Horaire/ObtenirInfoPlageHoraire?Id=' + idPlageHoraire);
