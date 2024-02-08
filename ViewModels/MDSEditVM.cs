@@ -25,7 +25,7 @@ namespace SPU.ViewModels
         public Civilite civilite { get; set; }
         [Display(Name = "Type d'employeur")]
         public TypeEmployeur TypeEmployeur { get; set; }
-        [Display(Name = "Téléphne de maison")]
+        [Display(Name = "Téléphone de maison")]
         public string telMaison { get; set; }
         [Display(Name = "Nom de l'employeur")]
         public string NomEmployeur { get; set; }
