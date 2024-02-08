@@ -32,6 +32,11 @@
                 <span asp-validation-for="Nom" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="PhoneNumber" class="control-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
@@ -51,22 +56,16 @@
                 <input asp-for="MatriculeId" class="form-control" />
                 <span asp-validation-for="MatriculeId" class="text-danger"></span>
             </div>
-            @* <div class="form-group">
-                <label asp-for="civilite" class="control-label"></label>
-                <select asp-for="civilite" class="form-control">
-                    <option value="">Sélectionnez...</option>
-                    <!-- Ajouter les options ici -->
-                </select>
-                <span asp-validation-for="civilite" class="text-danger"></span>
-            </div>
             <div class="form-group">
-                <label asp-for="TypeEmployeur" class="control-label"></label>
-                <select asp-for="TypeEmployeur" class="form-control">
-                    <option value="">Sélectionnez...</option>
-                    <!-- Ajouter les options ici -->
+                <label asp-for="idEmployeurSelectionne" class="control-label"></label>
+                <select asp-for="idEmployeurSelectionne" class="form-control">
+                    <option value="">Sélectionnez une entreprise</option>
+                    @foreach (var ent in ViewBag.Employeurs)
+                    {
+                        <option value="@ent.Value">@ent.Text</option>
+                    }
                 </select>
-                <span asp-validation-for="TypeEmployeur" class="text-danger"></span>
-            </div> *@
+            </div>
             <div class="form-group">
                 <label asp-for="civilite" class="control-label"></label>
                 <select asp-for="civilite" asp-items="Html.GetEnumSelectList<Civilite>()" class="form-control">
@@ -86,11 +85,6 @@
                 <label asp-for="telMaison" class="control-label"></label>
                 <input asp-for="telMaison" class="form-control" />
                 <span asp-validation-for="telMaison" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NomEmployeur" class="control-label"></label>
-                <input asp-for="NomEmployeur" class="form-control" />
-                <span asp-validation-for="NomEmployeur" class="text-danger"></span>
             </div>
             <input asp-for="role" class="form-control" type="hidden" value="MDS" />
             <div class="form-group">

@@ -1,4 +1,5 @@
-﻿using SPU.Enum;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SPU.Enum;
 using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
@@ -23,11 +24,18 @@ namespace SPU.ViewModels
         public Civilite civilite { get; set; }
         [Display(Name = "Type d'employeur")]
         public TypeEmployeur TypeEmployeur { get; set; }
-        [Display(Name = "Téléphne de maison")]
+        [Display(Name = "Téléphone de maison")]
         public string telMaison { get; set; }
         [Display(Name = "Nom de l'employeur")]
-        public string NomEmployeur { get; set; }
+        public string? NomEmployeur { get; set; }
         public string role { get; set; }
+        [Display(Name = " Courriel")]
+        public string Email { get; set; }
+
+        [Display(Name = "Veuillez choisir une entreprise")]
+        public Guid idEmployeurSelectionne { get; set; }
+
+        public List<SelectListItem> Employeurs { get; set; } = new List<SelectListItem>();
 
     }
 }

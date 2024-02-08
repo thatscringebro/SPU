@@ -82,41 +82,42 @@ namespace SPU.Controllers
 
 
         //CRUD pour utilisateur 
-        [Authorize(Roles = "Coordonateur")]
+        //[Authorize(Roles = "Coordonateur")]
+        [AllowAnonymous] // A ENLEVER APRES LES TESTS
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
         {
-            var vm = new List<UtilisateurDetailVM>();
-
+            var vm = new List<UtilisateurDetailVM>();           
             try
             {
-                foreach (var user in _userManager.Users)
+                foreach (var user in await _userManager.Users.ToListAsync())
                 {
-                    var userRoles = await _userManager.GetRolesAsync(user);
-                    vm.Add(new UtilisateurDetailVM
+                   foreach (var userRoles in await _userManager.GetRolesAsync(user))
                     {
-                        role = userRoles.SingleOrDefault(),
-                        Prenom = user.Prenom,
-                        Nom = user.Nom
-                    });
-                }
+                        vm.Add(new UtilisateurDetailVM
+                        {
+                            role = userRoles,
+                            Prenom = user.Prenom,
+                            Nom = user.Nom
+                        });
+                    }
+                }   
             }
             catch (Exception ex)
             {
                 ViewBag.UserListErrorMessage = "Erreur d'affichage des utilisateurs. Veuillez réessayé." + ex.Message;
             }
 
-            if (success)
-            {
-                if (actionType == "Remove")
-                {
-                    ViewBag.RemoveSuccessMessage = "L'utilisateur est retiré.";
-                }
-                else if (actionType == "Create")
-                {
-                    ViewBag.CreateSuccessMessage = "L'utilisateur est créer";
-                }
-            }
-
+            //if (success)
+            //{
+            //    if (actionType == "Remove")
+            //    {
+            //        ViewBag.RemoveSuccessMessage = "L'utilisateur est retiré.";
+            //    }
+            //    else if (actionType == "Create")
+            //    {
+            //        ViewBag.CreateSuccessMessage = "L'utilisateur est créer";
+            //    }
+            //}
             return View(vm);
         }
 
@@ -154,6 +155,7 @@ namespace SPU.Controllers
                 Value = e.id.ToString(),
                 Text = e.Nom
             }).ToList();
+
 
             switch (vue)
             {
@@ -198,6 +200,12 @@ namespace SPU.Controllers
 
 
             var toCreate = new Utilisateur(vm.Nom);
+
+            toCreate.Prenom = vm.Prenom;
+            toCreate.Nom = vm.Nom;
+            toCreate.PhoneNumber = vm.PhoneNumber;
+            toCreate.Email = vm.Email;
+            
             var result = await _userManager.CreateAsync(toCreate, vm.pwd);
 
             if (!result.Succeeded)
@@ -213,14 +221,15 @@ namespace SPU.Controllers
                 ModelState.AddModelError(string.Empty, $"Impossible d'ajouter le rôle {selectedRole.Name}. Veuillez réessayer.");
                 return View(vm);
             }
+            var ecole = _spuContext.Ecole.Where(x => x.id == vm.idEcoleSelectionne).FirstOrDefault();
 
             if(selectedRole.Name == "Stagiaire")
             {
                 var Stagiaire = new Stagiaire{
                     utilisateur = toCreate,
                     UtilisateurId = toCreate.Id,
-                    ecole = vm.Ecole,
-                    EcoleId = vm.Ecole.id
+                    ecole = ecole,
+                    EcoleId = vm.idEcoleSelectionne
                 };
                 _spuContext.Stagiaires.Add(Stagiaire);
                 
@@ -231,8 +240,8 @@ namespace SPU.Controllers
                 {
                     UtilisateurId = toCreate.Id,
                     utilisateur = toCreate,
-                    ecole = vm.Ecole,
-                    EcoleId = vm.Ecole.id
+                    ecole = ecole,
+                    EcoleId = vm.idEcoleSelectionne
                 };
                 _spuContext.Coordonateurs.Add(Coordo);
               
@@ -243,8 +252,8 @@ namespace SPU.Controllers
                 {
                     UtilisateurId = toCreate.Id,
                     utilisateur = toCreate,
-                    ecole = vm.Ecole,
-                    EcoleId = vm.Ecole.id
+                    ecole = ecole,
+                    EcoleId = vm.idEcoleSelectionne
                 };
                 _spuContext.Enseignants.Add(Enseignant);
                
@@ -259,6 +268,12 @@ namespace SPU.Controllers
         [HttpGet]
         public ActionResult CreationMDS()
         {
+            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+
              return View(); 
         }
 
@@ -276,7 +291,7 @@ namespace SPU.Controllers
 
             var roles = await _roleManager.Roles.ToListAsync();
 
-            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
+            var selectedRole = roles.FirstOrDefault(r => r.Name == vm.role);
 
             if (selectedRole == null)
             {
@@ -292,6 +307,10 @@ namespace SPU.Controllers
             }
 
             var toCreate = new Utilisateur(vm.Nom);
+            toCreate.Prenom = vm.Prenom;
+            toCreate.Nom = vm.Nom;
+            toCreate.PhoneNumber = vm.PhoneNumber;
+            toCreate.Email = vm.Email;
             var result = await _userManager.CreateAsync(toCreate, vm.pwd);
 
             if (!result.Succeeded)
@@ -308,15 +327,20 @@ namespace SPU.Controllers
                 return View(vm);
             }
 
+            var Entreprise = _spuContext.Employeurs.Where(x => x.Id == vm.idEmployeurSelectionne).Include(u => u.utilisateur).FirstOrDefault();
+            //Nom utilisateur pour l'entreprise = nom d'entreprise OBLIGATOIRE
+            
+            
             var MDs = new MDS
             {
                 utilisateur = toCreate,
                 UtilisateurId = toCreate.Id,
-                //MatriculeId = vm.MatriculeId,
+                MatriculeId = vm.MatriculeId,
                 civilite = vm.civilite,
                 typeEmployeur = vm.TypeEmployeur,
                 telMaison = vm.telMaison,
-                NomEmployeur = vm.NomEmployeur,
+                NomEmployeur = Entreprise.utilisateur.UserName,
+                EmployeurId = Entreprise.Id
 
             };
 
@@ -345,7 +369,7 @@ namespace SPU.Controllers
 
             var roles = await _roleManager.Roles.ToListAsync();
 
-            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
+            var selectedRole = roles.FirstOrDefault(r => r.Name == vm.role);
 
             if (selectedRole == null)
             {
@@ -362,6 +386,10 @@ namespace SPU.Controllers
 
 
             var toCreate = new Utilisateur(vm.Nom);
+            toCreate.Prenom = vm.Prenom;
+            toCreate.Nom = vm.Nom;
+            toCreate.PhoneNumber = vm.PhoneNumber;
+            toCreate.Email = vm.Email;
             var result = await _userManager.CreateAsync(toCreate, vm.pwd);
 
             if (!result.Succeeded)
@@ -382,7 +410,7 @@ namespace SPU.Controllers
             {
                 Ville = vm.ville,
                 Pays = vm.pays,
-                // = vm.province,
+                Province = vm.province,
                 CodePostal = vm.codePostal,
                 NoCivique = vm.NumeroDeRue,
                 Rue = vm.NomDeRue
@@ -443,7 +471,7 @@ namespace SPU.Controllers
             aEditer.Nom = vm.Nom;
             aEditer.Prenom = vm.Prenom;
             aEditer.PhoneNumber = vm.PhoneNumber;
-            //COURRIEL ? 
+            aEditer.Email = vm.Email; 
             aEditer.UserName = vm.userName;
 
             var works = _userManager.UpdateAsync(aEditer);
@@ -486,6 +514,7 @@ namespace SPU.Controllers
                 NomEmployeur = userMDS.NomEmployeur,
                 telMaison = userMDS.telMaison,
                 TypeEmployeur = userMDS.typeEmployeur,
+                Email = userMDS.utilisateur.Email,
                 
             };
 
@@ -507,7 +536,7 @@ namespace SPU.Controllers
             aEditer.Nom = vm.Nom;
             aEditer.Prenom = vm.Prenom;
             aEditer.PhoneNumber = vm.PhoneNumber;
-            //COURRIEL ? 
+            aEditer.Email = vm.Email;
             aEditer.UserName = vm.userName;
             MdsaEditer.MatriculeId = vm.MatriculeId;
             MdsaEditer.utilisateur = aEditer;
@@ -516,8 +545,6 @@ namespace SPU.Controllers
             MdsaEditer.telMaison = vm.telMaison;
             MdsaEditer.typeEmployeur = vm.TypeEmployeur;
 
-
-          
 
             var works = _userManager.UpdateAsync(aEditer);
           
@@ -560,7 +587,10 @@ namespace SPU.Controllers
                 NumeroDeRue = userEmployeur.adresse.NoCivique,
                 pays = userEmployeur.adresse.Pays,
                 province = userEmployeur.adresse.Province,
-                ville = userEmployeur.adresse.Ville
+                ville = userEmployeur.adresse.Ville,
+                Email = userEmployeur.utilisateur.Email
+                
+               
 
             };
 
@@ -582,7 +612,7 @@ namespace SPU.Controllers
             aEditer.Nom = vm.Nom;
             aEditer.Prenom = vm.Prenom;
             aEditer.PhoneNumber = vm.PhoneNumber;
-            //COURRIEL ? 
+            aEditer.Email = vm.Email;
             aEditer.UserName = vm.userName;
             userEmployeur.adresse.Province = vm.province;
             userEmployeur.adresse.NoCivique = vm.NumeroDeRue;
