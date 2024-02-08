@@ -23,7 +23,7 @@ namespace SPU.ViewModels
         [Display(Name = "Veuillez choisir un établissement")]
         public Ecole Ecole { get; set; }
 
-        public int idEcoleSelectionne { get; set; }
+        public Guid idEcoleSelectionne { get; set; }
         public List<SelectListItem> Ecoles { get; set; } = new List<SelectListItem>();
 
     }
