@@ -244,7 +244,7 @@ namespace SPU.Controllers
 
         public IActionResult MettreAbsent(string Id)
         {
-            PlageHoraire? plage = _context.PlageHoraires.Where(x => x.horaire.Id.ToString() == Id).FirstOrDefault();
+            PlageHoraire? plage = _context.PlageHoraires.Where(x => x.Id.ToString() == Id).FirstOrDefault();
 
             if (plage == null)
                 return BadRequest("Erreur, la plage horaire n'est pas valide");
