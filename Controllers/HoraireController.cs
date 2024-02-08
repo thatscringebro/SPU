@@ -20,6 +20,24 @@ namespace SPU.Controllers
         }
         public IActionResult Index()
         {
+            Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
+
+            if(user != null)
+            {
+                Coordonateur? coordo = _context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
+                Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
+                Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
+                MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+                if (mds != null)
+                {
+                    Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
+
+                    if(horaire != null)
+                        ViewBag.horaireId = horaire.Id;
+                }
+            }
+
             return View();
         }
 
@@ -43,7 +61,9 @@ namespace SPU.Controllers
                 nouvelleHoraire.MDSId = mds.Id;
                 nouvelleHoraire.Id = Guid.NewGuid();
 
-                ViewBag.horaireId = nouvelleHoraire.Id;
+                //Données temporaires
+                nouvelleHoraire.DateDebutStage = new DateTime(2024, 2, 12, 0, 0, 0).ToUniversalTime();
+                nouvelleHoraire.DateFinStage = new DateTime(2024, 4, 8, 0, 0, 0).ToUniversalTime();
 
                 _context.Add(nouvelleHoraire); 
                 _context.SaveChanges();
@@ -84,17 +104,25 @@ namespace SPU.Controllers
                                           vm.DateDebutPlageHoraire.Day,
                                           vm.HeureDebutPlageHoraire,
                                           vm.MinutesDebutPlageHoraire,
-                                          0);
+                                          0).ToUniversalTime();
 
             DateTime plageHoraireFin = new DateTime(vm.DateFinPlageHoraire.Year,
                               vm.DateFinPlageHoraire.Month,
                               vm.DateFinPlageHoraire.Day,
                               vm.HeureFinPlageHoraire,
                               vm.MinutesFinPlageHoraire,
-                              0);
+                              0).ToUniversalTime();
 
             //Save context
+            PlageHoraire ph = new PlageHoraire();
+            ph.Id = Guid.NewGuid();
+            ph.HoraireId = horaireId;
+            ph.DateDebut = plageHoraireDebut;
+            ph.DateFin = plageHoraireFin;
+            ph.ConfirmationPresence = true;
 
+            _context.Add(ph);
+            _context.SaveChanges();
 
             return RedirectToAction("Index", "Horaire");
         }
@@ -107,8 +135,10 @@ namespace SPU.Controllers
 
 
         // Ajout d'une confirmation
-        public IActionResult ModifierPlageHoraire()
+        public IActionResult ModifierPlageHoraire(Guid horaireId)
         {
+            //Aller chercher les informations avec le id de l'horaire et le id du div
+
             return View();
         }
 
