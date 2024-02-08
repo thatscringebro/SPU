@@ -327,7 +327,7 @@ namespace SPU.Controllers
                 return View(vm);
             }
 
-            var Entreprise = _spuContext.Employeurs.Where(x => x.Id == vm.idEmployeurSelectionne).FirstOrDefault();
+            var Entreprise = _spuContext.Employeurs.Where(x => x.Id == vm.idEmployeurSelectionne).Include(u => u.utilisateur).FirstOrDefault();
             //Nom utilisateur pour l'entreprise = nom d'entreprise OBLIGATOIRE
             
             
