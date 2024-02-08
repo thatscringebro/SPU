@@ -36,7 +36,7 @@ namespace SPU.ViewComponents
                 Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
 
                 if (horaire != null)
-                    journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaire.Id).ToList().Select(x => new JourneeTravailleVM
+                    journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaireId).ToList().Select(x => new JourneeTravailleVM
                     {
                         DateDebutQuart = x.DateDebut,
                         DateFinQuart = x.DateFin,

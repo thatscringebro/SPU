@@ -81,16 +81,17 @@ namespace SPU.Controllers
             Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
             MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
+            Horaire nouvelleHoraire = new Horaire();
+
             if (mds != null)
             {
-                Horaire nouvelleHoraire = new Horaire();
                 nouvelleHoraire.mds = mds;
                 nouvelleHoraire.MDSId = mds.Id;
                 nouvelleHoraire.Id = Guid.NewGuid();
 
                 //Données temporaires
-                nouvelleHoraire.DateDebutStage = vm.DateTimeDebutStage;
-                nouvelleHoraire.DateFinStage = vm.DateTimeFinStage;
+                nouvelleHoraire.DateDebutStage = vm.DateTimeDebutStage.ToUniversalTime();
+                nouvelleHoraire.DateFinStage = vm.DateTimeFinStage.ToUniversalTime();
 
                 _context.Add(nouvelleHoraire);
                 _context.SaveChanges();
@@ -98,11 +99,7 @@ namespace SPU.Controllers
                 ViewBag.horaireId = nouvelleHoraire.Id;
             }
 
-            //nouvelleHoraire.mds = user.Id;
-
-            //
-
-            return RedirectToAction("Index", "Horaire");
+            return RedirectToAction("Horaire", "Horaire", new { horaireId = nouvelleHoraire.Id });
         }
 
         public IActionResult AjoutPlageHoraireMDS()
