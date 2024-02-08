@@ -86,27 +86,21 @@ namespace SPU.Controllers
         [AllowAnonymous] // A ENLEVER APRES LES TESTS
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
         {
-            var vm = new List<UtilisateurDetailVM>();
-            
+            var vm = new List<UtilisateurDetailVM>();           
             try
             {
                 foreach (var user in await _userManager.Users.ToListAsync())
                 {
                    foreach (var userRoles in await _userManager.GetRolesAsync(user))
                     {
-
                         vm.Add(new UtilisateurDetailVM
                         {
                             role = userRoles,
                             Prenom = user.Prenom,
                             Nom = user.Nom
                         });
-
                     }
-
-                }
-
-            
+                }   
             }
             catch (Exception ex)
             {
@@ -124,7 +118,6 @@ namespace SPU.Controllers
             //        ViewBag.CreateSuccessMessage = "L'utilisateur est créer";
             //    }
             //}
-
             return View(vm);
         }
 
