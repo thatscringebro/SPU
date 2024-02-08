@@ -35,13 +35,14 @@ namespace SPU.ViewComponents
             {
                 Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
 
-                journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaire.Id).ToList().Select(x => new JourneeTravailleVM
-                {
-                    DateDebutQuart = x.DateDebut,
-                    DateFinQuart = x.DateFin,
-                    Id = x.Id,
-                    Present = x.ConfirmationPresence
-                }).ToList();
+                if (horaire != null)
+                    journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaire.Id).ToList().Select(x => new JourneeTravailleVM
+                    {
+                        DateDebutQuart = x.DateDebut,
+                        DateFinQuart = x.DateFin,
+                        Id = x.Id,
+                        Present = x.ConfirmationPresence
+                    }).ToList();
             }
             else if (stag != null)
             {
