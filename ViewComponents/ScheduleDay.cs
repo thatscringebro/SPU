@@ -52,8 +52,8 @@ namespace SPU.ViewComponents
                 if (horaire != null)
                     journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaireId).ToList().Select(x => new JourneeTravailleVM
                     {
-                        DateDebutQuart = x.DateDebut,
-                        DateFinQuart = x.DateFin,
+                        DateDebutQuart = x.DateDebut.ToLocalTime(),
+                        DateFinQuart = x.DateFin.ToLocalTime(),
                         Id = x.Id,
                         Present = x.ConfirmationPresence
                     }).ToList();
