@@ -18,33 +18,60 @@ namespace SPU.Controllers
             var claim = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             _loggedUserId = claim?.Value;
         }
-        public IActionResult Index()
+
+
+        public IActionResult Index(ListeHoraireVM vm)
         {
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
 
-            if(user != null)
+            Coordonateur? coordo = _context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+            if (mds != null)
+            {
+                vm.listeHoraireMds = _context.Horaires.Where(x => x.MDSId == mds.Id).ToList();
+            }
+
+            return View(vm);
+        }
+
+
+        public IActionResult Horaire(Guid horaireId)
+        {
+            Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
+            Horaire horaire = new Horaire();
+
+            if (user != null)
             {
                 Coordonateur? coordo = _context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
+
                 if (mds != null)
                 {
-                    Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
+                    horaire = _context.Horaires.Where(x => x.MDSId == mds.Id && x.Id == horaireId).FirstOrDefault();
 
-                    if(horaire != null)
+                    if (horaire != null)
                         ViewBag.horaireId = horaire.Id;
                 }
             }
 
-            return View();
+            return View(horaire);
         }
 
-        
+
+        public IActionResult AjoutNouvelHoraireMDS()
+        { 
+            return View(); 
+        }
+
 
         [HttpPost]
-        public IActionResult AjoutNouvelHoraireMDS()
+        public IActionResult AjoutNouvelHoraireMDS(AjoutNouvelHoraireMdsVM vm)
         {
             //Doit entrer le id de la personne
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
@@ -54,7 +81,7 @@ namespace SPU.Controllers
             Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
             MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
-            if(mds != null)
+            if (mds != null)
             {
                 Horaire nouvelleHoraire = new Horaire();
                 nouvelleHoraire.mds = mds;
@@ -62,15 +89,17 @@ namespace SPU.Controllers
                 nouvelleHoraire.Id = Guid.NewGuid();
 
                 //Données temporaires
-                nouvelleHoraire.DateDebutStage = new DateTime(2024, 2, 12, 0, 0, 0).ToUniversalTime();
-                nouvelleHoraire.DateFinStage = new DateTime(2024, 4, 8, 0, 0, 0).ToUniversalTime();
+                nouvelleHoraire.DateDebutStage = vm.DateTimeDebutStage;
+                nouvelleHoraire.DateFinStage = vm.DateTimeFinStage;
 
-                _context.Add(nouvelleHoraire); 
+                _context.Add(nouvelleHoraire);
                 _context.SaveChanges();
+
+                ViewBag.horaireId = nouvelleHoraire.Id;
             }
 
             //nouvelleHoraire.mds = user.Id;
-                
+
             //
 
             return RedirectToAction("Index", "Horaire");
@@ -124,12 +153,6 @@ namespace SPU.Controllers
             _context.Add(ph);
             _context.SaveChanges();
 
-            return RedirectToAction("Index", "Horaire");
-        }
-
-        // Lorsque le maître de stage à confirmer tous les plages horaires sur 2 semaines, il appuie sur confirmer dans la vue horaire
-        public IActionResult ConfirmationHoraireMDS()
-        {
             return RedirectToAction("Index", "Horaire");
         }
 
@@ -197,7 +220,8 @@ namespace SPU.Controllers
                 _context.SaveChanges();
                 return Ok();
             }
-            catch {
+            catch
+            {
                 return BadRequest("Erreur, la plage horraire n'a pas pu être modifiée");
             }
         }
