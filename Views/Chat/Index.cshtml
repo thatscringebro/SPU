@@ -53,7 +53,7 @@
       <div class="main noaside">
         <ul id="@mds.ChatId" class="chat">
           @{
-            List<Message> messages = context.Message.Where(x => x.ChatId == mds.ChatId).ToList();
+            List<Message> messages = context.Message.Include(x => x.utilisateur).Where(x => x.ChatId == mds.ChatId).ToList();
       }
           @foreach (var message in messages)
           {
@@ -74,7 +74,7 @@
                 string idMessageInput = mds.ChatId.ToString() + "messageInput";
                 string idSendButton = mds.ChatId.ToString() + "sendButton";
             }
-            <input type="text" placeholder="Votre message ici" id="@idMessageInput" onkeypress="handleKeyPressInput(event, '@idSendButton')"/>
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" class="inputChat" onkeypress="handleKeyPressInput(event, '@idSendButton')"/>
             <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@mds.ChatId')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-send" viewBox="0 0 16 16">
@@ -91,7 +91,7 @@
         </header>
         <ul>
       @{
-        List<Chat> chats = context.Chats.Where(x => x.EnseignantId == Model.Id).ToList();
+        List<Chat> chats = context.Chats.Where(x => x.EnseignantId == ens.Id).ToList();
       }
             @foreach (var chat in chats)
             {
@@ -109,7 +109,7 @@
   <div class="main hidden">
         <ul id="@chat.Id" class="chat">
       @{
-            List<Message> messages = context.Message.Where(x => x.ChatId == chat.Id).ToList();
+            List<Message> messages = context.Message.Include(x => x.utilisateur).Where(x => x.ChatId == chat.Id).ToList();
       }
             @foreach (var message in messages)
             {
@@ -130,7 +130,7 @@
                 string idMessageInput = chat.Id.ToString() + "messageInput";
                 string idSendButton = chat.Id.ToString() + "sendButton";
             }
-            <input type="text" placeholder="Votre message ici" id="@idMessageInput" onkeypress="handleKeyPressInput(event, '@idSendButton')"/>
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" class="inputChat" onkeypress="handleKeyPressInput(event, '@idSendButton')"/>
             <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@chat.Id')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-send" viewBox="0 0 16 16">
@@ -148,7 +148,7 @@
         </header>
         <ul>
       @{
-        List<Chat> chats = context.Chats.Where(x => x.CoordonateurId == Model.Id).ToList();
+        List<Chat> chats = context.Chats.Where(x => x.CoordonateurId == coordo.Id).ToList();
       }
             @foreach (var chat in chats)
             {
@@ -187,7 +187,7 @@
                 string idMessageInput = chat.Id.ToString() + "messageInput";
                 string idSendButton = chat.Id.ToString() + "sendButton";
             }
-            <input type="text" placeholder="Votre message ici" id="@idMessageInput" onkeypress="handleKeyPressInput(event, '@idSendButton')" />
+            <input type="text" placeholder="Votre message ici" id="@idMessageInput" class="inputChat" onkeypress="handleKeyPressInput(event, '@idSendButton')" />
             <a id="@idSendButton" onclick="sendMessage('@Model.Id', document.getElementById('@idMessageInput').value, '@chat.Id')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-send" viewBox="0 0 16 16">
@@ -215,12 +215,12 @@
 
   connection.on("ReceiveMessage", function (user, room, message, username, date) {
     var li = document.createElement("li");
-    li.classList.add("me");
+    if(user == '@Model.Id')
+      li.classList.add("me");
+    else
+      li.classList.add("you");
     document.getElementById(room).appendChild(li);
-    // We can assign user-supplied strings to an element's textContent because it
-    // is not interpreted as markup. If you're assigning in any other way, you 
-    // should be aware of possible script injection concerns.
-    //li.textContent = `${user} says ${message} in room ${room}`;
+    
     li.innerHTML = "<div class=\"entete\"><h2>"+ username + "&nbsp;</h2><h3>" + date + "</h3></div><div class=\"triangle\"></div><div class=\"message\">"+ message + "</div>";
 
     $(".chat").scrollTop($(".chat")[0].scrollHeight);
@@ -243,7 +243,7 @@
 
   function setActiveChat(chatId) {
       $(".main").addClass("hidden");
-      $("#" + chatId).removeClass("hidden");
+      $("#" + chatId).closest('div').removeClass("hidden");
 
       $(".chatSelect").removeClass("activeChat");
       $("#" + chatId + "Select").addClass("activeChat");

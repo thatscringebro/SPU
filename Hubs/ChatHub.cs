@@ -22,7 +22,6 @@ namespace SignalRChat.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            Console.WriteLine("--------Connected--------");
             var connectionId = Context.ConnectionId;
             var userId = _loggedUserId;
             lock(ConnectedUsers)
@@ -63,10 +62,12 @@ namespace SignalRChat.Hubs
             _context.Message.Add(m);
             _context.SaveChanges();
 
-            string coordo = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).CoordonateurId.ToString();
-            string enseignant = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).EnseignantId.ToString();
-            string stag = _context.Stagiaires.FirstOrDefault(x => x.ChatId.ToString() == room).Id.ToString();
-            List<string> mds = _context.MDS.Where(x => x.ChatId.ToString() == room).Select(x => x.Id.ToString()).ToList();
+            var coordoReal = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).CoordonateurId;
+            string coordo = _context.Coordonateurs.FirstOrDefault(x => x.Id == coordoReal).UtilisateurId.ToString();
+            var enseignantReal = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).EnseignantId;
+            string enseignant = _context.Enseignants.FirstOrDefault(x => x.Id == enseignantReal).UtilisateurId.ToString();
+            string stag = _context.Stagiaires.FirstOrDefault(x => x.ChatId.ToString() == room).UtilisateurId.ToString();
+            List<string> mds = _context.MDS.Where(x => x.ChatId.ToString() == room).Select(x => x.UtilisateurId.ToString()).ToList();
 
             List<string> clientsToSend = ConnectedUsers[user];
             if(ConnectedUsers.ContainsKey(coordo))
