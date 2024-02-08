@@ -271,7 +271,7 @@ namespace SPU.Controllers
             ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
             {
                 Value = e.Id.ToString(),
-                Text = e.utilisateur.ToString()
+                Text = e.utilisateur.UserName
             }).ToList();
 
              return View(); 
@@ -327,8 +327,10 @@ namespace SPU.Controllers
                 return View(vm);
             }
 
-            var idEntreprise = _spuContext.Employeurs.Where(x => x.utilisateur.UserName == vm.NomEmployeur).FirstOrDefault();
+            var Entreprise = _spuContext.Employeurs.Where(x => x.Id == vm.idEmployeurSelectionne).FirstOrDefault();
             //Nom utilisateur pour l'entreprise = nom d'entreprise OBLIGATOIRE
+            
+            
             var MDs = new MDS
             {
                 utilisateur = toCreate,
@@ -337,12 +339,12 @@ namespace SPU.Controllers
                 civilite = vm.civilite,
                 typeEmployeur = vm.TypeEmployeur,
                 telMaison = vm.telMaison,
-                NomEmployeur = vm.NomEmployeur,
-                EmployeurId = idEntreprise.Id
+                NomEmployeur = Entreprise.utilisateur.UserName,
+                EmployeurId = Entreprise.Id
 
             };
 
-           _spuContext.Add(MDs);
+            _spuContext.Add(MDs);
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
@@ -543,8 +545,6 @@ namespace SPU.Controllers
             MdsaEditer.telMaison = vm.telMaison;
             MdsaEditer.typeEmployeur = vm.TypeEmployeur;
 
-
-          
 
             var works = _userManager.UpdateAsync(aEditer);
           
