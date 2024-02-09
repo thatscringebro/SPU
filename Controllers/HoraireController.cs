@@ -38,7 +38,7 @@ namespace SPU.Controllers
         }
 
 
-        public IActionResult Horaire(Guid horaireId)
+        public IActionResult Horaire(Guid horaireId, HorairePageVM vm)
         {
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
             Horaire horaire = new Horaire();
@@ -50,17 +50,26 @@ namespace SPU.Controllers
                 Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
+                //Ajout champs horaireId dans bd pour stagiaire
+                //Stagiaire? stagiaire = _context.Stagiaires.Where(x => x);
+
 
                 if (mds != null)
                 {
+                    vm.nomMds =  string.Concat(mds.utilisateur.Prenom + " " + mds.utilisateur.Nom);
+                
                     horaire = _context.Horaires.Where(x => x.MDSId == mds.Id && x.Id == horaireId).FirstOrDefault();
 
                     if (horaire != null)
+                    {
                         ViewBag.horaireId = horaire.Id;
+                        vm.DateDebutStage = horaire.DateDebutStage.Date;
+                        vm.DateFinStage = horaire.DateFinStage.Date;
+                    }
                 }
             }
 
-            return View(horaire);
+            return View(vm);
         }
 
 
@@ -82,7 +91,7 @@ namespace SPU.Controllers
             MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
             Horaire nouvelleHoraire = new Horaire();
-
+            
             if (mds != null)
             {
                 nouvelleHoraire.mds = mds;
@@ -150,7 +159,7 @@ namespace SPU.Controllers
             _context.Add(ph);
             _context.SaveChanges();
 
-            return RedirectToAction("Horaire", "Horaire");
+            return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
         }
 
 
