@@ -10,5 +10,7 @@ namespace SPU.ViewModels
 
         [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime DateTimeFinStage { get; set; }
+
+        
     }
 }

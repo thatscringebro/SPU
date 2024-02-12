@@ -53,3 +53,12 @@ img.submit:hover {
     border: 4px solid blue;
     border-radius: 5%;
 }
+
+.horaire-horaire-entete {
+    background-color: darkgray;
+    color: white;
+    border: 2px solid #000000; /* Couleur grise pour la bordure */
+    border-radius: 10px; /* Coins arrondis */
+    padding: 10px;
+    max-width: 600px;
+}

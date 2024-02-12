@@ -37,7 +37,7 @@
     }
 
     .btn-pageHoraireMds-Confirmer {
-        margin-left: 120px;
+        left: 8px;
     }
 
 </style>
@@ -103,6 +103,17 @@
                 </select>
             </div>
         </div>
+        <br />
+        <div class="row">
+            <label>
+                <input id="horaire-ajoutplagehoraire-recurrence-checkbox" asp-for="Recurrence" type="checkbox" style="transform: scale(1.5);" />
+                Ajout de récurrence
+            </label>
+            <a style="font-style: italic; font-size:14px">
+                Ceci applique une récurrence de la plage horaire à toutes les deux semaines. Il sera possible de modifier ou supprimer des plages horaires manuellement pas la suite. 
+            </a>
+        </div>
+
         <br />
         <div class="row">
             <div class="col-6">

@@ -38,7 +38,7 @@ namespace SPU.Controllers
         }
 
 
-        public IActionResult Horaire(Guid horaireId)
+        public IActionResult Horaire(Guid horaireId, HorairePageVM vm)
         {
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
             Horaire horaire = new Horaire();
@@ -50,17 +50,26 @@ namespace SPU.Controllers
                 Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
+                //Ajout champs horaireId dans bd pour stagiaire
+                //Stagiaire? stagiaire = _context.Stagiaires.Where(x => x);
+
 
                 if (mds != null)
                 {
+                    vm.nomMds =  string.Concat(mds.utilisateur.Prenom + " " + mds.utilisateur.Nom);
+                
                     horaire = _context.Horaires.Where(x => x.MDSId == mds.Id && x.Id == horaireId).FirstOrDefault();
 
                     if (horaire != null)
+                    {
                         ViewBag.horaireId = horaire.Id;
+                        vm.DateDebutStage = horaire.DateDebutStage.Date;
+                        vm.DateFinStage = horaire.DateFinStage.Date;
+                    }
                 }
             }
 
-            return View(horaire);
+            return View(vm);
         }
 
 
@@ -82,7 +91,7 @@ namespace SPU.Controllers
             MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
             Horaire nouvelleHoraire = new Horaire();
-
+            
             if (mds != null)
             {
                 nouvelleHoraire.mds = mds;
@@ -123,34 +132,77 @@ namespace SPU.Controllers
         [HttpPost]
         public IActionResult AjoutPlageHoraireMDS(PlageHoraireMdsVM vm, Guid horaireId)
         {
-            vm.id = Guid.NewGuid();
+            //Si il y a de la récurrence
+            if(vm.Recurrence)
+            {
+                Horaire horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
 
-            DateTime plageHoraireDebut = new DateTime(vm.DateDebutPlageHoraire.Year,
-                                          vm.DateDebutPlageHoraire.Month,
-                                          vm.DateDebutPlageHoraire.Day,
-                                          vm.HeureDebutPlageHoraire,
-                                          vm.MinutesDebutPlageHoraire,
-                                          0).ToUniversalTime();
+                if(horaire != null)
+                {
+                    DateTime dateDebutStage = horaire.DateDebutStage.ToUniversalTime();
+                    DateTime dateFinStage = horaire.DateFinStage.ToUniversalTime();
 
-            DateTime plageHoraireFin = new DateTime(vm.DateFinPlageHoraire.Year,
-                              vm.DateFinPlageHoraire.Month,
-                              vm.DateFinPlageHoraire.Day,
-                              vm.HeureFinPlageHoraire,
-                              vm.MinutesFinPlageHoraire,
+                    DateTime plageHoraireDebut = new DateTime(vm.DateDebutPlageHoraire.Year,
+                              vm.DateDebutPlageHoraire.Month,
+                              vm.DateDebutPlageHoraire.Day,
+                              vm.HeureDebutPlageHoraire,
+                              vm.MinutesDebutPlageHoraire,
                               0).ToUniversalTime();
 
-            //Save context
-            PlageHoraire ph = new PlageHoraire();
-            ph.Id = Guid.NewGuid();
-            ph.HoraireId = horaireId;
-            ph.DateDebut = plageHoraireDebut;
-            ph.DateFin = plageHoraireFin;
-            ph.ConfirmationPresence = true;
+                    DateTime plageHoraireFin = new DateTime(vm.DateFinPlageHoraire.Year,
+                                      vm.DateFinPlageHoraire.Month,
+                                      vm.DateFinPlageHoraire.Day,
+                                      vm.HeureFinPlageHoraire,
+                                      vm.MinutesFinPlageHoraire,
+                                      0).ToUniversalTime();
 
-            _context.Add(ph);
-            _context.SaveChanges();
+                    while (plageHoraireDebut <= dateFinStage && plageHoraireFin <= dateFinStage)
+                    {
+                        PlageHoraire plageHoraireRecurrence = new PlageHoraire();
+                        plageHoraireRecurrence.Id = Guid.NewGuid();
+                        plageHoraireRecurrence.HoraireId = horaireId;
+                        plageHoraireRecurrence.DateDebut = plageHoraireDebut;
+                        plageHoraireRecurrence.DateFin = plageHoraireFin;
+                        plageHoraireRecurrence.ConfirmationPresence = true;
 
-            return RedirectToAction("Horaire", "Horaire");
+                        _context.Add(plageHoraireRecurrence);
+                        _context.SaveChanges();
+
+                        plageHoraireDebut = plageHoraireDebut.AddDays(14);
+                        plageHoraireFin = plageHoraireFin.AddDays(14);
+                    }
+                }
+            }
+            else
+            {
+                vm.id = Guid.NewGuid();
+
+                DateTime plageHoraireDebut = new DateTime(vm.DateDebutPlageHoraire.Year,
+                                              vm.DateDebutPlageHoraire.Month,
+                                              vm.DateDebutPlageHoraire.Day,
+                                              vm.HeureDebutPlageHoraire,
+                                              vm.MinutesDebutPlageHoraire,
+                                              0).ToUniversalTime();
+
+                DateTime plageHoraireFin = new DateTime(vm.DateFinPlageHoraire.Year,
+                                  vm.DateFinPlageHoraire.Month,
+                                  vm.DateFinPlageHoraire.Day,
+                                  vm.HeureFinPlageHoraire,
+                                  vm.MinutesFinPlageHoraire,
+                                  0).ToUniversalTime();
+
+                //Save context
+                PlageHoraire ph = new PlageHoraire();
+                ph.Id = Guid.NewGuid();
+                ph.HoraireId = horaireId;
+                ph.DateDebut = plageHoraireDebut;
+                ph.DateFin = plageHoraireFin;
+                ph.ConfirmationPresence = true;
+
+                _context.Add(ph);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
         }
 
 
@@ -161,12 +213,12 @@ namespace SPU.Controllers
             PlageHoraire ph = _context.PlageHoraires.Where(x => x.Id== idPlageHoraire).FirstOrDefault();
 
             vm.id = ph.Id;
-            vm.DateDebutPlageHoraire = ph.DateDebut;
-            vm.DateFinPlageHoraire= ph.DateFin;
-            vm.HeureDebutPlageHoraire = ph.DateDebut.Hour;
-            vm.HeureFinPlageHoraire = ph.DateFin.Hour;
-            vm.MinutesDebutPlageHoraire = ph.DateDebut.Minute;
-            vm.MinutesFinPlageHoraire = ph.DateFin.Minute;
+            vm.DateDebutPlageHoraire = ph.DateDebut.ToLocalTime();
+            vm.DateFinPlageHoraire= ph.DateFin.ToLocalTime();
+            vm.HeureDebutPlageHoraire = ph.DateDebut.ToLocalTime().Hour;
+            vm.HeureFinPlageHoraire = ph.DateFin.ToLocalTime().Hour;
+            vm.MinutesDebutPlageHoraire = ph.DateDebut.ToLocalTime().Minute;
+            vm.MinutesFinPlageHoraire = ph.DateFin.ToLocalTime().Minute;
             vm.Commentaire = ph.Commentaire;
             vm.EstPresent = ph.ConfirmationPresence;
 
@@ -178,47 +230,71 @@ namespace SPU.Controllers
         [HttpPost]
         public IActionResult ModifierPlageHoraire(ModifierPlageHoraireVM vm, string actionType, Guid PlageHoraireId)
         {
-            DateTime plageHoraireDebut = new DateTime(vm.DateDebutPlageHoraire.Year,
+            if(actionType == "supprimer")
+            {
+                // Récupérer la plage horaire existante depuis la base de données
+                PlageHoraire ph = _context.PlageHoraires.FirstOrDefault(x => x.Id == PlageHoraireId);
+
+                if (ph != null)
+                {
+                    _context.PlageHoraires.Remove(ph);
+                    _context.SaveChanges();
+
+                    // Rediriger vers l'action "Horaire" du contrôleur "Horaire"
+                    return RedirectToAction("Horaire", "Horaire", new { horaireId = ph.HoraireId });
+                }
+                else
+                {
+                    // Gérer le cas où la plage horaire n'est pas trouvée
+                    // Vous pouvez renvoyer une vue avec un message d'erreur approprié, par exemple.
+                    return NotFound();
+                }
+            }
+            else if(actionType == "modifier")
+            {
+                DateTime plageHoraireDebut = new DateTime(vm.DateDebutPlageHoraire.Year,
                               vm.DateDebutPlageHoraire.Month,
                               vm.DateDebutPlageHoraire.Day,
                               vm.HeureDebutPlageHoraire,
                               vm.MinutesDebutPlageHoraire,
                               0).ToUniversalTime();
 
-            DateTime plageHoraireFin = new DateTime(vm.DateFinPlageHoraire.Year,
-                              vm.DateFinPlageHoraire.Month,
-                              vm.DateFinPlageHoraire.Day,
-                              vm.HeureFinPlageHoraire,
-                              vm.MinutesFinPlageHoraire,
-                              0).ToUniversalTime();
+                DateTime plageHoraireFin = new DateTime(vm.DateFinPlageHoraire.Year,
+                                  vm.DateFinPlageHoraire.Month,
+                                  vm.DateFinPlageHoraire.Day,
+                                  vm.HeureFinPlageHoraire,
+                                  vm.MinutesFinPlageHoraire,
+                                  0).ToUniversalTime();
 
-            Guid horaireId = _context.PlageHoraires.Where(x => x.Id == PlageHoraireId).FirstOrDefault().HoraireId;
+                Guid horaireId = _context.PlageHoraires.Where(x => x.Id == PlageHoraireId).FirstOrDefault().HoraireId;
 
-            // Récupérer la plage horaire existante depuis la base de données
-            PlageHoraire ph = _context.PlageHoraires.FirstOrDefault(x => x.Id == PlageHoraireId);
+                // Récupérer la plage horaire existante depuis la base de données
+                PlageHoraire ph = _context.PlageHoraires.FirstOrDefault(x => x.Id == PlageHoraireId);
 
-            // Vérifier si la plage horaire existe
-            if (ph != null)
-            {
-                // Mettre à jour les propriétés de la plage horaire avec les nouvelles valeurs
-                ph.HoraireId = horaireId;
-                ph.Commentaire = vm.Commentaire;
-                ph.ConfirmationPresence = vm.EstPresent;
-                ph.DateDebut = plageHoraireDebut;
-                ph.DateFin = plageHoraireFin;
+                // Vérifier si la plage horaire existe
+                if (ph != null)
+                {
+                    // Mettre à jour les propriétés de la plage horaire avec les nouvelles valeurs
+                    ph.HoraireId = horaireId;
+                    ph.Commentaire = vm.Commentaire;
+                    ph.ConfirmationPresence = vm.EstPresent;
+                    ph.DateDebut = plageHoraireDebut;
+                    ph.DateFin = plageHoraireFin;
 
-                // Enregistrer les modifications dans la base de données
-                _context.SaveChanges();
+                    // Enregistrer les modifications dans la base de données
+                    _context.SaveChanges();
 
-                // Rediriger vers l'action "Horaire" du contrôleur "Horaire"
-                return RedirectToAction("Horaire", "Horaire", new { horaireId = ph.HoraireId });
+                    // Rediriger vers l'action "Horaire" du contrôleur "Horaire"
+                    return RedirectToAction("Horaire", "Horaire", new { horaireId = ph.HoraireId });
+                }
+                else
+                {
+                    // Gérer le cas où la plage horaire n'est pas trouvée
+                    // Vous pouvez renvoyer une vue avec un message d'erreur approprié, par exemple.
+                    return NotFound();
+                }
             }
-            else
-            {
-                // Gérer le cas où la plage horaire n'est pas trouvée
-                // Vous pouvez renvoyer une vue avec un message d'erreur approprié, par exemple.
-                return NotFound();
-            }
+            return RedirectToAction("Index", "Horaire");
         }
 
         [HttpPost]
