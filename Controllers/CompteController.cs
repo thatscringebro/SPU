@@ -655,16 +655,61 @@ namespace SPU.Controllers
         public async Task<IActionResult> Remove(Guid id, string role)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
-
             var userRole = role;
 
-            var result = await _userManager.DeleteAsync(user!);
+            
+            if (userRole == null)
+                NotFound();
+            
 
+            if (userRole == "Stagiaire")
+            {
+                var UserADelete = _spuContext.Stagiaires.Where(x => x.utilisateur == user).FirstOrDefault();
+                if (UserADelete == null)
+                    NotFound();
+                else
+                    _spuContext.Remove(UserADelete);
+            }
+            else if (userRole == "Coordonateur")
+            {
+                var UserADelete = _spuContext.Coordonateurs.Where(x => x.utilisateur == user).FirstOrDefault();
+                if (UserADelete == null)
+                    NotFound();
+                else
+                    _spuContext.Remove(UserADelete);
+            }
+            else if ( userRole == "Enseignant")
+            {
+                var UserADelete = _spuContext.Enseignants.Where(x => x.utilisateur == user).FirstOrDefault();
+                if (UserADelete == null)
+                    NotFound();
+                else
+                    _spuContext.Remove(UserADelete);
+            }
+            else if(userRole == "Employeur")
+            {
+                var UserADelete = _spuContext.Employeurs.Where(x => x.utilisateur == user).FirstOrDefault();
+                if (UserADelete == null)
+                    NotFound();
+                else
+                    _spuContext.Remove(UserADelete);
+            }
+            else if (userRole == "MDS")
+            {
+                var UserADelete = _spuContext.MDS.Where(x => x.utilisateur == user).FirstOrDefault();
+                if (UserADelete == null)
+                    NotFound();
+                else
+                    _spuContext.Remove(UserADelete);
+            }
+
+            var result = await _userManager.DeleteAsync(user!);
             if (!result.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Impossible de supprimer un utilisateur. Veuillez réessayer.");
                 return View();
             }
+           
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Remove" });
         }

@@ -34,7 +34,7 @@ namespace SPU.ViewModels
         public string Email { get; set; }
 
         [Display(Name = "Veuillez choisir une entreprise")]
-        public Guid idEmployeurSelectionne { get; set; }
+        public Guid? idEmployeurSelectionne { get; set; }
 
         public List<SelectListItem> Employeurs { get; set; } = new List<SelectListItem>();
     }

@@ -21,7 +21,7 @@ namespace SPU.Domain.Entites
 
 
         public Guid? StagiaireId { get; set; }
-        public Guid EmployeurId { get; set; }
+        public Guid? EmployeurId { get; set; }
         //public Guid HoraireId { get; set; }
         public Guid? ChatId { get; set; }
         public Guid UtilisateurId { get; set; }
@@ -34,7 +34,7 @@ namespace SPU.Domain.Entites
         //[ForeignKey(nameof(idHoraire))] virtual
         //public Horaire horaire { get; set; }
         //[ForeignKey(nameof(idEmployeur))] virtual
-        public Employeur employeur { get; set; }
+        public Employeur? employeur { get; set; }
         //[ForeignKey(nameof(idStagiaire))] virtual
         public Stagiaire? stagiaire { get; set; }
 

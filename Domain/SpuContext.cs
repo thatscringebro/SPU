@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SPU.Domain.Entites;
 
 
+
 namespace SPU.Domain
 {
     public class SpuContext : IdentityDbContext<Utilisateur, IdentityRole<Guid>, Guid>
@@ -32,7 +33,25 @@ namespace SPU.Domain
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); 
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<MDS>().HasOne(m => m.stagiaire).WithMany().HasForeignKey(m => m.StagiaireId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<MDS>().HasOne(m => m.employeur).WithMany().HasForeignKey(m => m.EmployeurId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<MDS>().HasOne(m => m.chat).WithMany().HasForeignKey(m => m.ChatId).OnDelete(DeleteBehavior.SetNull);
+
+
+            modelBuilder.Entity<Stagiaire>().HasOne(m => m.enseignant).WithMany().HasForeignKey(c => c.EnseignantId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Stagiaire>().HasOne(m => m.ecole).WithMany().HasForeignKey(c => c.EcoleId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Stagiaire>().HasOne(c => c.chat).WithMany().HasForeignKey(c => c.ChatId).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Stagiaire>().HasOne(c => c.employeur).WithMany().HasForeignKey(c => c.EmployeurId).OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Coordonateur>().HasOne(c => c.ecole).WithMany().HasForeignKey(c => c.EcoleId).OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Enseignant>().HasOne(c => c.ecole).WithMany().HasForeignKey(c => c.EcoleId);
+
+            modelBuilder.Entity<Employeur>().HasOne(c => c.adresse).WithMany().HasForeignKey(c => c.AdresseId).OnDelete(DeleteBehavior.SetNull);
+
+
             modelBuilder.Seed();
         }
 
