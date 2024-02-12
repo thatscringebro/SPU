@@ -57,7 +57,7 @@ namespace SignalRChat.Hubs
                 ChatId = Guid.Parse(room), 
             };
 
-            string username = _context.Utilisateurs.Find(Guid.Parse(user)).Nom;
+            string username = _context.Utilisateurs.Find(Guid.Parse(user)).NomComplet;
 
             _context.Message.Add(m);
             _context.SaveChanges();

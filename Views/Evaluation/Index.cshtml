@@ -1,8 +1,93 @@
+@model SPU.Domain.Entites.Utilisateur
+@using SPU.Domain.Entites
+@using SPU.Domain
+
 @{
     ViewData["Title"] = "Home Page";
+    SpuContext context = new SpuContext();
+    Coordonateur coordo = context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == Model.Id);
+    Enseignant ens = context.Enseignants.FirstOrDefault(x => x.UtilisateurId == Model.Id); 
+    Stagiaire stag = context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == Model.Id);
+    MDS mds = context.MDS.FirstOrDefault(x => x.UtilisateurId == Model.Id);
 }
 
 <div class="text-center">
     <h1 class="display-4">Évaluations</h1>
-    <p>Ici vonts les évaluations</p>
+    @if(coordo != null) {
+      <h2>Veuillez vous connecter avec votre compte enseignant</h2>
+    } else if (ens != null) {
+      List<Evaluation> evals = context.Evaluations.Where(x => x.EnseignantId == ens.Id).OrderBy(x => x.lienGoogleForm).ToList();
+      var groupedEvals = evals.GroupBy(x => x.lienGoogleForm)
+                        .Select(group => new {
+                            LienGoogleForm = group.Key,
+                            QuantiteConsulte = group.Sum(x => x.consulter ? 1 : 0),
+                            QuantiteActif = group.Sum(x => x.actif ? 1 : 0)
+                        }).ToList();
+
+      <button id="addEvaluationBtn" class="btn btn-success">Ajouter une évalutation</button>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Actions</th>
+            <th>Lien externe</th>
+            <th>Nombre consulté</th>
+            <th>Nombre actif</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var eval in groupedEvals)
+          {
+            <tr>
+              <td>allo</td>
+              <td>@eval.LienGoogleForm</td>
+              <td>@eval.QuantiteConsulte</td>
+              <td>@eval.QuantiteActif</td>
+            </tr>
+          } 
+        </tbody>
+      </table>
+
+      <!-- Modal -->
+      <div class="modal" tabindex="-1" role="dialog" id="addEvaluationModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Nouvelle évaluation</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Form to add new evaluation -->
+              <!-- Replace with your form inputs -->
+              <form>
+                <div class="form-group">
+                  <label for="evaluationUrl">URL de l'évaluation</label>
+                  <input type="text" class="form-control" id="evaluationUrl">
+                </div>
+                <div class="form-group">
+                  <label for="stagiaireOrMDS">Stagiaire ou MDS?</label>
+                  <input type="radio" id="stagiaireRadio" name="stagiaireOrMDS" value="stagiaire">
+                  <label for="stagiaireRadio">Stagiaire</label>
+                  <input type="radio" id="mdsRadio" name="stagiaireOrMDS" value="mds">
+                  <label for="mdsRadio">MDS</label>
+                </div>
+                <div class="form-group">
+                  <label for="evaluationActif">Évaluation active?</label>
+                  <input type="checkbox" id="evaluationActif">
+                </div>
+                <button type="submit" class="btn btn-primary">Créer évaluation</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <script>
+        // Show modal when "Ajouter une évaluation" button is clicked
+        document.getElementById('addEvaluationBtn').addEventListener('click', function() {
+          $('#addEvaluationModal').modal('show');
+        });
+      </script>
+    }
 </div>
