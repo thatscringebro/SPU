@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SPU.Domain;
 using SPU.Domain.Entites;
+using SPU.Enum;
 using SPU.ViewModels;
 using System.Security.Cryptography;
 
@@ -122,30 +123,6 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-
-        //A ENLEVER???? À REFLECHIRRRR
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Register()
-        {
-            //var model = new UtilisateurCreationVM();
-
-            //model.Ecoles = _spuContext.Ecole.Select( e => new SelectListItem
-            //{
-            //    Value = e.id.ToString(),
-            //    Text = e.Nom
-            //}).ToList();
-
-            //return View(model);
-
-            ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
-            {
-                Value = e.id.ToString(),
-                Text = e.Nom
-            }).ToList();
-
-            return View();
-        }
 
         [AllowAnonymous]
         [HttpGet]
@@ -485,11 +462,19 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(Manage));
         }
 
+
         [AllowAnonymous]
         //EDIT MDS
         //[Authorize(Roles = "Coordinateur")]
+        [HttpGet]
         public async Task<IActionResult> EditMDS(Guid id)
         {
+            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+
             var user = await _userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
@@ -501,18 +486,21 @@ namespace SPU.Controllers
             if(userMDS == null)
                 return NotFound();
 
+            //var empId = await _spuContext.Employeurs.Where(userMDS.emp)
+
             var modifUser = new MDSEditVM
             {
                 Id = userMDS.Id,
+                userName = userMDS.utilisateur.UserName,
                 Nom = userMDS.utilisateur.Nom,
                 Prenom = userMDS.utilisateur.Prenom,
                 PhoneNumber = userMDS.utilisateur.PhoneNumber,
-                userName = userMDS.utilisateur.UserName,
                 MatriculeId = userMDS.MatriculeId,
-                civilite = userMDS.civilite,
-                NomEmployeur = userMDS.NomEmployeur,
+                Civilite = userMDS.civilite,
+                //NomEmployeur = userMDS.NomEmployeur,
                 telMaison = userMDS.telMaison,
                 TypeEmployeur = userMDS.typeEmployeur,
+                idEmployeurSelectionne = userMDS.EmployeurId,
                 Email = userMDS.utilisateur.Email,
                 
             };
@@ -527,7 +515,6 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
         {
-          
             if (!ModelState.IsValid)
                 return View(vm);
 
@@ -539,31 +526,41 @@ namespace SPU.Controllers
             aEditer.PhoneNumber = vm.PhoneNumber;
             aEditer.Email = vm.Email;
             aEditer.UserName = vm.userName;
-            MdsaEditer.MatriculeId = vm.MatriculeId;
+
             MdsaEditer.utilisateur = aEditer;
-            MdsaEditer.civilite = vm.civilite;
-            MdsaEditer.NomEmployeur = vm.NomEmployeur;
+
+            MdsaEditer.MatriculeId = vm.MatriculeId;
+            MdsaEditer.civilite = vm.Civilite;
+            //MdsaEditer.NomEmployeur = vm.NomEmployeur;
+            MdsaEditer.EmployeurId = vm.idEmployeurSelectionne;
             MdsaEditer.telMaison = vm.telMaison;
             MdsaEditer.typeEmployeur = vm.TypeEmployeur;
 
 
-            var works = _userManager.UpdateAsync(aEditer);
+            var works = await _userManager.UpdateAsync(aEditer);
           
             if (works != null)
+            {
                 TempData["SuccessMessage"] = "Modifications succeeded";
-            else
-                TempData["ErrorMessage"] = "Request failed";
-           
-            _spuContext.MDS.Update(MdsaEditer);
-            await _spuContext.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Manage));
+                _spuContext.MDS.Update(MdsaEditer);
+                await _spuContext.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Manage));
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Request failed";
+                return View(vm);
+            }
+
         }
 
 
         [AllowAnonymous]
         //EDIT EMPLOYEUR
         //[Authorize(Roles = "Coordinateur")]
+        [HttpGet]
         public async Task<IActionResult> EditEmployeur(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
@@ -574,26 +571,26 @@ namespace SPU.Controllers
 
             var userEmployeur = await _spuContext.Employeurs.Where(x => x.UtilisateurId == user.Id).FirstOrDefaultAsync();
 
+            var userAdresse = await _spuContext.Employeurs.Where(a => a.AdresseId == userEmployeur.AdresseId).Select(a => a.adresse).FirstOrDefaultAsync();
+
             if (userEmployeur == null)
                 return NotFound();
 
-            var modifUser = new EntrepriseEditVM
+            var modifUser = new EmployeurEditVM
             {
                 Id = userEmployeur.Id,
+                userName = userEmployeur.utilisateur.UserName,
                 Nom = userEmployeur.utilisateur.Nom,
                 Prenom = userEmployeur.utilisateur.Prenom,
                 PhoneNumber = userEmployeur.utilisateur.PhoneNumber,
-                userName = userEmployeur.utilisateur.UserName,
-                codePostal = userEmployeur.adresse.CodePostal,
-                NomDeRue = userEmployeur.adresse.Rue,
-                NumeroDeRue = userEmployeur.adresse.NoCivique,
-                pays = userEmployeur.adresse.Pays,
-                province = userEmployeur.adresse.Province,
-                ville = userEmployeur.adresse.Ville,
-                Email = userEmployeur.utilisateur.Email
+                Email = userEmployeur.utilisateur.Email,
+                CodePostal = userAdresse.CodePostal,
+                NomDeRue = userAdresse.Rue,
+                NumeroDeRue = userAdresse.NoCivique,
+                Pays = userAdresse.Pays,
+                Province = userAdresse.Province,
+                Ville = userAdresse.Ville
                 
-               
-
             };
 
 
@@ -604,7 +601,7 @@ namespace SPU.Controllers
         [AllowAnonymous]
         //[Authorize(Roles = "Coordinateur")]
         [HttpPost]
-        public async Task<IActionResult> EditEmployeur(Guid id, EntrepriseEditVM vm)
+        public async Task<IActionResult> EditEmployeur(Guid id, EmployeurEditVM vm)
         {
 
             if (!ModelState.IsValid)
@@ -613,32 +610,41 @@ namespace SPU.Controllers
             var aEditer = await _userManager.FindByIdAsync(id.ToString()) ?? throw new ArgumentOutOfRangeException(nameof(id));
             var userEmployeur = _spuContext.Employeurs.Where(x => x.UtilisateurId == aEditer.Id).FirstOrDefault();
 
+            var userAdresse = await _spuContext.Employeurs.Where(a => a.AdresseId == userEmployeur.AdresseId).Select(a => a.adresse).FirstOrDefaultAsync();
+
             aEditer.Nom = vm.Nom;
             aEditer.Prenom = vm.Prenom;
             aEditer.PhoneNumber = vm.PhoneNumber;
             aEditer.Email = vm.Email;
             aEditer.UserName = vm.userName;
-            userEmployeur.adresse.Province = vm.province;
-            userEmployeur.adresse.NoCivique = vm.NumeroDeRue;
-            userEmployeur.adresse.Rue = vm.NomDeRue;
-            userEmployeur.adresse.CodePostal = vm.codePostal;
-            userEmployeur.adresse.Ville = vm.ville;
+
             userEmployeur.utilisateur = aEditer;
 
-
+            userAdresse.Province = vm.Province;
+            userAdresse.NoCivique = vm.NumeroDeRue;
+            userAdresse.Rue = vm.NomDeRue;
+            userAdresse.CodePostal = vm.CodePostal;
+            userAdresse.Ville = vm.Ville;
 
 
             var works = _userManager.UpdateAsync(aEditer);
 
             if (works != null)
+            {
                 TempData["SuccessMessage"] = "Modifications succeeded";
+
+                _spuContext.Adresses.Update(userAdresse);
+                _spuContext.Employeurs.Update(userEmployeur);
+                await _spuContext.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Manage));
+            }
             else
+            {
                 TempData["ErrorMessage"] = "Request failed";
+                return View(vm);
+            }
 
-            _spuContext.Employeurs.Update(userEmployeur);
-            await _spuContext.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Manage));
         }
 
 

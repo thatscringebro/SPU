@@ -39,7 +39,16 @@
                     @Html.DisplayFor(modelItem => item.Prenom)
                 </td>
                 <td>
-                    @Html.ActionLink("Modifier", "EditUtilisateur", "Compte", new { id = item.Id}, new { @class = "btn btn-primary" })
+                    @if (item.role == "MDS")
+                    {
+                        @Html.ActionLink("Modifier", "EditMDS", "Compte", new {id=item.Id}, new {@class = "btn btn-primary"})
+                    }
+                    else if (item.role == "Employeur")
+                    {
+                        @Html.ActionLink("Modifier", "EditEmployeur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                    }
+                    else
+                        @Html.ActionLink("Modifier", "EditUtilisateur", "Compte", new { id = item.Id}, new { @class = "btn btn-primary" })
                 </td>
             </tr>
         }
