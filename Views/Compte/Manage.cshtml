@@ -48,7 +48,15 @@
                         @Html.ActionLink("Modifier", "EditEmployeur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
                     }
                     else
+                    {
                         @Html.ActionLink("Modifier", "EditUtilisateur", "Compte", new { id = item.Id}, new { @class = "btn btn-primary" })
+                    }
+
+                    <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
+                        <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
+                            Supprimer
+                        </button>
+                    </form>
                 </td>
             </tr>
         }
@@ -56,5 +64,17 @@
 </table>
 
 @section Scripts {
-    
+    <script>
+        $(function() {
+            $('.delete-button').click(function() {
+                const nomComplet = $(this).data('prenom') + ' ' + $(this).data('nom') || "this item";
+
+                const message = `Voulez-vous vraiment supprimer ${nomComplet}?`;
+
+                if(confirm(message)) {
+                    $(this).parent("form").submit();
+                }
+            });
+        });
+    </script>
 }

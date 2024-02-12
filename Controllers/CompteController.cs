@@ -652,10 +652,11 @@ namespace SPU.Controllers
         //REMOVE POUR TOUS LE MONDE 
         //[Authorize(Roles = "Coordinateur")]
         [HttpPost]
-        public async Task<IActionResult> Remove(Guid id)
+        public async Task<IActionResult> Remove(Guid id, string role)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
 
+            var userRole = role;
 
             var result = await _userManager.DeleteAsync(user!);
 
