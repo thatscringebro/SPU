@@ -47,7 +47,7 @@ namespace SPU.Domain
 
             modelBuilder.Entity<Coordonateur>().HasOne(c => c.ecole).WithMany().HasForeignKey(c => c.EcoleId).OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<Enseignant>().HasOne(c => c.ecole).WithMany().HasForeignKey(c => c.EcoleId);
+            modelBuilder.Entity<Enseignant>().HasOne(c => c.ecole).WithMany().HasForeignKey(c => c.EcoleId).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Employeur>().HasOne(c => c.adresse).WithMany().HasForeignKey(c => c.AdresseId).OnDelete(DeleteBehavior.SetNull);
 
