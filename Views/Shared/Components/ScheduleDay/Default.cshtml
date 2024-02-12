@@ -274,7 +274,7 @@
             heuresDiv.classList.add('heures');
 
             // Ajoute les 96 quarts d'heure à l'élément <div> des heures
-            for (var i = 0; i < 96; i++) {
+            for (var quartHeure = 0; quartHeure < 96; quartHeure++) {
                 let isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
                 let IdPlageHoraire = '';
 
@@ -288,22 +288,26 @@
                     // Si le quart de travail commence et se termine le même jour
                     if (new Date(item.DateDebutQuart).toDateString() === new Date(item.DateFinQuart).toDateString()) {
                         // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
-                        if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= i * 15 && i * 15 < finQuartMinutes) {
+                        if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15 && quartHeure * 15 < finQuartMinutes) {
                             isWorkingHour = true;
                             IdPlageHoraire = item.Id;
+                            console.log("1");
                             break;
                         }
                     } else { // Si le quart de travail commence un jour et se termine le lendemain
                         // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
-                        if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= i * 15) {
+                        if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15) {
                             isWorkingHour = true;
                             IdPlageHoraire = item.Id;
+                            console.log("2");
                             break;
                         }
                         // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
-                        if (new Date(item.DateFinQuart).toDateString() === journee.toDateString() && i * 15 < finQuartMinutes) {
+                        if (new Date(item.DateFinQuart).toDateString() === journee.toDateString() && quartHeure * 15 < finQuartMinutes) {
                             isWorkingHour = true;
                             IdPlageHoraire = item.Id;
+                            console.log(i*15);
+                            console.log(finQuartMinutes);
                             break;
                         }
                     }
@@ -317,7 +321,7 @@
                     quartHeureElement.classList.add('idPlageHoraire-' + IdPlageHoraire);
                     quartHeureElement.style.backgroundColor = 'lightblue';
                 }
-                if (i % 4 === 3) {
+                if (quartHeure % 4 === 3) {
                     quartHeureElement.style.borderBottom = '1px solid lightgrey';
                 }
 
