@@ -655,61 +655,54 @@ namespace SPU.Controllers
         public async Task<IActionResult> Remove(Guid id, string role)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
-            var userRole = role;
-
-            
-            if (userRole == null)
-                NotFound();
-            
-
-            if (userRole == "Stagiaire")
+            if (user == null)
             {
-                var UserADelete = _spuContext.Stagiaires.Where(x => x.utilisateur == user).FirstOrDefault();
-                if (UserADelete == null)
-                    NotFound();
-                else
-                    _spuContext.Remove(UserADelete);
-            }
-            else if (userRole == "Coordonateur")
-            {
-                var UserADelete = _spuContext.Coordonateurs.Where(x => x.utilisateur == user).FirstOrDefault();
-                if (UserADelete == null)
-                    NotFound();
-                else
-                    _spuContext.Remove(UserADelete);
-            }
-            else if ( userRole == "Enseignant")
-            {
-                var UserADelete = _spuContext.Enseignants.Where(x => x.utilisateur == user).FirstOrDefault();
-                if (UserADelete == null)
-                    NotFound();
-                else
-                    _spuContext.Remove(UserADelete);
-            }
-            else if(userRole == "Employeur")
-            {
-                var UserADelete = _spuContext.Employeurs.Where(x => x.utilisateur == user).FirstOrDefault();
-                if (UserADelete == null)
-                    NotFound();
-                else
-                    _spuContext.Remove(UserADelete);
-            }
-            else if (userRole == "MDS")
-            {
-                var UserADelete = _spuContext.MDS.Where(x => x.utilisateur == user).FirstOrDefault();
-                if (UserADelete == null)
-                    NotFound();
-                else
-                    _spuContext.Remove(UserADelete);
+                return NotFound();
             }
 
-            var result = await _userManager.DeleteAsync(user!);
+            switch (role)
+            {
+                case "Stagiaire":
+                    var stagiaire = _spuContext.Stagiaires.FirstOrDefault(x => x.utilisateur == user);
+                    if (stagiaire == null)
+                        return NotFound();
+                    _spuContext.Remove(stagiaire);
+                    break;
+                case "Coordonateur":
+                    var coordonateur = _spuContext.Coordonateurs.FirstOrDefault(x => x.utilisateur == user);
+                    if (coordonateur == null)
+                        return NotFound();
+                    _spuContext.Remove(coordonateur);
+                    break;
+                case "Enseignant":
+                    var enseignant = _spuContext.Enseignants.FirstOrDefault(x => x.utilisateur == user);
+                    if (enseignant == null)
+                        return NotFound();
+                    _spuContext.Remove(enseignant);
+                    break;
+                case "Employeur":
+                    var employeur = _spuContext.Employeurs.FirstOrDefault(x => x.utilisateur == user);
+                    if (employeur == null)
+                        return NotFound();
+                    _spuContext.Remove(employeur);
+                    break;
+                case "MDS":
+                    var mds = _spuContext.MDS.FirstOrDefault(x => x.utilisateur == user);
+                    if (mds == null)
+                        return NotFound();
+                    _spuContext.Remove(mds);
+                    break;
+                default:
+                    return NotFound();
+            }
+
+            var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Impossible de supprimer un utilisateur. Veuillez réessayer.");
                 return View();
             }
-           
+
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Remove" });
         }

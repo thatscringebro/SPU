@@ -13,7 +13,7 @@ namespace SPU.Domain
         public DbSet<Utilisateur> Utilisateurs { get; set; }
         public DbSet<Adresse> Adresses { get; set; }
         public DbSet<Chat> Chats { get; set; }
-        //public DbSet<ConfirmationTemps> ConfirmationTemps { get; set; }
+
         //public DbSet<Contrat> Contrats { get; set; }
         public DbSet<Coordonateur> Coordonateurs { get; set; }
 
@@ -38,7 +38,6 @@ namespace SPU.Domain
             modelBuilder.Entity<MDS>().HasOne(m => m.stagiaire).WithMany().HasForeignKey(m => m.StagiaireId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<MDS>().HasOne(m => m.employeur).WithMany().HasForeignKey(m => m.EmployeurId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<MDS>().HasOne(m => m.chat).WithMany().HasForeignKey(m => m.ChatId).OnDelete(DeleteBehavior.SetNull);
-
 
             modelBuilder.Entity<Stagiaire>().HasOne(m => m.enseignant).WithMany().HasForeignKey(c => c.EnseignantId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<Stagiaire>().HasOne(m => m.ecole).WithMany().HasForeignKey(c => c.EcoleId).OnDelete(DeleteBehavior.SetNull);
