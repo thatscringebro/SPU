@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using SignalRChat.Hubs;
 using SPU.Domain;
 using SPU.Domain.Entites;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,10 @@ builder.Services.Configure<IdentityOptions>(options =>
 	// User settings.
 	options.User.RequireUniqueEmail = false;
 });
+
+//FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
