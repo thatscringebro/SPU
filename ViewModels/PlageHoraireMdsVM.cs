@@ -17,5 +17,7 @@ namespace SPU.ViewModels
         public int MinutesDebutPlageHoraire { get; set; }
         public int HeureFinPlageHoraire { get; set; }
         public int MinutesFinPlageHoraire { get; set; }
+
+        public bool Recurrence { get; set; }
     }
 }
