@@ -49,11 +49,7 @@ namespace SPU.Controllers
                 return hex;
             }
         }
-        [AllowAnonymous]
-        public ActionResult ChoixCreation()
-        {
-            return View();
-        }
+     
 
 
         #region login
@@ -112,9 +108,17 @@ namespace SPU.Controllers
         #endregion
 
         #region Manage
+        //[AllowAnonymous]
+        [Authorize(Roles = "Coordonateur")]
+        public ActionResult ChoixCreation()
+        {
+            return View();
+        }
+
+
         //CRUD pour utilisateur 
-        //[Authorize(Roles = "Coordonateur")]
-        [AllowAnonymous] // A ENLEVER APRES LES TESTS
+        //[AllowAnonymous] 
+        [Authorize(Roles = "Coordonateur")]
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
         {
             var vm = new List<UtilisateurDetailVM>();
@@ -192,7 +196,6 @@ namespace SPU.Controllers
 
 
         //CREATION STAGIAIRE/COORDO/ENSEIGNANT
-        //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
@@ -286,9 +289,9 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         //EDIT STAGIAIRE/COORDO/ENSEIGNANT
-        //[Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordinateur")]
         [HttpGet]
         public async Task<IActionResult> EditUtilisateur(Guid id)
         {
@@ -311,8 +314,8 @@ namespace SPU.Controllers
             return View(modifUser);
         }
 
-        [AllowAnonymous]
-        //[Authorize(Roles = "Coordinateur")]
+        //[AllowAnonymous]
+        [Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> EditUtilisateur(Guid id, UtilisateurEditVM vm)
         {
@@ -366,7 +369,6 @@ namespace SPU.Controllers
         }
 
         //CREATION MDS
-        //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
@@ -436,9 +438,9 @@ namespace SPU.Controllers
         }
 
 
-        [AllowAnonymous]
+        
         //EDIT MDS
-        //[Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordinateur")]
         [HttpGet]
         public async Task<IActionResult> EditMDS(Guid id)
         {
@@ -483,8 +485,8 @@ namespace SPU.Controllers
         }
 
 
-        [AllowAnonymous]
-        //[Authorize(Roles = "Coordinateur")]
+       
+        [Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
         {
@@ -625,9 +627,9 @@ namespace SPU.Controllers
 
 
 
-        [AllowAnonymous]
+       
         //EDIT EMPLOYEUR
-        //[Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordinateur")]
         [HttpGet]
         public async Task<IActionResult> EditEmployeur(Guid id)
         {
@@ -666,8 +668,8 @@ namespace SPU.Controllers
         }
 
 
-        [AllowAnonymous]
-        //[Authorize(Roles = "Coordinateur")]
+        //[AllowAnonymous]
+        [Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> EditEmployeur(Guid id, EmployeurEditVM vm)
         {
@@ -717,9 +719,9 @@ namespace SPU.Controllers
         #endregion
 
         #region Remove 
-        [AllowAnonymous]
+        
         //REMOVE POUR TOUS LE MONDE 
-        //[Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordinateur")]
         [HttpPost]
         public async Task<IActionResult> Remove(Guid id, string role)
         {
@@ -780,10 +782,7 @@ namespace SPU.Controllers
 
         #region Relier 
 
-
-
-        //[Authorize(Roles = "Coordonateur")]
-        [AllowAnonymous] // A ENLEVER APRES LES TESTS
+        [Authorize(Roles = "Coordonateur")]
         [HttpGet]
         public async Task<IActionResult> Relier()
         {
@@ -824,7 +823,7 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Coordonateur")]
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid idMdsSelectionne1, Guid idMdsSelectionne2, Guid idEnseignantSelectionne)
         {
