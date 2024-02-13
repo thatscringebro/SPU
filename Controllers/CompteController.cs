@@ -83,10 +83,20 @@ namespace SPU.Controllers
                     return View(vm);
                 }
 
+                var user =  _userManager.Users.FirstOrDefault(r => r.UserName == vm.UserName);
+                var role = await _userManager.GetRolesAsync(user);
+                var roleUser = role.FirstOrDefault();
+
+                if (roleUser == "Coordonateur")
+                    return RedirectToAction(nameof(Manage));
+
                 if (!string.IsNullOrEmpty(returnUrl))
                     return Redirect(returnUrl);
 
-                return RedirectToAction("Index", "Home");
+
+               
+                    return RedirectToAction("Index", "Home");
+
             }
             catch
             {
