@@ -226,15 +226,15 @@
     var dateDebut = new Date('@dateDebut.ToString("yyyy-MM-ddTHH:mm:ss")');
     var dateFin = new Date('@dateFin.ToString("yyyy-MM-ddTHH:mm:ss")');
 
-    console.log('@modelJson');
+    @*console.log('@modelJson');*@
     var modelJS = '@modelJson'
 
     modelJS = modelJS.replaceAll('&quot;', '"')
 
-    console.log(modelJS);
+    @*console.log(modelJS);*@
 
     var model = JSON.parse(modelJS);
-    console.log(model);
+    @*console.log(model);*@
 
     function afficherSemaine(dateDebut, dateFin) {
         // Sélectionne l'élément <ul> dans lequel les jours seront affichés
@@ -324,8 +324,8 @@
                             quartHeureElement.addEventListener("click", function () {
 
                                 //Maître de stage
-                                console.log(idPlageHoraire);
-                                console.debug;
+                                @*console.log(idPlageHoraire);*@
+                                @*console.debug;*@
                                 window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
 
                                 //Stagiaire
@@ -391,7 +391,7 @@
             }
             const data = await response.json();
 
-            console.log('Informations de la plage horaire :', data);
+            @*console.log('Informations de la plage horaire :', data);*@
 
             const debutQuart = new Date(data.dateDebutQuart);
             const finQuart = new Date(data.dateFinQuart);
@@ -440,8 +440,8 @@
                     div.addEventListener("click", function () {
 
                         //Maître de stage
-                        console.log(idPlageHoraire);
-                        console.debug;
+                        @*console.log(idPlageHoraire);*@
+                        @*console.debug;*@
                         window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
 
                         //Stagiaire
