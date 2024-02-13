@@ -280,6 +280,7 @@
             // Ajoute les 96 quarts d'heure à l'élément <div> des heures
             for (var quartHeure = 0; quartHeure < 96; quartHeure++) {
                 let isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
+                let Present = true;
                 let IdPlageHoraire = '';
 
                 for (let i = 0; i < model.length; i++) {
@@ -288,6 +289,12 @@
                     // Convertir la date de début et de fin du quart en minutes
                     const debutQuartMinutes = new Date(item.DateDebutQuart).getHours() * 60 + new Date(item.DateDebutQuart).getMinutes();
                     const finQuartMinutes = new Date(item.DateFinQuart).getHours() * 60 + new Date(item.DateFinQuart).getMinutes();
+
+                    //vérifie présence
+                    if (item.Present)
+                        Present = true;
+                    else
+                        Present = false;
 
                     // Si le quart de travail commence et se termine le même jour
                     if (new Date(item.DateDebutQuart).toDateString() === new Date(item.DateFinQuart).toDateString()) {
@@ -319,7 +326,13 @@
                 quartHeureElement.style.height = '5.266666px';
                 if (isWorkingHour) {
                     quartHeureElement.classList.add('idPlageHoraire-' + IdPlageHoraire);
-                    quartHeureElement.style.backgroundColor = 'lightblue';
+
+                    if(Present == false)
+                        quartHeureElement.style.backgroundColor = 'lightgrey';
+                    else
+                        quartHeureElement.style.backgroundColor = 'lightblue';
+
+
                     var classes = quartHeureElement.classList;
                     for (var i = 0; i < classes.length; i++) {
                         var match = classes[i].match(/^idPlageHoraire-(.*)$/);
