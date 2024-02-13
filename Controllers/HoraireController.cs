@@ -139,8 +139,14 @@ namespace SPU.Controllers
         [HttpPost]
         public IActionResult AjoutPlageHoraireMDS(PlageHoraireMdsVM vm, Guid horaireId)
         {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.horaireId = horaireId;
+                return View(vm);
+            }
+
             //Si il y a de la récurrence
-            if(vm.Recurrence)
+            if (vm.Recurrence)
             {
                 Horaire horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
 
@@ -237,7 +243,12 @@ namespace SPU.Controllers
         [HttpPost]
         public IActionResult ModifierPlageHoraire(ModifierPlageHoraireVM vm, string actionType, Guid PlageHoraireId)
         {
-            if(actionType == "supprimer")
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            if (actionType == "supprimer")
             {
                 // Récupérer la plage horaire existante depuis la base de données
                 PlageHoraire ph = _context.PlageHoraires.FirstOrDefault(x => x.Id == PlageHoraireId);

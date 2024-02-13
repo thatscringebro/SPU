@@ -54,6 +54,7 @@
         </div>
         <div>
             Date : <input class="form-control" type="date" asp-for="DateDebutPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            <span asp-validation-for="DateDebutPlageHoraire" class="text-danger"></span>
         </div>
         <div class="row">
             <div class="col-6">
@@ -64,6 +65,7 @@
                         <option value="@i">@i.ToString("00")</option>
                     }
                 </select>
+                <span asp-validation-for="HeureDebutPlageHoraire" class="text-danger"></span>
             </div>
             <div class="col-6">
                 <label for="minutes">Minutes :</label>
@@ -73,6 +75,7 @@
                     <option value="30">30</option>
                     <option value="45">45</option>
                 </select>
+                <span asp-validation-for="MinutesDebutPlageHoraire" class="text-danger"></span>
             </div>
         </div>
         <br />
@@ -82,6 +85,7 @@
         </div>
         <div>
             Date : <input class="form-control" type="date" asp-for="DateFinPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            <span asp-validation-for="DateFinPlageHoraire" class="text-danger"></span>
         </div>
         <div class="row">
             <div class="col-6">
@@ -92,6 +96,7 @@
                         <option value="@i">@i.ToString("00")</option>
                     }
                 </select>
+                <span asp-validation-for="HeureFinPlageHoraire" class="text-danger"></span>
             </div>
             <div class="col-6">
                 <label for="minutes">Minutes :</label>
@@ -101,6 +106,7 @@
                     <option value="30">30</option>
                     <option value="45">45</option>
                 </select>
+                <span asp-validation-for="MinutesFinPlageHoraire" class="text-danger"></span>
             </div>
         </div>
         <br />
