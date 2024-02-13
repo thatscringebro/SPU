@@ -802,10 +802,9 @@ namespace SPU.Controllers
             }).ToList();
             try
             {
-                foreach (var user in _spuContext.Stagiaires.Include(s => s.utilisateur).ToList())
+                foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
                 {
-                    // Récupération des MDS liés à ce stagiaire
-                    //var lstMds = _spuContext.MDS.Where(m => m.Stagiaires.Any(s => s.Id == user.Id)).Include(m => m.utilisateur).ToList();
+                    List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
 
                     vm.Add(new StagiairesEditVM
                     {
@@ -813,8 +812,8 @@ namespace SPU.Controllers
                         Prenom = user.utilisateur?.Prenom,
                         Nom = user.utilisateur?.Nom,
                         idEnseignantSelectionne = user.EnseignantId,
-                        idMdsSelectionne1 = user.MDSId1, //lstMds.ElementAtOrDefault(0)?.Id,
-                        idMdsSelectionne2 = user.MDSId2 //lstMds.ElementAtOrDefault(1)?.Id
+                        idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
+                        idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id
                     });
                 }
             }
@@ -841,16 +840,19 @@ namespace SPU.Controllers
                 Value = e.Id.ToString(),
                 Text = e.utilisateur.UserName
             }).ToList();
-            foreach (var user in _spuContext.Stagiaires.Include(s => s.utilisateur).ToList())
+
+            foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
             {
+                List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
+
                 vm.Add(new StagiairesEditVM
                 {
                     Id = user.Id,
                     Prenom = user.utilisateur?.Prenom,
                     Nom = user.utilisateur?.Nom,
                     idEnseignantSelectionne = user.EnseignantId,
-                    idMdsSelectionne1 = user.MDSId1,
-                    idMdsSelectionne2 = user.MDSId2
+                    idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
+                    idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id
                 });
             }
 
@@ -876,27 +878,25 @@ namespace SPU.Controllers
             }
 
 
-            var isMds1AlreadyAssigned = _spuContext.Stagiaires.Any(s => s.Id != idStagiaire && s.MDSId1 == idMdsSelectionne1);
-            var isMds2AlreadyAssigned = _spuContext.Stagiaires.Any(s => s.Id != idStagiaire && s.MDSId2 == idMdsSelectionne2);
+            var MdsaEditer1 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne1).FirstOrDefault();
+                var MdsaEditer2 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne2).FirstOrDefault();
+                var StagiaireAediter = _spuContext.Stagiaires.Where(x => x.Id == idStagiaire).FirstOrDefault();
 
-            if (isMds1AlreadyAssigned || isMds2AlreadyAssigned)
-            {
-                TempData["ErrorMessage"] = "L'un des maîtres de stage sélectionnés est déjà associé à un autre stagiaire. Veuillez sélectionner un autre maître de stage.";
-                return View("Relier", vm);
-            }
-            else
-            {
-                Stagiaire.MDSId1 = idMdsSelectionne1;
-                Stagiaire.MDSId2 = idMdsSelectionne2;
+                MdsaEditer1.StagiaireId = idStagiaire;
+                var succes1 = _spuContext.MDS.Update(MdsaEditer1);
+                MdsaEditer2.StagiaireId = idStagiaire;
+                var succes2 = _spuContext.MDS.Update(MdsaEditer2);
+                StagiaireAediter.EnseignantId = idEnseignantSelectionne;
+                var succes3 = _spuContext.Stagiaires.Update(StagiaireAediter);
 
-                Stagiaire.EnseignantId = idEnseignantSelectionne;
+                if (succes1 != null && succes2 != null && succes3 != null)
+                {
+                    TempData["SuccessMessage"] = "Modifications réussies";
 
-                await _spuContext.SaveChangesAsync();
+                    await _spuContext.SaveChangesAsync();
+                }
 
-                TempData["SuccessMessage"] = "Modifications réussies";
-                return RedirectToAction("Relier");
-            }
-
+            return RedirectToAction("Relier");
         }
         #endregion
 

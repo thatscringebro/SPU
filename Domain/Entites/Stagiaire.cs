@@ -12,10 +12,10 @@ namespace SPU.Domain.Entites
         public Guid? EmployeurId { get; set; }
         public Guid EcoleId { get; set; }
         //[ForeignKey(nameof(MDS))] virtual
-        public MDS MDS2 { get; set; }
-        public Guid? MDSId2 { get; set; }
-        public MDS MDS1 { get; set; }
-        public Guid? MDSId1 { get; set; }
+        //public MDS MDS2 { get; set; }
+        //public Guid? MDSId2 { get; set; }
+        //public MDS MDS1 { get; set; }
+        //public Guid? MDSId1 { get; set; }
 
         //[ForeignKey(nameof(UtilisateurId))] virtual
         public Utilisateur utilisateur { get; set; }
