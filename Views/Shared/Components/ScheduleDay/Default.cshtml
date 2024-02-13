@@ -251,6 +251,10 @@
             // Ajoute une classe "colonne" à l'élément <li>
             liElement.classList.add('colonne');
 
+            if(journee.getDay() == 0 || journee.getDay() == 6)
+                liElement.classList.add('fin-de-semaine');
+
+
             // Crée un nouvel élément <div> pour afficher la date
             var dateDiv = document.createElement('div');
             dateDiv.classList.add('date');
