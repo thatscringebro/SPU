@@ -722,10 +722,9 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Remove" });
         }
 
-    #endregion
+        #endregion
 
-
-    }
+        #region Relier 
 
 
 
@@ -752,7 +751,7 @@ namespace SPU.Controllers
                 foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
                 {
                     List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
-                    
+
                     vm.Add(new StagiairesEditVM
                     {
                         Id = user.Id,
@@ -771,7 +770,7 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-        [AllowAnonymous] 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid idMdsSelectionne1, Guid idMdsSelectionne2, Guid idEnseignantSelectionne)
         {
@@ -807,8 +806,11 @@ namespace SPU.Controllers
 
                 return RedirectToAction("Relier");
             }
-            
+
         }
+        #endregion
+
+
     }
 
 }
