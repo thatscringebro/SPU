@@ -656,18 +656,54 @@ namespace SPU.Controllers
         public async Task<IActionResult> Remove(Guid id, string role)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-            var userRole = role;
+            switch (role)
+            {
+                case "Stagiaire":
+                    var stagiaire = _spuContext.Stagiaires.FirstOrDefault(x => x.utilisateur == user);
+                    if (stagiaire == null)
+                        return NotFound();
+                    _spuContext.Remove(stagiaire);
+                    break;
+                case "Coordonateur":
+                    var coordonateur = _spuContext.Coordonateurs.FirstOrDefault(x => x.utilisateur == user);
+                    if (coordonateur == null)
+                        return NotFound();
+                    _spuContext.Remove(coordonateur);
+                    break;
+                case "Enseignant":
+                    var enseignant = _spuContext.Enseignants.FirstOrDefault(x => x.utilisateur == user);
+                    if (enseignant == null)
+                        return NotFound();
+                    _spuContext.Remove(enseignant);
+                    break;
+                case "Employeur":
+                    var employeur = _spuContext.Employeurs.FirstOrDefault(x => x.utilisateur == user);
+                    if (employeur == null)
+                        return NotFound();
+                    _spuContext.Remove(employeur);
+                    break;
+                case "MDS":
+                    var mds = _spuContext.MDS.FirstOrDefault(x => x.utilisateur == user);
+                    if (mds == null)
+                        return NotFound();
+                    _spuContext.Remove(mds);
+                    break;
+                default:
+                    return NotFound();
+            }
 
-            //var roleVB = ViewBag.RoleVB;
-
-            var result = await _userManager.DeleteAsync(user!);
-
+            var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Impossible de supprimer un utilisateur. Veuillez réessayer.");
                 return View();
             }
+
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Remove" });
         }
@@ -709,7 +745,7 @@ namespace SPU.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.UserListErrorMessage = "Erreur d'affichage des stagiaires. Veuillez réessayé." + ex.Message;
+                ViewBag.UserListErrorMessage = "Erreur d'affichage des stagiaires. Veuillez réessayer." + ex.Message;
             }
             return View(vm);
         }
@@ -743,7 +779,7 @@ namespace SPU.Controllers
 
                 if (succes1 != null && succes2 != null && succes3 != null)
                 {
-                    TempData["SuccessMessage"] = "Modifications succeeded";
+                    TempData["SuccessMessage"] = "Modifications réussies";
 
                     await _spuContext.SaveChangesAsync();
                 }
