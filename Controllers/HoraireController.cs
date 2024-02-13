@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SPU.Domain;
@@ -19,7 +20,7 @@ namespace SPU.Controllers
             _loggedUserId = claim?.Value;
         }
 
-
+        [Authorize]
         public IActionResult Index(ListeHoraireVM vm)
         {
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
