@@ -802,9 +802,10 @@ namespace SPU.Controllers
             }).ToList();
             try
             {
-                foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
+                foreach (var user in _spuContext.Stagiaires.Include(s => s.utilisateur).ToList())
                 {
-                    List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
+                    // Récupération des MDS liés à ce stagiaire
+                    //var lstMds = _spuContext.MDS.Where(m => m.Stagiaires.Any(s => s.Id == user.Id)).Include(m => m.utilisateur).ToList();
 
                     vm.Add(new StagiairesEditVM
                     {
@@ -812,8 +813,8 @@ namespace SPU.Controllers
                         Prenom = user.utilisateur?.Prenom,
                         Nom = user.utilisateur?.Nom,
                         idEnseignantSelectionne = user.EnseignantId,
-                        idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
-                        idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id
+                        idMdsSelectionne1 = user.MDSId1, //lstMds.ElementAtOrDefault(0)?.Id,
+                        idMdsSelectionne2 = user.MDSId2 //lstMds.ElementAtOrDefault(1)?.Id
                     });
                 }
             }
@@ -828,36 +829,61 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid idMdsSelectionne1, Guid idMdsSelectionne2, Guid idEnseignantSelectionne)
         {
-            if (!ModelState.IsValid)
+            var vm = new List<StagiairesEditVM>();
+            ViewBag.Enseignants = _spuContext.Enseignants.Select(e => new SelectListItem
             {
-                return View();
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+
+            ViewBag.Mds = _spuContext.MDS.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+            foreach (var user in _spuContext.Stagiaires.Include(s => s.utilisateur).ToList())
+            {
+                vm.Add(new StagiairesEditVM
+                {
+                    Id = user.Id,
+                    Prenom = user.utilisateur?.Prenom,
+                    Nom = user.utilisateur?.Nom,
+                    idEnseignantSelectionne = user.EnseignantId,
+                    idMdsSelectionne1 = user.MDSId1,
+                    idMdsSelectionne2 = user.MDSId2
+                });
             }
 
-            if (idMdsSelectionne1 == idMdsSelectionne2)
+
+            if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Le même maître de stage a été sélectionné deux fois. Veuillez sélectionner des maîtres de stage différents.";
-                return View();
+                return View("Relier", vm);
+            }
+
+            if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
+            {
+                TempData["ErrorMessage"] = "Le même maître de stage a été sélectionné deux fois ou aucun maître de stage n'a été sélectionné. Veuillez sélectionner des maîtres de stage différents.";
+
+                return View("Relier", vm);
+            }
+
+
+            var Stagiaire = _spuContext.Stagiaires.Find(idStagiaire);
+            if (Stagiaire == null)
+            {
+                TempData["ErrorMessage"] = "Stagiaire introuvable.";
+                return View("Relier", vm);
             }
             else
             {
-                var MdsaEditer1 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne1).FirstOrDefault();
-                var MdsaEditer2 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne2).FirstOrDefault();
-                var StagiaireAediter = _spuContext.Stagiaires.Where(x => x.Id == idStagiaire).FirstOrDefault();
+                Stagiaire.MDSId1 = idMdsSelectionne1;
+                Stagiaire.MDSId2 = idMdsSelectionne2;
 
-                MdsaEditer1.StagiaireId = idStagiaire;
-                var succes1 = _spuContext.MDS.Update(MdsaEditer1);
-                MdsaEditer2.StagiaireId = idStagiaire;
-                var succes2 = _spuContext.MDS.Update(MdsaEditer2);
-                StagiaireAediter.EnseignantId = idEnseignantSelectionne;
-                var succes3 = _spuContext.Stagiaires.Update(StagiaireAediter);
+                Stagiaire.EnseignantId = idEnseignantSelectionne;
 
-                if (succes1 != null && succes2 != null && succes3 != null)
-                {
-                    TempData["SuccessMessage"] = "Modifications réussies";
+                await _spuContext.SaveChangesAsync();
 
-                    await _spuContext.SaveChangesAsync();
-                }
-
+                TempData["SuccessMessage"] = "Modifications réussies";
                 return RedirectToAction("Relier");
             }
 
