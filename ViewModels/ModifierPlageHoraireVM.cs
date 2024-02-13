@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
@@ -20,5 +21,23 @@ namespace SPU.ViewModels
 
         public bool EstPresent { get; set; }
         public string? Commentaire { get; set; }
+
+        public class Validator : AbstractValidator<ModifierPlageHoraireVM>
+        {
+            public Validator()
+            {
+
+                RuleFor(vm => vm.DateDebutPlageHoraire)
+                    .NotEmpty().WithMessage("Veuillez entrer une date de début de plage horaire")
+                    .GreaterThan(DateTime.MinValue).WithMessage("La date de début de plage horaire ne peut pas être vide");
+
+                RuleFor(vm => vm.DateFinPlageHoraire)
+                    .NotEmpty().WithMessage("Veuillez entrer une date de fin de plage horaire")
+                    .GreaterThan(DateTime.MinValue).WithMessage("La date de fin de plage horaire ne peut pas être vide")
+                    .LessThan(x => x.DateDebutPlageHoraire.AddHours(x.HeureDebutPlageHoraire).AddMinutes(x.MinutesDebutPlageHoraire).AddHours(24)).WithMessage("La plage horaire doit avoir une durée de moins de 24 heures");
+
+            }
+
+        }
     }
 }

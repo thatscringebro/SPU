@@ -1,31 +1,100 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using SPU.Models;
+using SPU.Domain;
+using SPU.Domain.Entites;
 
 namespace SPU.Controllers;
 
 public class EvaluationController : Controller
 {
-    private readonly ILogger<EvaluationController> _logger;
+    private readonly string _loggedUserId;
+    private readonly SpuContext _context;
 
-    public EvaluationController(ILogger<EvaluationController> logger)
+    public EvaluationController(SpuContext context, IHttpContextAccessor httpContextAccessor)
     {
-        _logger = logger;
+        _context = context;
+        var claim = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+        _loggedUserId = claim?.Value;
     }
 
+    [Authorize]
     public IActionResult Index()
     {
-        return View();
+        Utilisateur user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
+
+        return View(user);
     }
 
-    public IActionResult Privacy()
+    [Authorize]
+    public IActionResult Create(string lienGoogleForm, bool actif, bool estStagiaire)
     {
-        return View();
+        Guid idEnseignant = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId.ToString() == _loggedUserId).Id;
+        List<Stagiaire> stagiaires = _context.Stagiaires.Where(x => x.EnseignantId == idEnseignant).ToList();
+        
+        // si c'est pour les stagiaires
+        if(estStagiaire)
+        {
+          foreach (Stagiaire stag in stagiaires)
+          {
+              Evaluation eval = new Evaluation()
+              {
+                lienGoogleForm = lienGoogleForm,
+                StagiaireId = stag.Id,
+                MDSId = null,
+                EnseignantId = idEnseignant,
+                consulter = false,
+                actif = actif,
+                estStagiaire = true
+              };
+
+              _context.Evaluations.Add(eval);
+          }
+
+          _context.SaveChanges();
+        }
+        // c'est pour les mds
+        else 
+        {
+          List<MDS> mds = (from stag in stagiaires
+                 join md in _context.MDS on stag.Id equals md.StagiaireId
+                 select md).ToList();
+
+          foreach (MDS ms in mds)
+          {
+              Evaluation eval = new Evaluation()
+              {
+                lienGoogleForm = lienGoogleForm,
+                MDSId = ms.Id,
+                StagiaireId = null,
+                EnseignantId = idEnseignant,
+                consulter = false,
+                actif = actif,
+                estStagiaire = false
+              };
+
+              _context.Evaluations.Add(eval);
+          }
+
+          _context.SaveChanges();
+        }
+
+        return Ok();
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    [Authorize]
+    public IActionResult Delete(string lien) 
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+      List<Evaluation> evals = _context.Evaluations.Where(x => x.lienGoogleForm == lien).ToList();
+
+      _context.Evaluations.RemoveRange(evals);
+
+      _context.SaveChanges();
+
+      return Ok();
     }
 }

@@ -8,6 +8,7 @@ html {
   }
   .main_header{
     height: 7vh;
+    background-color:white;
   }
 }
 
@@ -28,6 +29,7 @@ main {
   text-align: center;
   display: flex;
   margin-top: 1rem;
+  margin-bottom: 40rem;
   background: none;
   border: none;
   text-decoration: none;
@@ -56,6 +58,6 @@ hr {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
