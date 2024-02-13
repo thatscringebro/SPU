@@ -837,45 +837,16 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid idMdsSelectionne1, Guid idMdsSelectionne2, Guid idEnseignantSelectionne)
         {
-            var vm = new List<StagiairesEditVM>();
-            ViewBag.Enseignants = _spuContext.Enseignants.Select(e => new SelectListItem
-            {
-                Value = e.Id.ToString(),
-                Text = e.utilisateur.UserName
-            }).ToList();
-
-            ViewBag.Mds = _spuContext.MDS.Select(e => new SelectListItem
-            {
-                Value = e.Id.ToString(),
-                Text = e.utilisateur.UserName
-            }).ToList();
-
-            foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
-            {
-                List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
-
-                vm.Add(new StagiairesEditVM
-                {
-                    Id = user.Id,
-                    Prenom = user.utilisateur?.Prenom,
-                    Nom = user.utilisateur?.Nom,
-                    idEnseignantSelectionne = user.EnseignantId,
-                    idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
-                    idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id
-                });
-            }
-
-
             if (!ModelState.IsValid)
             {
-                return View("Relier", vm);
+                return RedirectToAction("Relier");
             }
 
             if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
             {
                 TempData["ErrorMessage"] = "Le même maître de stage a été sélectionné deux fois ou aucun maître de stage n'a été sélectionné. Veuillez sélectionner des maîtres de stage différents.";
 
-                return View("Relier", vm);
+                return RedirectToAction("Relier");
             }
 
 
@@ -883,7 +854,7 @@ namespace SPU.Controllers
             if (Stagiaire == null)
             {
                 TempData["ErrorMessage"] = "Stagiaire introuvable.";
-                return View("Relier", vm);
+                return RedirectToAction("Relier");
             }
 
 
