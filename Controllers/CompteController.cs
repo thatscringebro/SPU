@@ -9,6 +9,8 @@ using SPU.Enum;
 using SPU.Models;
 using SPU.ViewModels;
 using System.Security.Cryptography;
+using System.Security.Policy;
+using System.Text;
 
 namespace SPU.Controllers
 {
@@ -19,6 +21,8 @@ namespace SPU.Controllers
         private readonly SignInManager<Utilisateur> _signInManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly SpuContext _spuContext;
+        
+
 
         public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
@@ -27,6 +31,23 @@ namespace SPU.Controllers
             _signInManager = signInManager;
             _spuContext = spuContext;
 
+        }
+
+    
+        public string CreateSHA512(string strData)
+        {
+            var message = Encoding.UTF8.GetBytes(strData);
+            using (var alg = SHA512.Create())
+            {
+                string hex = "";
+
+                var hashValue = alg.ComputeHash(message);
+                foreach (byte x in hashValue)
+                {
+                    hex += string.Format("{0:x2}", x);
+                }
+                return hex;
+            }
         }
 
         #region login
@@ -127,10 +148,13 @@ namespace SPU.Controllers
         }
         #endregion
 
+
         #region CreationNormal et EditNormal
         [AllowAnonymous]
+        [Route("Compte/CreationNormal")]
+        [Route("Compte/CreationNormal/{hash?}")]
         [HttpGet]
-        public ActionResult CreationNormal(string vue)
+        public ActionResult CreationNormal(string vue, string hash)
         {
             ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
             {
@@ -138,17 +162,27 @@ namespace SPU.Controllers
                 Text = e.Nom
             }).ToList();
 
+            var stagiaire = CreateSHA512("Stagiaire");
+            var enseignant = CreateSHA512("Enseignant");
+            var Coordo = CreateSHA512("Coordonateur");
 
-            switch (vue)
-            {
-                case "CreationCoordonateur": //Creation coordo
-                    return View("CreationCoordonateur");
-                case "CreationEnseignant": //Creation enseignant
-                    return View("CreationEnseignant");
-                default:
-                    //Retourne STAGIAIRE si aucun choix
-                    return View();
-            }
+
+            if (hash == enseignant)
+                return View("CreationEnseignant");
+            else if (hash == Coordo)
+                return View("CreationCoordonateur");
+            else
+                return View();
+            //switch (vue)
+            //{
+            //    case "CreationCoordonateur": //Creation coordo
+            //        return View("CreationCoordonateur");
+            //    case "CreationEnseignant": //Creation enseignant
+            //        return View("CreationEnseignant");
+            //    default:
+            //        //Retourne STAGIAIRE si aucun choix
+            //        return View();
+            //}
         }
 
 
@@ -158,11 +192,12 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
         {
+
             if (!ModelState.IsValid)
             {
                 return View(vm);
             }
-
+            
             var roles = await _roleManager.Roles.ToListAsync();
 
             var selectedRole = roles.FirstOrDefault(r => r.Name == vm.role);
@@ -303,11 +338,14 @@ namespace SPU.Controllers
 
         #endregion
 
+
         #region CreationMDS et EditMDS
 
         [AllowAnonymous]
+        [Route("Compte/CreationMDS")]
+        [Route("Compte/CreationMDS/{hash?}")]
         [HttpGet]
-        public ActionResult CreationMDS()
+        public ActionResult CreationMDS(string hash)
         {
             ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
             {
@@ -315,7 +353,12 @@ namespace SPU.Controllers
                 Text = e.utilisateur.UserName
             }).ToList();
 
-            return View();
+            var MDS = CreateSHA512("MDS");
+
+            if (hash == MDS)
+                return View("CreationMDS");
+            else
+                return View(); // a changer avec le role du coordo quand on va être rendu au role !! 
         }
 
         //CREATION MDS
@@ -486,10 +529,17 @@ namespace SPU.Controllers
 
         #region CreationEmployeur et EditEmployeur
         [AllowAnonymous]
+        [Route("Compte/CreationEntreprise")]
+        [Route("Compte/CreationEntreprise/{hash?}")]
         [HttpGet]
-        public ActionResult CreationEntreprise()
+        public ActionResult CreationEntreprise(string hash)
         {
-            return View();
+            var Employeur = CreateSHA512("Employeyr");
+
+            if (hash == Employeur)
+                return View("CreationEntreprise");
+            else
+                return View(); // a changer avec le role du coordo quand on va être rendu au role !! 
         }
 
         //[Authorize(Roles = "Coordinateur")]
