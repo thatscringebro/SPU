@@ -58,6 +58,7 @@
                 Selection de la date du début du stage :
             </div>
             <input class="form-control" type="date" asp-for="DateTimeDebutStage" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            <span asp-validation-for="DateTimeDebutStage" class="text-danger"></span>
         </div>
         <br />
         <div>
@@ -65,6 +66,7 @@
                 Selection de la date de fin du stage :
             </div>
             <input class="form-control" type="date" asp-for="DateTimeFinStage" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            <span asp-validation-for="DateTimeFinStage" class="text-danger"></span>
         </div>
         <hr>
 

@@ -82,6 +82,13 @@ namespace SPU.Controllers
         [HttpPost]
         public IActionResult AjoutNouvelHoraireMDS(AjoutNouvelHoraireMdsVM vm)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            DateTime test = DateTime.MinValue;
+
             //Doit entrer le id de la personne
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
 
