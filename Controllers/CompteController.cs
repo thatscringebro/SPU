@@ -781,7 +781,6 @@ namespace SPU.Controllers
         #region Relier 
 
 
-
         //[Authorize(Roles = "Coordonateur")]
         [AllowAnonymous] // A ENLEVER APRES LES TESTS
         [HttpGet]
