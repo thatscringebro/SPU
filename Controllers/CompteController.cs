@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SPU.Domain;
 using SPU.Domain.Entites;
 using SPU.Enum;
+using SPU.Models;
 using SPU.ViewModels;
 using System.Security.Cryptography;
 
@@ -720,9 +721,94 @@ namespace SPU.Controllers
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Remove" });
         }
+
     #endregion
 
 
+    }
+
+
+
+        //[Authorize(Roles = "Coordonateur")]
+        [AllowAnonymous] // A ENLEVER APRES LES TESTS
+        [HttpGet]
+        public async Task<IActionResult> Relier()
+        {
+            var vm = new List<StagiairesEditVM>();
+
+            ViewBag.Enseignants = _spuContext.Enseignants.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+
+            ViewBag.Mds = _spuContext.MDS.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+            try
+            {
+                foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
+                {
+                    List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
+                    
+                    vm.Add(new StagiairesEditVM
+                    {
+                        Id = user.Id,
+                        Prenom = user.utilisateur?.Prenom,
+                        Nom = user.utilisateur?.Nom,
+                        idEnseignantSelectionne = user.EnseignantId,
+                        idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
+                        idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.UserListErrorMessage = "Erreur d'affichage des stagiaires. Veuillez réessayer." + ex.Message;
+            }
+            return View(vm);
+        }
+
+        [AllowAnonymous] 
+        [HttpPost]
+        public async Task<IActionResult> Relier(Guid idStagiaire, Guid idMdsSelectionne1, Guid idMdsSelectionne2, Guid idEnseignantSelectionne)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            if (idMdsSelectionne1 == idMdsSelectionne2)
+            {
+                TempData["ErrorMessage"] = "Le même maître de stage a été sélectionné deux fois. Veuillez sélectionner des maîtres de stage différents.";
+                return View();
+            }
+            else
+            {
+                var MdsaEditer1 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne1).FirstOrDefault();
+                var MdsaEditer2 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne2).FirstOrDefault();
+                var StagiaireAediter = _spuContext.Stagiaires.Where(x => x.Id == idStagiaire).FirstOrDefault();
+
+                MdsaEditer1.StagiaireId = idStagiaire;
+                var succes1 = _spuContext.MDS.Update(MdsaEditer1);
+                MdsaEditer2.StagiaireId = idStagiaire;
+                var succes2 = _spuContext.MDS.Update(MdsaEditer2);
+                StagiaireAediter.EnseignantId = idEnseignantSelectionne;
+                var succes3 = _spuContext.Stagiaires.Update(StagiaireAediter);
+
+                if (succes1 != null && succes2 != null && succes3 != null)
+                {
+                    TempData["SuccessMessage"] = "Modifications réussies";
+
+                    await _spuContext.SaveChangesAsync();
+                }
+
+                return RedirectToAction("Relier");
+            }
+            
+        }
     }
 
 }

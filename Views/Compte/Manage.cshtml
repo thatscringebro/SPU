@@ -2,12 +2,18 @@
 
 @{
     ViewData["Title"] = "Gestion Utilisateurs";
+
 }
 
 <h1>Gérer les utilisateurs<br></h1>
 
 <div class="mt-2 mb-2">
     @Html.ActionLink("Créer un nouvel utilisateur", "CreationNormal", "Compte",
+            new { }, new { @class = "btn btn-primary" })
+</div>
+
+<div class="mt-2 mb-2">
+    @Html.ActionLink("Effectuer des liaisons", "Relier", "Compte",
             new { }, new { @class = "btn btn-primary" })
 </div>
 
@@ -51,12 +57,16 @@
                     {
                         @Html.ActionLink("Modifier", "EditUtilisateur", "Compte", new { id = item.Id}, new { @class = "btn btn-primary" })
                     }
-
                     <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
                         <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
                             Supprimer
                         </button>
                     </form>
+                    @{
+                        <span hidden>
+                            ViewBag.RoleVB = @item.role
+                        </span>
+                    }
                 </td>
             </tr>
         }
