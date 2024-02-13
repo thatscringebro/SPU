@@ -291,7 +291,6 @@
                         if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15 && quartHeure * 15 < finQuartMinutes) {
                             isWorkingHour = true;
                             IdPlageHoraire = item.Id;
-                            console.log("1");
                             break;
                         }
                     } else { // Si le quart de travail commence un jour et se termine le lendemain
@@ -299,15 +298,12 @@
                         if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15) {
                             isWorkingHour = true;
                             IdPlageHoraire = item.Id;
-                            console.log("2");
                             break;
                         }
                         // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
                         if (new Date(item.DateFinQuart).toDateString() === journee.toDateString() && quartHeure * 15 < finQuartMinutes) {
                             isWorkingHour = true;
                             IdPlageHoraire = item.Id;
-                            console.log(i*15);
-                            console.log(finQuartMinutes);
                             break;
                         }
                     }
@@ -320,6 +316,24 @@
                 if (isWorkingHour) {
                     quartHeureElement.classList.add('idPlageHoraire-' + IdPlageHoraire);
                     quartHeureElement.style.backgroundColor = 'lightblue';
+                    var classes = quartHeureElement.classList;
+                    for (var i = 0; i < classes.length; i++) {
+                        var match = classes[i].match(/^idPlageHoraire-(.*)$/);
+                        if (match) {
+                            var idPlageHoraire = match[1];
+                            quartHeureElement.addEventListener("click", function () {
+
+                                //Maître de stage
+                                console.log(idPlageHoraire);
+                                console.debug;
+                                window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
+
+                                //Stagiaire
+                                //afficherAlerte(idPlageHoraire);
+                            });
+                            break;
+                        }
+                    }
                 }
                 if (quartHeure % 4 === 3) {
                     quartHeureElement.style.borderBottom = '1px solid lightgrey';
