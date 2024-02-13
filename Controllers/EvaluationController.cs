@@ -29,4 +29,72 @@ public class EvaluationController : Controller
 
         return View(user);
     }
+
+    [Authorize]
+    public IActionResult Create(string lienGoogleForm, bool actif, bool estStagiaire)
+    {
+        Guid idEnseignant = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId.ToString() == _loggedUserId).Id;
+        List<Stagiaire> stagiaires = _context.Stagiaires.Where(x => x.EnseignantId == idEnseignant).ToList();
+        
+        // si c'est pour les stagiaires
+        if(estStagiaire)
+        {
+          foreach (Stagiaire stag in stagiaires)
+          {
+              Evaluation eval = new Evaluation()
+              {
+                lienGoogleForm = lienGoogleForm,
+                StagiaireId = stag.Id,
+                MDSId = null,
+                EnseignantId = idEnseignant,
+                consulter = false,
+                actif = actif,
+                estStagiaire = true
+              };
+
+              _context.Evaluations.Add(eval);
+          }
+
+          _context.SaveChanges();
+        }
+        // c'est pour les mds
+        else 
+        {
+          List<MDS> mds = (from stag in stagiaires
+                 join md in _context.MDS on stag.Id equals md.StagiaireId
+                 select md).ToList();
+
+          foreach (MDS ms in mds)
+          {
+              Evaluation eval = new Evaluation()
+              {
+                lienGoogleForm = lienGoogleForm,
+                MDSId = ms.Id,
+                StagiaireId = null,
+                EnseignantId = idEnseignant,
+                consulter = false,
+                actif = actif,
+                estStagiaire = false
+              };
+
+              _context.Evaluations.Add(eval);
+          }
+
+          _context.SaveChanges();
+        }
+
+        return Ok();
+    }
+
+    [Authorize]
+    public IActionResult Delete(string lien) 
+    {
+      List<Evaluation> evals = _context.Evaluations.Where(x => x.lienGoogleForm == lien).ToList();
+
+      _context.Evaluations.RemoveRange(evals);
+
+      _context.SaveChanges();
+
+      return Ok();
+    }
 }
