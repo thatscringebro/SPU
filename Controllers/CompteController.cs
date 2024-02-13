@@ -49,6 +49,12 @@ namespace SPU.Controllers
                 return hex;
             }
         }
+        [AllowAnonymous]
+        public ActionResult ChoixCreation()
+        {
+            return View();
+        }
+
 
         #region login
         [AllowAnonymous]
@@ -147,7 +153,6 @@ namespace SPU.Controllers
             return View(vm);
         }
         #endregion
-
 
         #region CreationNormal et EditNormal
         [AllowAnonymous]
@@ -337,7 +342,6 @@ namespace SPU.Controllers
 
 
         #endregion
-
 
         #region CreationMDS et EditMDS
 
