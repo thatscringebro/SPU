@@ -153,37 +153,45 @@
         </ul>
     </div>
 </div>
-<div style="width:100%; text-align:center;">
+<div style="width:100%; text-align:center; height: 50px;">
     <button class="btn-precedent" onclick="precedent()">Semaine précédente</button>
     <button class="btn-suivant" onclick="suivant()">Semaine suivante</button>
 </div>
 
 <style>
-    .fin-de-semaine {
-        border: 3px solid black !important;
+    .fin-de-semaine .date {
+        background: linear-gradient(to bottom, #60d5d0, #47b9a3);
     }
+
     .btn-precedent {
         border-radius: 20px 0 0 20px;
         border: none;
         padding: 5px;
         padding-left: 15px;
         padding-right: 15px;
-        background-color: lightblue;
+        color: white;
+        background: linear-gradient(to bottom, #60bbd5, #47a0b9);
+        box-shadow: 0px 5px 10px rgba(5, 88, 111, 0.5);
     }
 
     .btn-suivant {
-        border-radius: 0 15px 15px 0;
+        border-radius: 0 20px 20px 0;
         border: none;
         padding: 5px;
         padding-left: 20px;
         padding-right: 20px;
-        background-color: lightblue;
+        color: white;
+        background: linear-gradient(to bottom, #60bbd5, #47a0b9);
+        box-shadow: 0px 5px 10px rgba(5, 88, 111, 0.5);
     }
 
     .date {
         text-align: center;
-        color: black;
-        border-bottom: 1px solid grey;
+        color: white;
+        border-radius: 5px;
+        background: linear-gradient(to bottom, #60bbd5, #47a0b9);
+        transform: scale(1.05);
+        box-shadow: 0px 5px 10px rgba(5, 88, 111, 0.5);
     }
 
     .jour-mois, p {
@@ -194,7 +202,7 @@
     .colonne {
         width: 100px;
         height: 550px;
-        border: 1px solid grey;
+        border: 1px solid #47a0b9;
         border-radius: 5px;
         margin: 3px;
         display: flex;
@@ -221,6 +229,7 @@
         overflow: hidden
     }
 </style>
+
 
 <script>
     var dateDebut = new Date('@dateDebut.ToString("yyyy-MM-ddTHH:mm:ss")');
