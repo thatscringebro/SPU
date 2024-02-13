@@ -1,21 +1,30 @@
 ﻿@using SPU.ViewModels;
 @model List<JourneeTravailleVM>
+@using System.Text.Json
+@using System.Text.Json.Serialization
 
 @{
     int Annee = DateTime.Now.Year;
+    DateTime dateDebut = DateTime.Now.AddDays(-DateTime.Now.DayOfWeek.GetHashCode()).Date;
+    DateTime dateFin = DateTime.Now.AddDays(-DateTime.Now.DayOfWeek.GetHashCode() + 14).Date;
+    var modelJson = JsonSerializer.Serialize(Model);
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<div style="display:flex">
 
-<div class="horizontal-list">
-    <ul>
-        @for (int mois = 1; mois <= 12; mois++)
+    <div style="padding-top: 38px">
+        @for (int i = 0; i <= 24; i++)
         {
-            @for (int jour = 1; jour <= DateTime.DaysInMonth(Annee, mois); jour++)
+            <p style="text-align:end; font-weight:bold; padding-right:5px;">@i:00 </p>
+        }
+    </div>
+    <div class="horizontal-list">
+        <ul>
+            @for (DateTime journee = dateDebut; journee < dateFin; journee = journee.AddDays(1))
             {
-                DateTime journee = new DateTime(Annee, mois, jour);
                 <li>
-                    <div class="colonne">
+                    <div class="colonne @(journee.DayOfWeek == DayOfWeek.Saturday || journee.DayOfWeek == DayOfWeek.Sunday ? "fin-de-semaine" : "")">
                         <div class="date">
                             @switch (journee.DayOfWeek.ToString())
                             {
@@ -85,7 +94,8 @@
                         <div class="heures">
                             @for (int i = 0; i < 96; i++)
                             {
-                                bool isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
+                                bool isWorkingHour = false;
+                                bool Present = true;
                                 Guid IdPlageHoraire = new Guid();
                                 foreach (var item in Model)
                                 {
@@ -101,6 +111,8 @@
                                         {
                                             isWorkingHour = true;
                                             IdPlageHoraire = item.Id;
+                                            if (item.Present == false)
+                                                Present = false;
 
                                             break;
                                         }
@@ -112,6 +124,8 @@
                                         {
                                             isWorkingHour = true;
                                             IdPlageHoraire = item.Id;
+                                            if (item.Present == false)
+                                                Present = false;
 
                                             break;
                                         }
@@ -120,6 +134,8 @@
                                         {
                                             isWorkingHour = true;
                                             IdPlageHoraire = item.Id;
+                                            if (item.Present == false)
+                                                Present = false;
 
                                             break;
                                         }
@@ -127,18 +143,43 @@
                                 }
 
                                 // Appliquer le style en fonction de la condition isWorkingHour
-                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? "background-color: lightblue;" : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
+                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? (Present ? "background-color: lightblue;" : "background-color: lightgrey;") : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
                                 </div>
                             }
                         </div>
                     </div>
                 </li>
             }
-        }
-    </ul>
+        </ul>
+    </div>
+</div>
+<div style="width:100%; text-align:center;">
+    <button class="btn-precedent" onclick="precedent()">Semaine précédente</button>
+    <button class="btn-suivant" onclick="suivant()">Semaine suivante</button>
 </div>
 
 <style>
+    .fin-de-semaine {
+        border: 3px solid black !important;
+    }
+    .btn-precedent {
+        border-radius: 20px 0 0 20px;
+        border: none;
+        padding: 5px;
+        padding-left: 15px;
+        padding-right: 15px;
+        background-color: lightblue;
+    }
+
+    .btn-suivant {
+        border-radius: 0 15px 15px 0;
+        border: none;
+        padding: 5px;
+        padding-left: 20px;
+        padding-right: 20px;
+        background-color: lightblue;
+    }
+
     .date {
         text-align: center;
         color: black;
@@ -182,8 +223,167 @@
 </style>
 
 <script>
-    function afficherAlerte(idPlageHoraire) {
+    var dateDebut = new Date('@dateDebut.ToString("yyyy-MM-ddTHH:mm:ss")');
+    var dateFin = new Date('@dateFin.ToString("yyyy-MM-ddTHH:mm:ss")');
 
+    console.log('@modelJson');
+    var modelJS = '@modelJson'
+
+    modelJS = modelJS.replaceAll('&quot;', '"')
+
+    console.log(modelJS);
+
+    var model = JSON.parse(modelJS);
+    console.log(model);
+
+    function afficherSemaine(dateDebut, dateFin) {
+        // Sélectionne l'élément <ul> dans lequel les jours seront affichés
+        var ulElement = document.querySelector('.horizontal-list ul');
+
+        // Vide le contenu de l'élément <ul> pour afficher les nouveaux jours
+        ulElement.innerHTML = '';
+
+        // Boucle à travers chaque jour entre dateDebut et dateFin
+        for (var journee = new Date(dateDebut); journee <= dateFin; journee.setDate(journee.getDate() + 1)) {
+            // Crée un nouvel élément <li> pour chaque jour
+            var liElement = document.createElement('li');
+
+            // Ajoute une classe "colonne" à l'élément <li>
+            liElement.classList.add('colonne');
+
+            // Crée un nouvel élément <div> pour afficher la date
+            var dateDiv = document.createElement('div');
+            dateDiv.classList.add('date');
+
+            // Ajoute le nom du jour de la semaine à la dateDiv
+            var dayName = journee.toLocaleDateString('fr-FR', { weekday: 'long' });
+            var dayParagraph = document.createElement('p');
+            dayParagraph.textContent = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+            dateDiv.appendChild(dayParagraph);
+
+            // Ajoute la date du mois à la dateDiv
+            var dateParagraph = document.createElement('p');
+            dateParagraph.textContent = journee.getDate() + ' ' + moisEnFrancais(journee.getMonth() + 1);
+            dateDiv.appendChild(dateParagraph);
+
+            // Ajoute la dateDiv à l'élément <li>
+            liElement.appendChild(dateDiv);
+
+            // Crée un nouvel élément <div> pour afficher les heures
+            var heuresDiv = document.createElement('div');
+            heuresDiv.classList.add('heures');
+
+            // Ajoute les 96 quarts d'heure à l'élément <div> des heures
+            for (var quartHeure = 0; quartHeure < 96; quartHeure++) {
+                let isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
+                let IdPlageHoraire = '';
+
+                for (let i = 0; i < model.length; i++) {
+                    const item = model[i];
+
+                    // Convertir la date de début et de fin du quart en minutes
+                    const debutQuartMinutes = new Date(item.DateDebutQuart).getHours() * 60 + new Date(item.DateDebutQuart).getMinutes();
+                    const finQuartMinutes = new Date(item.DateFinQuart).getHours() * 60 + new Date(item.DateFinQuart).getMinutes();
+
+                    // Si le quart de travail commence et se termine le même jour
+                    if (new Date(item.DateDebutQuart).toDateString() === new Date(item.DateFinQuart).toDateString()) {
+                        // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
+                        if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15 && quartHeure * 15 < finQuartMinutes) {
+                            isWorkingHour = true;
+                            IdPlageHoraire = item.Id;
+                            break;
+                        }
+                    } else { // Si le quart de travail commence un jour et se termine le lendemain
+                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
+                        if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15) {
+                            isWorkingHour = true;
+                            IdPlageHoraire = item.Id;
+                            break;
+                        }
+                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
+                        if (new Date(item.DateFinQuart).toDateString() === journee.toDateString() && quartHeure * 15 < finQuartMinutes) {
+                            isWorkingHour = true;
+                            IdPlageHoraire = item.Id;
+                            break;
+                        }
+                    }
+                }
+
+                // Appliquer le style en fonction de la condition isWorkingHour
+                const quartHeureElement = document.createElement('div');
+                quartHeureElement.classList.add('quartHeure');
+                quartHeureElement.style.height = '5.266666px';
+                if (isWorkingHour) {
+                    quartHeureElement.classList.add('idPlageHoraire-' + IdPlageHoraire);
+                    quartHeureElement.style.backgroundColor = 'lightblue';
+                    var classes = quartHeureElement.classList;
+                    for (var i = 0; i < classes.length; i++) {
+                        var match = classes[i].match(/^idPlageHoraire-(.*)$/);
+                        if (match) {
+                            var idPlageHoraire = match[1];
+                            quartHeureElement.addEventListener("click", function () {
+
+                                //Maître de stage
+                                console.log(idPlageHoraire);
+                                console.debug;
+                                window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
+
+                                //Stagiaire
+                                //afficherAlerte(idPlageHoraire);
+                            });
+                            break;
+                        }
+                    }
+                }
+                if (quartHeure % 4 === 3) {
+                    quartHeureElement.style.borderBottom = '1px solid lightgrey';
+                }
+
+                // Ajouter l'élément quartHeure à la page ou au conteneur approprié
+                // Remplacez document.body par le conteneur approprié si nécessaire
+                heuresDiv.appendChild(quartHeureElement);
+            }
+
+            // Ajoute les heuresDiv à l'élément <li>
+            liElement.appendChild(heuresDiv);
+
+            // Ajoute le <li> à l'élément <ul>
+            ulElement.appendChild(liElement);
+        }
+    }
+
+    // Fonction pour convertir un mois en français
+    function moisEnFrancais(mois) {
+        switch (mois) {
+            case 1: return 'Janvier';
+            case 2: return 'Février';
+            case 3: return 'Mars';
+            case 4: return 'Avril';
+            case 5: return 'Mai';
+            case 6: return 'Juin';
+            case 7: return 'Juillet';
+            case 8: return 'Août';
+            case 9: return 'Septembre';
+            case 10: return 'Octobre';
+            case 11: return 'Novembre';
+            case 12: return 'Décembre';
+            default: return '';
+        }
+    }
+
+    function precedent() {
+        dateDebut.setDate(dateDebut.getDate() - 14);
+        dateFin.setDate(dateFin.getDate() - 14);
+        afficherSemaine(dateDebut, dateFin);
+    }
+
+    function suivant() {
+        dateDebut.setDate(dateDebut.getDate() + 14);
+        dateFin.setDate(dateFin.getDate() + 14);
+        afficherSemaine(dateDebut, dateFin);
+    }
+
+    async function afficherAlerte(idPlageHoraire) {
         try {
             const response = await fetch('/Horaire/ObtenirInfoPlageHoraire?Id=' + idPlageHoraire);
             if (!response.ok) {
@@ -193,16 +393,26 @@
 
             console.log('Informations de la plage horaire :', data);
 
+            const debutQuart = new Date(data.dateDebutQuart);
+            const finQuart = new Date(data.dateFinQuart);
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const debutQuartFormatte = debutQuart.toLocaleDateString('fr-FR', options);
+            const finQuartFormatte = finQuart.toLocaleDateString('fr-FR', options);
+
+            const debutHeureMinutes = debutQuart.getHours().toString().padStart(2, '0') + ':' + debutQuart.getMinutes().toString().padStart(2, '0');
+            const finHeureMinutes = finQuart.getHours().toString().padStart(2, '0') + ':' + finQuart.getMinutes().toString().padStart(2, '0');
+
             Swal.fire({
                 title: 'Vous serez absent ?',
-                text: 'Voulez-vous cocher absent entre le ' + data.DateDebutQuart.Day + ' ' + data.DateDebutQuart.Month + ' à ' + data.DateDebutQuart.Hour + ':' + data.DateDebutQuart.Minute + ' et le ' + data.DateFinQuart.Day + ' ' + data.DateFinQuart.Month + ' à ' + data.DateFinQuart.Hour + ':' + data.DateFinQuart.Minute + ' ?',
+                text: `Voulez-vous cocher absent entre le ${debutQuartFormatte} à ${debutHeureMinutes} et le ${finQuartFormatte} à ${finHeureMinutes} ?`,
                 icon: 'info',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Je serai absent',
                 cancelButtonText: 'Annuler',
-            }).then((result) => {
+            }).then(async (result) => {
                 if (result.isConfirmed) {
                     const response = await fetch('/Horaire/MettreAbsent?Id=' + idPlageHoraire);
                     if (!response.ok) {
@@ -229,7 +439,13 @@
                     var idPlageHoraire = match[1];
                     div.addEventListener("click", function () {
 
-                        afficherAlerte(idPlageHoraire);
+                        //Maître de stage
+                        console.log(idPlageHoraire);
+                        console.debug;
+                        window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
+
+                        //Stagiaire
+                        //afficherAlerte(idPlageHoraire);
                     });
                     break;
                 }

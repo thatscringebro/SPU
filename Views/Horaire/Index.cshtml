@@ -1,35 +1,78 @@
-﻿@using SPU.ViewComponents
+﻿@using SPU.ViewModels
 
-@{
-    int anneeEnCours = DateTime.Today.Year;
-}
+@model ListeHoraireVM
 
-<div>
-    <a id="horaire-ajoutPlageHoraire-button" asp-area="" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout plage horaire</a>
-</div>
-<div class="horizontal-list">
-        <vc:schedule-day></vc:schedule-day>
-</div>
-<div>
-    <a id="horaire-confirmationPlageHoraire-button" asp-area="">Confirmation de l'horaire</a>
-</div>
+<style>
+    .horaire-listehoraire-fullclass {
+        margin-top:10px;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-<script>
-    document.getElementById('horaire-confirmationPlageHoraire-button').addEventListener('click', function () {
-        event.preventDefault();
+    .horaire-listehoraire-fullclass::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("/images/pexels-denniz-futalan-3452997.jpg");
+        background-size: cover;
+        background-repeat:no-repeat;
+        filter: blur(12px);
+        z-index: -1;
+    }
 
-        Swal.fire({
-            title: "Confirmation",
-            text: "Etes-vous sûr de vouloir confirmer le choix des 2 semaines de l'horaire? Il ne sera pas possible de modifier cette récurrence des 2 semaines. Par contre, vous allez pouvoir gérer manuellement chaque plage horaire et les modifier à votre guise.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Oui, confirmer',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = "/Horaire/ConfirmationHoraireMDS";
+    .horaire-listehoraire-liste {
+        position: relative;
+        margin: auto;
+        border: 3px solid blue;
+        padding: 10px;
+        max-width: 1000px;
+        background-color: white !important;
+        z-index: 1;
+    }
+
+</style>
+
+
+<div class="horaire-listehoraire-fullclass">
+    <div class="horaire-listehoraire-liste">
+        <br />
+        <form asp-controller="Horaire" asp-action="AjoutNouvelHoraireMDS" method="get">
+            <button id="horaire-ajoutnouvelhorairemds-button" type="submit" class="btn btn-primary" style="font-size:20px;">Ajout nouvel horaire maître de stage</button>
+        </form>
+        <br />
+
+        <h1>Liste des horaires</h1>
+        <hr />
+        @if (Model.listeHoraireMds != null)
+        {
+            @foreach (var item in Model.listeHoraireMds)
+            {
+
+                <div class="row" style="margin:20px;">
+                    <div class="row" style="font-size:26px; font-weight: bold;">
+                        Choix de l'horaire :
+                    </div>
+                    <br />
+                    <div class="row" style="font-size:22px; ">
+                        <label>
+                            Horaire du : @item.DateDebutStage.ToString("d MMMM yyyy") au @item.DateFinStage.ToString("d MMMM yyyy")
+                        </label>
+                    </div>
+                    <div class="row" id="horaire-listehoraire-id-@item.Id">
+                        <img class="submit" onclick="location.href ='@Url.Action("Horaire", "Horaire", new { horaireId = item.Id })'" src="/images/Horaire_miniature.png" style="width:200px" />
+                    </div>
+                </div>
+                <hr />
             }
-        });
-    });
-</script>
+        }
+    </div>
+</div>
+
+
+
+
+
