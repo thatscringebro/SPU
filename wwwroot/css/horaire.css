@@ -26,3 +26,39 @@
 #horaire-confirmationPlageHoraire-button:hover {
     background-color: #19a51d;
 }
+
+#horaire-ajoutnouvelhorairemds-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #25ca2b;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#horaire-ajoutnouvelhorairemds-button:hover {
+    background-color: #19a51d;
+}
+
+img.submit {
+    cursor: pointer;
+    transition: border-color 0.4s;
+    padding: 10px;
+}
+
+
+img.submit:hover {
+    cursor: pointer;
+    border: 4px solid blue;
+    border-radius: 5%;
+}
+
+.horaire-horaire-entete {
+    background-color: darkgray;
+    color: white;
+    border: 2px solid #000000; /* Couleur grise pour la bordure */
+    border-radius: 10px; /* Coins arrondis */
+    padding: 10px;
+    max-width: 600px;
+}

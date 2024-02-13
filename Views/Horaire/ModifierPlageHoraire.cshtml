@@ -13,28 +13,29 @@
         height: 100%;
     }
 
-        .modifierplagehoraire-fullpage-class::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("/images/pexels-denniz-futalan-3452997.jpg");
-            background-size: cover;
-            filter: blur(12px);
-            z-index: -1;
-        }
+    .modifierplagehoraire-fullpage-class::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("/images/pexels-denniz-futalan-3452997.jpg");
+        background-size: cover;
+        filter: blur(12px);
+        z-index: -1;
+    }
 
-    form {
+    #horaire-modifierplagehoraire-form {
         position: relative;
         margin: auto;
+        background-color: white !important;
         border: 3px solid blue;
         padding: 10px;
         max-width: 500px;
-        background-color: white !important;
         z-index: 1;
     }
+
 </style>
 
 <div class="modifierplagehoraire-fullpage-class">
@@ -46,7 +47,8 @@
             <h2 style="font-size:20px;">Plage horaire début</h2>
         </div>
         <div>
-            Date : <input class="form-control" type="date" asp-for="DateDebutPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            Date : <input class="form-control" type="date" asp-for="DateDebutPlageHoraire" asp-format="{0:yyyy-MM-dd}" />
+            <span asp-validation-for="DateDebutPlageHoraire" class="text-danger"></span>
         </div>
         <div class="row">
             <div class="col-6">
@@ -57,6 +59,7 @@
                         <option value="@i">@i.ToString("00")</option>
                     }
                 </select>
+                <span asp-validation-for="HeureDebutPlageHoraire" class="text-danger"></span>
             </div>
             <div class="col-6">
                 <label for="minutes">Minutes :</label>
@@ -66,6 +69,7 @@
                     <option value="30">30</option>
                     <option value="45">45</option>
                 </select>
+                <span asp-validation-for="MinutesDebutPlageHoraire" class="text-danger"></span>
             </div>
         </div>
         <br />
@@ -74,7 +78,8 @@
             <h2 style="font-size:20px;">Plage horaire fin</h2>
         </div>
         <div>
-            Date : <input class="form-control" type="date" asp-for="DateFinPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            Date : <input class="form-control" type="date" asp-for="DateFinPlageHoraire" asp-format="{0:yyyy-MM-dd}" />
+            <span asp-validation-for="DateFinPlageHoraire" class="text-danger"></span>
         </div>
         <div class="row">
             <div class="col-6">
@@ -85,6 +90,7 @@
                         <option value="@i">@i.ToString("00")</option>
                     }
                 </select>
+                <span asp-validation-for="HeureFinPlageHoraire" class="text-danger"></span>
             </div>
             <div class="col-6">
                 <label for="minutes">Minutes :</label>
@@ -94,19 +100,20 @@
                     <option value="30">30</option>
                     <option value="45">45</option>
                 </select>
+                <span asp-validation-for="MinutesFinPlageHoraire" class="text-danger"></span>
             </div>
         </div>
         <br />
         <div class="row" style="font-size:20px">
             <div class="col-6">
                 <label>
-                    <input id="presentCheckbox" asp-for="EstPresent" type="checkbox" value="true" checked="checked" style="transform: scale(1.5);" />
+                    <input id="presentCheckbox" asp-for="EstPresent" type="checkbox" value="true" style="transform: scale(1.5);" />
                     Présent
                 </label>
             </div>
             <div class="col-6">
                 <label>
-                    <input id="absentCheckbox" asp-for="EstPresent" type="checkbox" value="false" style="transform: scale(1.5);" />
+                    <input id="absentCheckbox" type="checkbox" value="false" style="transform: scale(1.5);" />
                     Absent
                 </label>
             </div>
@@ -127,6 +134,7 @@
             <div class="col-4">
                 <button type="submit" style="margin-left:40px" class="btn btn-secondary">Annuler</button>
             </div>
+            <input type="hidden" name="PlageHoraireId" value="@ViewBag.PlageHoraireId" />
             <div class="col-4">
                 <button id="horaire-modifierplagehoraire-ajoutbutton" style="margin-left:40px" class="btn btn-primary">Confirmer</button>
             </div>
@@ -148,6 +156,7 @@
             absentCheckbox.checked = false;
             commentaireInput.disabled = true;
         } else {
+            absentCheckbox.checked = true;
             commentaireInput.disabled = false;
         }
     });
@@ -156,6 +165,10 @@
         if (absentCheckbox.checked) {
             presentCheckbox.checked = false;
             commentaireInput.disabled = false;
+        }
+        else{
+            presentCheckbox.checked = true;
+            commentaireInput.disabled = true;
         }
     });
 

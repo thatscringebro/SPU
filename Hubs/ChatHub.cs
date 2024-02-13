@@ -57,23 +57,29 @@ namespace SignalRChat.Hubs
                 ChatId = Guid.Parse(room), 
             };
 
-            string username = _context.Utilisateurs.Find(Guid.Parse(user)).Nom;
+            string username = _context.Utilisateurs.Find(Guid.Parse(user)).NomComplet;
 
             _context.Message.Add(m);
             _context.SaveChanges();
 
-            string coordo = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).CoordonateurId.ToString();
-            string enseignant = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).EnseignantId.ToString();
-            string stag = _context.Stagiaires.FirstOrDefault(x => x.ChatId.ToString() == room).Id.ToString();
-            List<string> mds = _context.MDS.Where(x => x.ChatId.ToString() == room).Select(x => x.Id.ToString()).ToList();
+            var coordoReal = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).CoordonateurId;
+            string coordo = _context.Coordonateurs.FirstOrDefault(x => x.Id == coordoReal).UtilisateurId.ToString();
+            var enseignantReal = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).EnseignantId;
+            string enseignant = _context.Enseignants.FirstOrDefault(x => x.Id == enseignantReal).UtilisateurId.ToString();
+            string stag = _context.Stagiaires.FirstOrDefault(x => x.ChatId.ToString() == room).UtilisateurId.ToString();
+            List<string> mds = _context.MDS.Where(x => x.ChatId.ToString() == room).Select(x => x.UtilisateurId.ToString()).ToList();
 
             List<string> clientsToSend = ConnectedUsers[user];
-            clientsToSend.AddRange(ConnectedUsers[coordo]);
-            clientsToSend.AddRange(ConnectedUsers[enseignant]);
-            clientsToSend.AddRange(ConnectedUsers[stag]);
+            if(ConnectedUsers.ContainsKey(coordo))
+                clientsToSend.AddRange(ConnectedUsers[coordo]);
+            if(ConnectedUsers.ContainsKey(enseignant))
+                clientsToSend.AddRange(ConnectedUsers[enseignant]);
+            if(ConnectedUsers.ContainsKey(stag))
+                clientsToSend.AddRange(ConnectedUsers[stag]);
             foreach (string id in mds)
             {
-                clientsToSend.AddRange(ConnectedUsers[id]);
+                if(ConnectedUsers.ContainsKey(id))
+                    clientsToSend.AddRange(ConnectedUsers[id]);
             }
 
             await Clients.Clients(clientsToSend).SendAsync("ReceiveMessage", user, room, message, username, DateTime.Now.ToString("h:mmtt, MMM d"));

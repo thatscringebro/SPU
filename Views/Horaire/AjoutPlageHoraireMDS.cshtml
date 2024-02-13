@@ -13,20 +13,20 @@
         overflow: hidden;
     }
 
-        .plagehorairemds-fullpage-class::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("/images/pexels-denniz-futalan-3452997.jpg");
-            background-size: cover;
-            filter: blur(12px);
-            z-index: -1;
-        }
+    .plagehorairemds-fullpage-class::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("/images/pexels-denniz-futalan-3452997.jpg");
+        background-size: cover;
+        filter: blur(12px);
+        z-index: -1;
+    }
 
-    form {
+    #horaire-ajoutplagehoraire-form-id {
         position: relative;
         margin: auto;
         border: 3px solid green;
@@ -37,23 +37,15 @@
     }
 
     .btn-pageHoraireMds-Confirmer {
-        margin-left: 120px;
+        left: 8px;
     }
 
 </style>
 
 <div class="plagehorairemds-fullpage-class">
-    <form method="post" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">
+    <form id="horaire-ajoutplagehoraire-form-id" method="post" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">
         <h1>Ajout d'une plage horaire</h1>
-        <div>
-            <div style="font-size:18px">
-                Selection de la date du début du stage :
-            </div>
-            <div style="font-style: italic; font-size:14px">
-                (Choisir le premier lundi du début du stage)
-            </div>
-            <input class="form-control" type="date" asp-for="DateTimeDebutStage" asp-format="{0:yyyy-MM-ddTHH:mm}" />
-        </div>
+        
         <br />
         <hr>
 
@@ -62,6 +54,7 @@
         </div>
         <div>
             Date : <input class="form-control" type="date" asp-for="DateDebutPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            <span asp-validation-for="DateDebutPlageHoraire" class="text-danger"></span>
         </div>
         <div class="row">
             <div class="col-6">
@@ -72,6 +65,7 @@
                         <option value="@i">@i.ToString("00")</option>
                     }
                 </select>
+                <span asp-validation-for="HeureDebutPlageHoraire" class="text-danger"></span>
             </div>
             <div class="col-6">
                 <label for="minutes">Minutes :</label>
@@ -81,6 +75,7 @@
                     <option value="30">30</option>
                     <option value="45">45</option>
                 </select>
+                <span asp-validation-for="MinutesDebutPlageHoraire" class="text-danger"></span>
             </div>
         </div>
         <br />
@@ -90,6 +85,7 @@
         </div>
         <div>
             Date : <input class="form-control" type="date" asp-for="DateFinPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            <span asp-validation-for="DateFinPlageHoraire" class="text-danger"></span>
         </div>
         <div class="row">
             <div class="col-6">
@@ -100,6 +96,7 @@
                         <option value="@i">@i.ToString("00")</option>
                     }
                 </select>
+                <span asp-validation-for="HeureFinPlageHoraire" class="text-danger"></span>
             </div>
             <div class="col-6">
                 <label for="minutes">Minutes :</label>
@@ -109,15 +106,27 @@
                     <option value="30">30</option>
                     <option value="45">45</option>
                 </select>
+                <span asp-validation-for="MinutesFinPlageHoraire" class="text-danger"></span>
             </div>
         </div>
         <br />
         <div class="row">
+            <label>
+                <input id="horaire-ajoutplagehoraire-recurrence-checkbox" asp-for="Recurrence" type="checkbox" style="transform: scale(1.5);" />
+                Ajout de récurrence
+            </label>
+            <a style="font-style: italic; font-size:14px">
+                Ceci applique une récurrence de la plage horaire à toutes les deux semaines. Il sera possible de modifier ou supprimer des plages horaires manuellement pas la suite. 
+            </a>
+        </div>
+
+        <br />
+        <div class="row">
             <div class="col-6">
-                <button type="submit" asp-action="Index" asp-controller="Horaire" class="btn btn-secondary btn-pageHoraireMds-Annuler">Annuler</button>
+                <button type="submit" asp-action="Horaire" asp-controller="Horaire" asp-route-horaireId="@ViewBag.horaireId" class="btn btn-secondary btn-pageHoraireMds-Annuler">Annuler</button>
             </div>
             <div class="col-6">
-                <button type="submit" asp-action="AjoutPlageHoraireMDS" asp-controller="Horaire" class="btn btn-primary btn-pageHoraireMds-Confirmer">Confirmer</button>
+                <button type="submit" asp-action="AjoutPlageHoraireMDS" asp-route-horaireId="@ViewBag.horaireId" asp-controller="Horaire" class="btn btn-primary btn-pageHoraireMds-Confirmer">Confirmer</button>
             </div>
         </div>
     </form>

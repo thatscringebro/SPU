@@ -1,0 +1,8 @@
+.redhover :hover {
+  color: red;
+}
+
+.actionIcon {
+  background-color: transparent;
+  border: none;
+}
