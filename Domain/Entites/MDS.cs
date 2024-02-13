@@ -20,7 +20,7 @@ namespace SPU.Domain.Entites
         public string NomEmployeur { get; set; }
 
 
-        //public Guid? StagiaireId { get; set; }
+        public Guid? StagiaireId { get; set; }
         public Guid? EmployeurId { get; set; }
         //public Guid HoraireId { get; set; }
         public Guid? ChatId { get; set; }
@@ -38,7 +38,6 @@ namespace SPU.Domain.Entites
         //[ForeignKey(nameof(idStagiaire))] virtual
         public Stagiaire? stagiaire { get; set; }
 
-        public ICollection<Stagiaire> Stagiaires { get; set; }
 
     }
 }

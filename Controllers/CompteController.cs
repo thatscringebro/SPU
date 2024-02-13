@@ -870,6 +870,16 @@ namespace SPU.Controllers
                 TempData["ErrorMessage"] = "Stagiaire introuvable.";
                 return View("Relier", vm);
             }
+
+
+            var isMds1AlreadyAssigned = _spuContext.Stagiaires.Any(s => s.Id != idStagiaire && s.MDSId1 == idMdsSelectionne1);
+            var isMds2AlreadyAssigned = _spuContext.Stagiaires.Any(s => s.Id != idStagiaire && s.MDSId2 == idMdsSelectionne2);
+
+            if (isMds1AlreadyAssigned || isMds2AlreadyAssigned)
+            {
+                TempData["ErrorMessage"] = "L'un des maîtres de stage sélectionnés est déjà associé à un autre stagiaire. Veuillez sélectionner un autre maître de stage.";
+                return View("Relier", vm);
+            }
             else
             {
                 Stagiaire.MDSId1 = idMdsSelectionne1;

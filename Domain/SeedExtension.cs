@@ -250,7 +250,7 @@ namespace SPU.Domain
 				commentaire = commentaire,
 				commentaireCIUSS = commentaireCIUSS,
 				NomEmployeur = nomEmployeur,
-                //Stagiaires stagiaire.Id,
+                StagiaireId = stagiaire.Id,
 				EmployeurId = employeur.Id,
 				ChatId = chat.Id,
 			};
