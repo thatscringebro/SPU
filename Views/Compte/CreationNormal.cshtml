@@ -4,17 +4,17 @@
     ViewData["Title"] = "S'enregistrer";
 }
 
-
+@* Modifier en fonction du role si coordo le back va se faire vers la page du choix de création sinon le back reste home*@
 <div class="mt-2 mb-2">
     @Html.ActionLink("Back", "Index", "Home",
             new { }, new { @class = "btn btn-secondary" })
 </div>
 
-<h1>Pas un stagiaire, sélectionnz le rôle approprié</h1>
+@* <h1>Pas un stagiaire, sélectionnz le rôle approprié</h1>
 @Html.ActionLink("Coordinateur", "CreationNormal", "Compte", new { vue = "CreationCoordonateur" }, null)
 @Html.ActionLink("Enseignant", "CreationNormal", "Compte", new { vue = "CreationEnseignant" }, null)
 @Html.ActionLink("Maître de stage", "CreationMDS", "Compte", null, new { @class = "btn btn-link" })
-@Html.ActionLink("Entreprise", "CreationEntreprise", "Compte", new { }, new { @class = "btn btn-primary" })
+@Html.ActionLink("Entreprise", "CreationEntreprise", "Compte", new { }, new { @class = "btn btn-primary" }) *@
 
 
 <form id="user-form" asp-action="CreationNormal" asp-controller="Compte" method="post">
