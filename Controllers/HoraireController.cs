@@ -33,7 +33,7 @@ namespace SPU.Controllers
             if (mds != null)
             {
                 vm.listeHoraireMds = _context.Horaires.Where(x => x.MDSId == mds.Id).ToList();
-            }
+            } 
 
             return View(vm);
         }
