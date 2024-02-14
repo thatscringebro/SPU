@@ -151,24 +151,29 @@ namespace SPU.Controllers
             {
                 Horaire horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
 
-                if(horaire != null)
+                if (horaire != null)
                 {
-                    DateTime dateDebutStage = horaire.DateDebutStage.ToUniversalTime();
-                    DateTime dateFinStage = horaire.DateFinStage.ToUniversalTime();
+                    DateTime dateDebutStage = horaire.DateDebutStage;
+                    DateTime dateFinStage = horaire.DateFinStage;
 
-                    DateTime plageHoraireDebut = new DateTime(vm.DateDebutPlageHoraire.Year,
-                              vm.DateDebutPlageHoraire.Month,
-                              vm.DateDebutPlageHoraire.Day,
-                              vm.HeureDebutPlageHoraire,
-                              vm.MinutesDebutPlageHoraire,
-                              0).ToUniversalTime();
+                    // Obtenir l'heure locale
+                    TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
 
-                    DateTime plageHoraireFin = new DateTime(vm.DateFinPlageHoraire.Year,
-                                      vm.DateFinPlageHoraire.Month,
-                                      vm.DateFinPlageHoraire.Day,
-                                      vm.HeureFinPlageHoraire,
-                                      vm.MinutesFinPlageHoraire,
-                                      0).ToUniversalTime();
+                    DateTime plageHoraireDebut = TimeZoneInfo.ConvertTime(new DateTime(vm.DateDebutPlageHoraire.Year,
+                                              vm.DateDebutPlageHoraire.Month,
+                                              vm.DateDebutPlageHoraire.Day,
+                                              vm.HeureDebutPlageHoraire,
+                                              vm.MinutesDebutPlageHoraire,
+                                              0), localTimeZone);
+
+                    DateTime plageHoraireFin = TimeZoneInfo.ConvertTime(new DateTime(vm.DateFinPlageHoraire.Year,
+                                              vm.DateFinPlageHoraire.Month,
+                                              vm.DateFinPlageHoraire.Day,
+                                              vm.HeureFinPlageHoraire,
+                                              vm.MinutesFinPlageHoraire,
+                                              0), localTimeZone);
+
+                    List<PlageHoraire> listePlageHoraire = new List<PlageHoraire>();
 
                     while (plageHoraireDebut <= dateFinStage && plageHoraireFin <= dateFinStage)
                     {
@@ -179,12 +184,21 @@ namespace SPU.Controllers
                         plageHoraireRecurrence.DateFin = plageHoraireFin;
                         plageHoraireRecurrence.ConfirmationPresence = true;
 
-                        _context.Add(plageHoraireRecurrence);
-                        _context.SaveChanges();
+                        listePlageHoraire.Add(plageHoraireRecurrence);
 
                         plageHoraireDebut = plageHoraireDebut.AddDays(14);
                         plageHoraireFin = plageHoraireFin.AddDays(14);
                     }
+
+                    foreach (PlageHoraire ph in listePlageHoraire)
+                    {
+                        // Conserver les dates en tant qu'UTC pour PostgreSQL
+                        ph.DateDebut = ph.DateDebut.ToUniversalTime();
+                        ph.DateFin = ph.DateFin.ToUniversalTime();
+                        _context.Add(ph);
+                    }
+
+                    _context.SaveChanges();
                 }
             }
             else
