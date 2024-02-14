@@ -25,54 +25,62 @@
 }
 
 @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
-
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.role)
+                Rôle
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nom)
+                Nom
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Prenom)
+                Prénom
+            </th>
+            <th>
+                Action
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var role in new List<string> { "Stagiaire", "MDS", "Enseignant", "Employeur", "Coordonnateur" })
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.role)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nom)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Prenom)
-                </td>
-                <td>
-                    @if (item.role == "MDS")
-                    {
-                        @Html.ActionLink("Modifier", "EditMDS", "Compte", new {id=item.Id}, new {@class = "btn btn-primary"})
-                    }
-                    else if (item.role == "Employeur")
-                    {
-                        @Html.ActionLink("Modifier", "EditEmployeur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
-                    }
-                    else
-                    {
-                        @Html.ActionLink("Modifier", "EditUtilisateur", "Compte", new { id = item.Id}, new { @class = "btn btn-primary" })
-                    }
-                    <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
-                        <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
-                            Supprimer
-                        </button>
-                    </form>
-                </td>
+                <td colspan="4" class="bg-dark text-white">@role</td>
             </tr>
+            @foreach (var item in Model.Where(x => x.role == role))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.role)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Prenom)
+                    </td>
+                    <td>
+                        @if (item.role == "MDS")
+                        {
+                            @Html.ActionLink("Modifier", "EditMDS", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        }
+                        else if (item.role == "Employeur")
+                        {
+                            @Html.ActionLink("Modifier", "EditEmployeur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Modifier", "EditUtilisateur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        }
+                        <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
+                            <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
