@@ -842,7 +842,7 @@ namespace SPU.Controllers
                 return RedirectToAction("Relier");
             }
 
-            if ((idMdsSelectionne1 == null || idMdsSelectionne2 == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
+            if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
             {
                 TempData["ErrorMessage"] = "Le même maître de stage a été sélectionné deux fois ou aucun maître de stage n'a été sélectionné. Veuillez sélectionner des maîtres de stage différents.";
 
