@@ -828,27 +828,33 @@ namespace SPU.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.UserListErrorMessage = "Erreur d'affichage des stagiaires. Veuillez réessayer." + ex.Message;
+                TempData["ErrorMessage"] = "Erreur d'affichage des stagiaires. Veuillez réessayer.";
             }
             return View(vm);
         }
 
         [Authorize(Roles = "Coordonateur")]
         [HttpPost]
-        public async Task<IActionResult> Relier(Guid idStagiaire, Guid idMdsSelectionne1, Guid idMdsSelectionne2, Guid idEnseignantSelectionne)
+        public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid idEnseignantSelectionne)
         {
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("Relier");
             }
 
-            if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
+            if ((idMdsSelectionne1 == null || idMdsSelectionne2 == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
             {
                 TempData["ErrorMessage"] = "Le même maître de stage a été sélectionné deux fois ou aucun maître de stage n'a été sélectionné. Veuillez sélectionner des maîtres de stage différents.";
 
                 return RedirectToAction("Relier");
             }
 
+            if (idEnseignantSelectionne == null)
+            {
+                TempData["ErrorMessage"] = "Veuillez sélectionner un enseignant.";
+
+                return RedirectToAction("Relier");
+            }
 
             var Stagiaire = _spuContext.Stagiaires.Find(idStagiaire);
             if (Stagiaire == null)
@@ -857,24 +863,41 @@ namespace SPU.Controllers
                 return RedirectToAction("Relier");
             }
 
-
             var MdsaEditer1 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne1).FirstOrDefault();
-                var MdsaEditer2 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne2).FirstOrDefault();
-                var StagiaireAediter = _spuContext.Stagiaires.Where(x => x.Id == idStagiaire).FirstOrDefault();
+            var MdsaEditer2 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne2).FirstOrDefault();
+            var StagiaireAediter = _spuContext.Stagiaires.Where(x => x.Id == idStagiaire).FirstOrDefault();
 
-                MdsaEditer1.StagiaireId = idStagiaire;
-                var succes1 = _spuContext.MDS.Update(MdsaEditer1);
-                MdsaEditer2.StagiaireId = idStagiaire;
-                var succes2 = _spuContext.MDS.Update(MdsaEditer2);
-                StagiaireAediter.EnseignantId = idEnseignantSelectionne;
-                var succes3 = _spuContext.Stagiaires.Update(StagiaireAediter);
+            var anciensMds = _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToList();
 
-                if (succes1 != null && succes2 != null && succes3 != null)
+            foreach (var mds in anciensMds)
+            {
+                if (mds.Id != idMdsSelectionne1 && mds.Id != idMdsSelectionne2)
                 {
-                    TempData["SuccessMessage"] = "Modifications réussies";
-
-                    await _spuContext.SaveChangesAsync();
+                    mds.StagiaireId = null; 
                 }
+            }
+
+            if (MdsaEditer1 != null)
+            {
+                MdsaEditer1.StagiaireId = idStagiaire;
+                _spuContext.MDS.Update(MdsaEditer1);
+            }
+
+            if (MdsaEditer2 != null && idMdsSelectionne2 != idMdsSelectionne1)
+            {
+                MdsaEditer2.StagiaireId = idStagiaire;
+                _spuContext.MDS.Update(MdsaEditer2);
+            }
+
+            if (StagiaireAediter != null)
+            {
+                StagiaireAediter.EnseignantId = idEnseignantSelectionne;
+                _spuContext.Stagiaires.Update(StagiaireAediter);
+            }
+
+            await _spuContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Modifications réussies";
 
             return RedirectToAction("Relier");
         }

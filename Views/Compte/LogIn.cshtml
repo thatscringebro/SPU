@@ -7,6 +7,14 @@
 
 <link rel="stylesheet" href="~/css/login.css"/>
 
+@if (TempData["LogoutSuccessMessage"] != null)
+{
+	<div class="alert alert-success">
+		@TempData["LogoutSuccessMessage"]
+	</div>
+}
+@* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
+
 <div class="containerLogin">
 	<div class="screen">
 		<div class="screen__content">

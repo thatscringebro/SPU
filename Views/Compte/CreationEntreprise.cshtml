@@ -10,6 +10,9 @@
             new { }, new { @class = "btn btn-secondary" })
 </div>
 
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
 <form asp-action="CreationEntreprise">
     <h1>Inscription d'Entreprise</h1>
     <hr />

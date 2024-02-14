@@ -17,6 +17,15 @@
             new { }, new { @class = "btn btn-primary" })
 </div>
 
+@if (!string.IsNullOrEmpty(ViewBag.UserListErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Html.Raw(ViewBag.UserListErrorMessage)
+    </div>
+}
+
+@* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
+
 <table class="table">
     <thead>
         <tr>
