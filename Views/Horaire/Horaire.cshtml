@@ -8,35 +8,35 @@
 }
 
 <hr />
-<div class="horaire-horaire-entete">
-    <h2>Horaire SPU</h2>
-    <div>
-        <label>
-            Horaire du : @Model.DateDebutStage.ToString("d MMMM yyyy") au @Model.DateFinStage.ToString("d MMMM yyyy")
-        </label>
-    </div>
-    <div>
-        @if (Model.nomStagiaire == null)
-        {
-            <label>
-                Maître de stage : @Model.nomMds | Stagiaire: À déterminer
-            </label>
-        }
-        else
-        {
-            <label>
-                Maître de stage : @Model.nomMds | Stagiaire: @Model.nomStagiaire
-            </label>
-        }
-    </div>
-    <div>
-        
-    </div>
-</div>
-<div>
-    <a id="horaire-ajoutPlageHoraire-button" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout plage horaire</a>
-</div>
+<div style="width:600px; margin: 0 auto;">
 
+    <div class="horaire-horaire-entete">
+        <h2>Horaire SPU</h2>
+        <div>
+            <label>
+                Horaire du : @Model.DateDebutStage.ToString("d MMMM yyyy") au @Model.DateFinStage.ToString("d MMMM yyyy")
+            </label>
+        </div>
+        <div>
+            @if (Model.nomStagiaire == null)
+            {
+                <label>
+                    Maître de stage : @Model.nomMds | Stagiaire: À déterminer
+                </label>
+            }
+            else
+            {
+                <label>
+                    Maître de stage : @Model.nomMds | Stagiaire: @Model.nomStagiaire
+                </label>
+            }
+        </div>
+    </div>
+    <div style="text-align: center;">
+        <a id="horaire-ajoutPlageHoraire-button" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout plage horaire</a>
+    </div>
+</div>
+<br/>
 <div class="horizontal-list">
     <vc:schedule-day horaire-id="@ViewBag.horaireId"></vc:schedule-day>
 </div>
