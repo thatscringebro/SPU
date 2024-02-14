@@ -835,7 +835,7 @@ namespace SPU.Controllers
 
         [Authorize(Roles = "Coordonateur")]
         [HttpPost]
-        public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid idEnseignantSelectionne)
+        public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne)
         {
             if (!ModelState.IsValid)
             {
