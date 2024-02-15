@@ -14,7 +14,7 @@ namespace SPU.Domain
 
 		public static void Seed(this ModelBuilder builder)
 		{
-			var coordonateur = AddRole(builder, "Coordonateur");
+			var coordonnateur = AddRole(builder, "Coordonnateur");
             var employeur = AddRole(builder, "Employeur");
             var enseignant = AddRole(builder, "Enseignant");
             var mds = AddRole(builder, "MDS");
@@ -35,7 +35,7 @@ namespace SPU.Domain
 
 			AddUserToRole(builder, user1, enseignant);
 			AddUserToRole(builder, user2, employeur);
-			AddUserToRole(builder, user3, coordonateur);
+			AddUserToRole(builder, user3, coordonnateur);
 			AddUserToRole(builder, user4, stagiaire);
 			AddUserToRole(builder, user5, mds);
 			
@@ -201,15 +201,15 @@ namespace SPU.Domain
             return newAddress;
         }
 
-        private static Coordonateur AddCoordo(ModelBuilder builder, Utilisateur user, Ecole ecole)
+        private static Coordonnateur AddCoordo(ModelBuilder builder, Utilisateur user, Ecole ecole)
 		{
-			var newUser = new Coordonateur()
+			var newUser = new Coordonnateur()
             {
                 Id = Guid.NewGuid(),
 				UtilisateurId=user.Id,
 				EcoleId = ecole.id,
             };
-			builder.Entity<Coordonateur>().HasData(newUser);
+			builder.Entity<Coordonnateur>().HasData(newUser);
 			return newUser;
 		}
 
@@ -259,7 +259,7 @@ namespace SPU.Domain
             return newUser;
         }
 
-        private static Chat AddChat(ModelBuilder builder, Utilisateur user, Enseignant enseignant, Coordonateur coordonateur)
+        private static Chat AddChat(ModelBuilder builder, Utilisateur user, Enseignant enseignant, Coordonnateur coordonateur)
         {
             var newChat = new Chat()
             {

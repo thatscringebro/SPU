@@ -87,7 +87,7 @@ namespace SPU.Controllers
                 var role = await _userManager.GetRolesAsync(user);
                 var roleUser = role.FirstOrDefault();
 
-                if (roleUser == "Coordonateur")
+                if (roleUser == "Coordonnateur")
                     return RedirectToAction(nameof(Manage));
 
                 if (!string.IsNullOrEmpty(returnUrl))
@@ -119,7 +119,7 @@ namespace SPU.Controllers
 
         #region Manage
         //[AllowAnonymous]
-        [Authorize(Roles = "Coordonateur")]
+        [Authorize(Roles = "Coordonnateur")]
         public ActionResult ChoixCreation()
         {
             return View();
@@ -128,7 +128,7 @@ namespace SPU.Controllers
 
         //CRUD pour utilisateur 
         //[AllowAnonymous] 
-        [Authorize(Roles = "Coordonateur")]
+        [Authorize(Roles = "Coordonnateur")]
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
         {
             var vm = new List<UtilisateurDetailVM>();
@@ -183,25 +183,33 @@ namespace SPU.Controllers
 
             var stagiaire = CreateSHA512("Stagiaire");
             var enseignant = CreateSHA512("Enseignant");
-            var Coordo = CreateSHA512("Coordonateur");
+            var Coordo = CreateSHA512("Coordonnateur");
 
-
-            if (hash == enseignant)
-                return View("CreationEnseignant");
-            else if (hash == Coordo)
-                return View("CreationCoordonateur");
+            if(hash == null)
+            {
+                switch (vue)
+                {
+                    case "CreationCoordonnateur": //Creation coordo
+                        return View("CreationCoordonnateur");
+                    case "CreationEnseignant": //Creation enseignant
+                        return View("CreationEnseignant");
+                    default:
+                        //Retourne STAGIAIRE si aucun choix
+                        return View();
+                }
+            }
             else
-                return View();
-            //switch (vue)
-            //{
-            //    case "CreationCoordonateur": //Creation coordo
-            //        return View("CreationCoordonateur");
-            //    case "CreationEnseignant": //Creation enseignant
-            //        return View("CreationEnseignant");
-            //    default:
-            //        //Retourne STAGIAIRE si aucun choix
-            //        return View();
-            //}
+            {
+
+                if (hash == enseignant)
+                    return View("CreationEnseignant");
+                else if (hash == Coordo)
+                    return View("CreationCoordonnateur");
+                else
+                    return View();
+            }
+
+           
         }
 
 
@@ -270,16 +278,16 @@ namespace SPU.Controllers
                 _spuContext.Stagiaires.Add(Stagiaire);
 
             }
-            else if (selectedRole.Name == "Coordonateur")
+            else if (selectedRole.Name == "Coordonnateur")
             {
-                var Coordo = new Coordonateur
+                var Coordo = new Coordonnateur
                 {
                     UtilisateurId = toCreate.Id,
                     utilisateur = toCreate,
                     ecole = ecole,
                     EcoleId = vm.idEcoleSelectionne
                 };
-                _spuContext.Coordonateurs.Add(Coordo);
+                _spuContext.Coordonnateurs.Add(Coordo);
 
             }
             else if (selectedRole.Name == "Enseignant")
@@ -301,7 +309,7 @@ namespace SPU.Controllers
 
         //[AllowAnonymous]
         //EDIT STAGIAIRE/COORDO/ENSEIGNANT
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> EditUtilisateur(Guid id)
         {
@@ -325,7 +333,7 @@ namespace SPU.Controllers
         }
 
         //[AllowAnonymous]
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> EditUtilisateur(Guid id, UtilisateurEditVM vm)
         {
@@ -450,7 +458,7 @@ namespace SPU.Controllers
 
         
         //EDIT MDS
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> EditMDS(Guid id)
         {
@@ -496,7 +504,7 @@ namespace SPU.Controllers
 
 
        
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
         {
@@ -545,15 +553,15 @@ namespace SPU.Controllers
 
         #region CreationEmployeur et EditEmployeur
         [AllowAnonymous]
-        [Route("Compte/CreationEntreprise")]
-        [Route("Compte/CreationEntreprise/{hash?}")]
+        [Route("Compte/CreationEmployeur")]
+        [Route("Compte/CreationEmployeur/{hash?}")]
         [HttpGet]
-        public ActionResult CreationEntreprise(string hash)
+        public ActionResult CreationEmployeur(string hash)
         {
             var Employeur = CreateSHA512("Employeyr");
 
             if (hash == Employeur)
-                return View("CreationEntreprise");
+                return View("CreationEmployeur");
             else
                 return View(); // a changer avec le role du coordo quand on va être rendu au role !! 
         }
@@ -561,7 +569,7 @@ namespace SPU.Controllers
         //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> CreationEntreprise(EmployeurCreationVM vm)
+        public async Task<IActionResult> CreationEmployeur(EmployeurCreationVM vm)
         {
 
             if (!ModelState.IsValid)
@@ -639,7 +647,7 @@ namespace SPU.Controllers
 
        
         //EDIT EMPLOYEUR
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> EditEmployeur(Guid id)
         {
@@ -679,7 +687,7 @@ namespace SPU.Controllers
 
 
         //[AllowAnonymous]
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> EditEmployeur(Guid id, EmployeurEditVM vm)
         {
@@ -731,7 +739,7 @@ namespace SPU.Controllers
         #region Remove 
         
         //REMOVE POUR TOUS LE MONDE 
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> Remove(Guid id, string role)
         {
@@ -749,11 +757,11 @@ namespace SPU.Controllers
                         return NotFound();
                     _spuContext.Remove(stagiaire);
                     break;
-                case "Coordonateur":
-                    var coordonateur = _spuContext.Coordonateurs.FirstOrDefault(x => x.utilisateur == user);
-                    if (coordonateur == null)
+                case "Coordonnateur":
+                    var coordonnateur = _spuContext.Coordonnateurs.FirstOrDefault(x => x.utilisateur == user);
+                    if (coordonnateur == null)
                         return NotFound();
-                    _spuContext.Remove(coordonateur);
+                    _spuContext.Remove(coordonnateur);
                     break;
                 case "Enseignant":
                     var enseignant = _spuContext.Enseignants.FirstOrDefault(x => x.utilisateur == user);
@@ -792,7 +800,7 @@ namespace SPU.Controllers
 
         #region Relier 
 
-        [Authorize(Roles = "Coordonateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> Relier()
         {
@@ -834,7 +842,7 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-        [Authorize(Roles = "Coordonateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne)
         {

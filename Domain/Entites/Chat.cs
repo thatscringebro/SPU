@@ -14,7 +14,7 @@ namespace SPU.Domain.Entites
         //public virtual Stagiaire stagiaire { get; set; }
         //[ForeignKey(nameof(idEnseignant))]virtual
         public Enseignant enseignant { get; set; }
-        public  Coordonateur coordonateur { get; set; }
+        public  Coordonnateur coordonateur { get; set; }
 
         //public List<MDS> mds = new();
         //public List<Message> message = new();

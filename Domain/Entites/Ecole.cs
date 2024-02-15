@@ -8,7 +8,7 @@ namespace SPU.Domain.Entites
         public string Nom {  get; set; }
         //public List<Stagiaire> Stagiaires { get; set; }
         //public List<Enseignant> Enseignants { get; set;}
-        //public List<Coordonateur> Coordonateurs { get; set; }
+        //public List<Coordonnateur> Coordonateurs { get; set; }
         public string NumDeTel { get; set; }
 
         public Guid AdresseId { get; set; }
