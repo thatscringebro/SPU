@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
 {
-    public class EntrepriseCreationVM 
+    public class EmployeurCreationVM 
     {
         [Display(Name = "Nom d'utilisateur")]
         public string userName { get; set; }
