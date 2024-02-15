@@ -22,8 +22,6 @@ namespace SPU.Controllers
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly SpuContext _spuContext;
         
-
-
         public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
             _roleManager = roleManager;
@@ -32,7 +30,6 @@ namespace SPU.Controllers
             _spuContext = spuContext;
 
         }
-
     
         public string CreateSHA512(string strData)
         {
@@ -268,13 +265,19 @@ namespace SPU.Controllers
 
             if (selectedRole.Name == "Stagiaire")
             {
+                var Chat = new Chat();
+
                 var Stagiaire = new Stagiaire
                 {
                     utilisateur = toCreate,
                     UtilisateurId = toCreate.Id,
                     ecole = ecole,
-                    EcoleId = vm.idEcoleSelectionne
+                    EcoleId = vm.idEcoleSelectionne,
+                    chat = Chat,
+                    ChatId = Chat.Id,
+                    
                 };
+             
                 _spuContext.Stagiaires.Add(Stagiaire);
 
             }
@@ -873,10 +876,10 @@ namespace SPU.Controllers
                 return RedirectToAction("Relier");
             }
 
-            var MdsaEditer1 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne1).FirstOrDefault();
-            var MdsaEditer2 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne2).FirstOrDefault();
-            var StagiaireAediter = _spuContext.Stagiaires.Where(x => x.Id == idStagiaire).FirstOrDefault();
-
+            var MdsaEditer1 = _spuContext.MDS.FirstOrDefault(x => x.Id == idMdsSelectionne1);
+            var MdsaEditer2 = _spuContext.MDS.FirstOrDefault(x => x.Id == idMdsSelectionne2);
+            var StagiaireAediter = _spuContext.Stagiaires.FirstOrDefault(x => x.Id == idStagiaire);
+            var ChatsStagiaire = _spuContext.Chats.FirstOrDefault(x => x.Id == StagiaireAediter.ChatId);
             var anciensMds = _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToList();
 
             foreach (var mds in anciensMds)
@@ -884,24 +887,33 @@ namespace SPU.Controllers
                 if (mds.Id != idMdsSelectionne1 && mds.Id != idMdsSelectionne2)
                 {
                     mds.StagiaireId = null; 
+                    mds.ChatId = null;
+                    mds.chat = null;
                 }
             }
 
             if (MdsaEditer1 != null)
             {
                 MdsaEditer1.StagiaireId = idStagiaire;
+                MdsaEditer1.chat = Stagiaire.chat;
+                MdsaEditer1.ChatId = Stagiaire.ChatId;
                 _spuContext.MDS.Update(MdsaEditer1);
             }
 
             if (MdsaEditer2 != null && idMdsSelectionne2 != idMdsSelectionne1)
             {
                 MdsaEditer2.StagiaireId = idStagiaire;
+                MdsaEditer2.chat = Stagiaire.chat;
+                MdsaEditer2.ChatId = Stagiaire.ChatId;
                 _spuContext.MDS.Update(MdsaEditer2);
             }
 
             if (StagiaireAediter != null)
             {
                 StagiaireAediter.EnseignantId = idEnseignantSelectionne;
+               
+                ChatsStagiaire.EnseignantId = idEnseignantSelectionne;
+
                 _spuContext.Stagiaires.Update(StagiaireAediter);
             }
 

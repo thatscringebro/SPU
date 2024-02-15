@@ -62,19 +62,19 @@ namespace SignalRChat.Hubs
             _context.Message.Add(m);
             _context.SaveChanges();
 
-            var coordoReal = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).CoordonateurId;
-            string coordo = _context.Coordonnateurs.FirstOrDefault(x => x.Id == coordoReal).UtilisateurId.ToString();
+           // var coordoReal = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).CoordonateurId;
+           // string coordo = _context.Coordonnateurs.FirstOrDefault(x => x.Id == coordoReal).UtilisateurId.ToString();
             var enseignantReal = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).EnseignantId;
             string enseignant = _context.Enseignants.FirstOrDefault(x => x.Id == enseignantReal).UtilisateurId.ToString();
             string stag = _context.Stagiaires.FirstOrDefault(x => x.ChatId.ToString() == room).UtilisateurId.ToString();
             List<string> mds = _context.MDS.Where(x => x.ChatId.ToString() == room).Select(x => x.UtilisateurId.ToString()).ToList();
 
             List<string> clientsToSend = ConnectedUsers[user];
-            if(ConnectedUsers.ContainsKey(coordo))
-                clientsToSend.AddRange(ConnectedUsers[coordo]);
-            if(ConnectedUsers.ContainsKey(enseignant))
+            //if(ConnectedUsers.ContainsKey(coordo))
+            //    clientsToSend.AddRange(ConnectedUsers[coordo]);
+            if (ConnectedUsers.ContainsKey(enseignant))
                 clientsToSend.AddRange(ConnectedUsers[enseignant]);
-            if(ConnectedUsers.ContainsKey(stag))
+            if (ConnectedUsers.ContainsKey(stag))
                 clientsToSend.AddRange(ConnectedUsers[stag]);
             foreach (string id in mds)
             {

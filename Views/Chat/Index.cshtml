@@ -1,4 +1,4 @@
-@model SPU.Domain.Entites.Utilisateur
+@* @model SPU.Domain.Entites.Utilisateur
 @using SPU.Domain.Entites
 @using SPU.Domain
 @using Microsoft.EntityFrameworkCore 
@@ -115,7 +115,7 @@
         </header>
         <ul id="listChat">
       @{
-        List<Chat> chats = context.Chats.Where(x => x.CoordonateurId == coordo.Id).ToList();
+        // List<Chat> chats = context.Chats.Where(x => x.CoordonateurId == coordo.Id).ToList();
       }
             @foreach (var chat in chats)
             {
@@ -242,3 +242,4 @@
     }
   }
 </script>
+ *@
