@@ -561,7 +561,7 @@ namespace SPU.Controllers
         //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> CreationEntreprise(EntrepriseCreationVM vm)
+        public async Task<IActionResult> CreationEntreprise(EmployeurCreationVM vm)
         {
 
             if (!ModelState.IsValid)
