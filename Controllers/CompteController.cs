@@ -8,6 +8,7 @@ using SPU.Domain.Entites;
 using SPU.Enum;
 using SPU.Models;
 using SPU.ViewModels;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
@@ -50,7 +51,6 @@ namespace SPU.Controllers
             }
         }
      
-
 
         #region login
         [AllowAnonymous]
@@ -166,10 +166,44 @@ namespace SPU.Controllers
             //}
             return View(vm);
         }
-        #endregion
 
-        #region CreationNormal et EditNormal
-        [AllowAnonymous]
+        [Authorize(Roles = "Employeur")]
+        public async Task<IActionResult> ManageMds()
+		{
+			var vm = new List<MdsDetailVM>();
+			try
+			{
+                var idUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (idUser == null)
+                {
+                    ViewBag.UserListErrorMessage = "Erreur d'affichage. Veuillez réessayer!";
+                }
+
+                Guid idEmp = _spuContext.Employeurs.FirstOrDefault(a => a.UtilisateurId == Guid.Parse(idUser)).Id;
+
+
+                foreach (var user in await _spuContext.MDS.Where(m => m.EmployeurId == idEmp).Include(u => u.utilisateur).ToListAsync())
+                {
+					vm.Add(new MdsDetailVM
+					{
+						Id = user.Id,
+                        Prenom = user.utilisateur.Prenom,
+						Nom = user.utilisateur.Nom
+					});
+				}
+			}
+			catch (Exception ex)
+			{
+				ViewBag.UserListErrorMessage = "Erreur d'affichage des maîtres de stages. Veuillez réessayer!" + ex.Message;
+			}
+
+			return View(vm);
+		}
+		#endregion
+
+		#region CreationNormal et EditNormal
+		[AllowAnonymous]
         [Route("Compte/CreationNormal")]
         [Route("Compte/CreationNormal/{hash?}")]
         [HttpGet]
@@ -863,11 +897,14 @@ namespace SPU.Controllers
                 return RedirectToAction("Relier");
             }
 
-            var MdsaEditer1 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne1).FirstOrDefault();
-            var MdsaEditer2 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne2).FirstOrDefault();
-            var StagiaireAediter = _spuContext.Stagiaires.Where(x => x.Id == idStagiaire).FirstOrDefault();
+            //var MdsaEditer1 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne1).FirstOrDefault();
+			var MdsaEditer1 = _spuContext.MDS.FirstOrDefault(x => x.Id == idMdsSelectionne1);
+			//var MdsaEditer2 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne2).FirstOrDefault();
+			var MdsaEditer2 = _spuContext.MDS.FirstOrDefault(x => x.Id == idMdsSelectionne2);
+			//var StagiaireAediter = _spuContext.Stagiaires.Where(x => x.Id == idStagiaire).FirstOrDefault();
+			var StagiaireAediter = _spuContext.Stagiaires.FirstOrDefault(x => x.Id == idStagiaire);
 
-            var anciensMds = _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToList();
+			var anciensMds = _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToList();
 
             foreach (var mds in anciensMds)
             {

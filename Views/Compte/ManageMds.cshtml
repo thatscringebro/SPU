@@ -1,0 +1,49 @@
+﻿@model IEnumerable<SPU.ViewModels.MdsDetailVM>
+
+@{
+    ViewData["Title"] = "Gestion des stagiaires";
+
+}
+
+<h1>Gérer les stagiaires<br></h1>
+
+
+
+@if (!string.IsNullOrEmpty(ViewBag.UserListErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Html.Raw(ViewBag.UserListErrorMessage)
+    </div>
+}
+
+@* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Prenom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nom)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Prenom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nom)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    
+}

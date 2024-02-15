@@ -98,10 +98,10 @@ namespace SPU.Domain
             AddUserToRole(builder, user15, mds);
             var mds1 = AddMds(builder, user14, "SPU123457", Status.Incomplet, Civilite.M, TypeEmployeur.CIUSSS, false,
                 "0987654322", "AccreditationY", "Commentaire mds1", "Commentaire CIUSS mds1",
-                "EmployeuryeurY", stagiaire1, employeur1, chat1);
+                "EmployeurY", stagiaire1, employeur1, chat1);
             var mds2 = AddMds(builder, user15, "SPU123458", Status.Refusé, Civilite.Mme, TypeEmployeur.CISSS, true,
                 "0987654323", "AccreditationZ", "Commentaire mds2", "Commentaire CIUSS mds2",
-                "EmployeuryeurZ", stagiaire2, employeur2, chat2);
+                "EmployeurZ", stagiaire2, employeur2, chat2);
 
 
             //var horaire = AddHoraire(builder, stagiaire0, mds0, ecole);
