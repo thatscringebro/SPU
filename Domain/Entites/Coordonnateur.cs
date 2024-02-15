@@ -2,7 +2,7 @@
 
 namespace SPU.Domain.Entites
 {
-    public class Coordonateur 
+    public class Coordonnateur 
     {
 
         public Guid Id { get; set; }

@@ -5,8 +5,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SPU.Domain;
 using SPU.Domain.Entites;
+using SPU.Enum;
+using SPU.Models;
 using SPU.ViewModels;
 using System.Security.Cryptography;
+using System.Security.Policy;
+using System.Text;
 
 namespace SPU.Controllers
 {
@@ -17,6 +21,8 @@ namespace SPU.Controllers
         private readonly SignInManager<Utilisateur> _signInManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly SpuContext _spuContext;
+        
+
 
         public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
@@ -27,7 +33,26 @@ namespace SPU.Controllers
 
         }
 
+    
+        public string CreateSHA512(string strData)
+        {
+            var message = Encoding.UTF8.GetBytes(strData);
+            using (var alg = SHA512.Create())
+            {
+                string hex = "";
 
+                var hashValue = alg.ComputeHash(message);
+                foreach (byte x in hashValue)
+                {
+                    hex += string.Format("{0:x2}", x);
+                }
+                return hex;
+            }
+        }
+     
+
+
+        #region login
         [AllowAnonymous]
         public IActionResult LogIn(string? returnUrl = "")
         {
@@ -58,10 +83,20 @@ namespace SPU.Controllers
                     return View(vm);
                 }
 
+                var user =  _userManager.Users.FirstOrDefault(r => r.UserName == vm.UserName);
+                var role = await _userManager.GetRolesAsync(user);
+                var roleUser = role.FirstOrDefault();
+
+                if (roleUser == "Coordonnateur")
+                    return RedirectToAction(nameof(Manage));
+
                 if (!string.IsNullOrEmpty(returnUrl))
                     return Redirect(returnUrl);
 
-                return RedirectToAction("Index", "Home");
+
+               
+                    return RedirectToAction("Index", "Home");
+
             }
             catch
             {
@@ -80,27 +115,38 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(LogIn));
         }
 
+        #endregion
+
+        #region Manage
+        //[AllowAnonymous]
+        [Authorize(Roles = "Coordonnateur")]
+        public ActionResult ChoixCreation()
+        {
+            return View();
+        }
+
 
         //CRUD pour utilisateur 
-        //[Authorize(Roles = "Coordonateur")]
-        [AllowAnonymous] // A ENLEVER APRES LES TESTS
+        //[AllowAnonymous] 
+        [Authorize(Roles = "Coordonnateur")]
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
         {
-            var vm = new List<UtilisateurDetailVM>();           
+            var vm = new List<UtilisateurDetailVM>();
             try
             {
                 foreach (var user in await _userManager.Users.ToListAsync())
                 {
-                   foreach (var userRoles in await _userManager.GetRolesAsync(user))
+                    foreach (var userRoles in await _userManager.GetRolesAsync(user))
                     {
                         vm.Add(new UtilisateurDetailVM
                         {
                             role = userRoles,
+                            Id = user.Id,
                             Prenom = user.Prenom,
                             Nom = user.Nom
                         });
                     }
-                }   
+                }
             }
             catch (Exception ex)
             {
@@ -120,35 +166,14 @@ namespace SPU.Controllers
             //}
             return View(vm);
         }
+        #endregion
 
-
-        //A ENLEVER???? À REFLECHIRRRR
+        #region CreationNormal et EditNormal
         [AllowAnonymous]
+        [Route("Compte/CreationNormal")]
+        [Route("Compte/CreationNormal/{hash?}")]
         [HttpGet]
-        public IActionResult Register()
-        {
-            //var model = new UtilisateurCreationVM();
-
-            //model.Ecoles = _spuContext.Ecole.Select( e => new SelectListItem
-            //{
-            //    Value = e.id.ToString(),
-            //    Text = e.Nom
-            //}).ToList();
-
-            //return View(model);
-
-            ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
-            {
-                Value = e.id.ToString(),
-                Text = e.Nom
-            }).ToList();
-
-            return View();
-        }
-
-        [AllowAnonymous]
-        [HttpGet]
-        public ActionResult CreationNormal(string vue)
+        public ActionResult CreationNormal(string vue, string hash)
         {
             ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
             {
@@ -156,31 +181,49 @@ namespace SPU.Controllers
                 Text = e.Nom
             }).ToList();
 
+            var stagiaire = CreateSHA512("Stagiaire");
+            var enseignant = CreateSHA512("Enseignant");
+            var Coordo = CreateSHA512("Coordonnateur");
 
-            switch (vue)
+            if(hash == null)
             {
-                case "CreationCoordonateur": //Creation coordo
-                    return View("CreationCoordonateur");
-                case "CreationEnseignant": //Creation enseignant
+                switch (vue)
+                {
+                    case "CreationCoordonnateur": //Creation coordo
+                        return View("CreationCoordonnateur");
+                    case "CreationEnseignant": //Creation enseignant
+                        return View("CreationEnseignant");
+                    default:
+                        //Retourne STAGIAIRE si aucun choix
+                        return View();
+                }
+            }
+            else
+            {
+
+                if (hash == enseignant)
                     return View("CreationEnseignant");
-                default:
-                    //Retourne STAGIAIRE si aucun choix
+                else if (hash == Coordo)
+                    return View("CreationCoordonnateur");
+                else
                     return View();
             }
+
+           
         }
 
 
         //CREATION STAGIAIRE/COORDO/ENSEIGNANT
-        //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
         {
+
             if (!ModelState.IsValid)
             {
                 return View(vm);
             }
-
+            
             var roles = await _roleManager.Roles.ToListAsync();
 
             var selectedRole = roles.FirstOrDefault(r => r.Name == vm.role);
@@ -205,7 +248,7 @@ namespace SPU.Controllers
             toCreate.Nom = vm.Nom;
             toCreate.PhoneNumber = vm.PhoneNumber;
             toCreate.Email = vm.Email;
-            
+
             var result = await _userManager.CreateAsync(toCreate, vm.pwd);
 
             if (!result.Succeeded)
@@ -223,30 +266,31 @@ namespace SPU.Controllers
             }
             var ecole = _spuContext.Ecole.Where(x => x.id == vm.idEcoleSelectionne).FirstOrDefault();
 
-            if(selectedRole.Name == "Stagiaire")
+            if (selectedRole.Name == "Stagiaire")
             {
-                var Stagiaire = new Stagiaire{
+                var Stagiaire = new Stagiaire
+                {
                     utilisateur = toCreate,
                     UtilisateurId = toCreate.Id,
                     ecole = ecole,
                     EcoleId = vm.idEcoleSelectionne
                 };
                 _spuContext.Stagiaires.Add(Stagiaire);
-                
+
             }
-            else if(selectedRole.Name == "Coordonateur")
+            else if (selectedRole.Name == "Coordonnateur")
             {
-                var Coordo = new Coordonateur
+                var Coordo = new Coordonnateur
                 {
                     UtilisateurId = toCreate.Id,
                     utilisateur = toCreate,
                     ecole = ecole,
                     EcoleId = vm.idEcoleSelectionne
                 };
-                _spuContext.Coordonateurs.Add(Coordo);
-              
+                _spuContext.Coordonnateurs.Add(Coordo);
+
             }
-            else if( selectedRole.Name == "Enseignant")
+            else if (selectedRole.Name == "Enseignant")
             {
                 var Enseignant = new Enseignant
                 {
@@ -256,17 +300,77 @@ namespace SPU.Controllers
                     EcoleId = vm.idEcoleSelectionne
                 };
                 _spuContext.Enseignants.Add(Enseignant);
-               
+
             }
             await _spuContext.SaveChangesAsync();
 
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
 
+        //[AllowAnonymous]
+        //EDIT STAGIAIRE/COORDO/ENSEIGNANT
+        [Authorize(Roles = "Coordonnateur")]
+        [HttpGet]
+        public async Task<IActionResult> EditUtilisateur(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+                return NotFound();
+
+            var roleCh = await _userManager.GetRolesAsync(user);
+
+            var modifUser = new UtilisateurEditVM
+            {
+                Nom = user.Nom,
+                Prenom = user.Prenom,
+                PhoneNumber = user.PhoneNumber,
+                userName = user.UserName,
+                role = roleCh.FirstOrDefault()
+            };
+
+
+            return View(modifUser);
+        }
+
+        //[AllowAnonymous]
+        [Authorize(Roles = "Coordonnateur")]
+        [HttpPost]
+        public async Task<IActionResult> EditUtilisateur(Guid id, UtilisateurEditVM vm)
+        {
+            if (!ModelState.IsValid)
+                return View(vm);
+
+
+            var aEditer = await _userManager.FindByIdAsync(id.ToString()) ?? throw new ArgumentOutOfRangeException(nameof(id));
+
+            aEditer.Nom = vm.Nom;
+            aEditer.Prenom = vm.Prenom;
+            aEditer.PhoneNumber = vm.PhoneNumber;
+            aEditer.Email = vm.Email;
+            aEditer.UserName = vm.userName;
+
+            var works = _userManager.UpdateAsync(aEditer);
+            if (works != null)
+                TempData["SuccessMessage"] = "Modifications succeeded";
+            else
+                TempData["ErrorMessage"] = "Request failed";
+
+
+
+            await _spuContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Manage));
+        }
+
+
+        #endregion
+
+        #region CreationMDS et EditMDS
 
         [AllowAnonymous]
+        [Route("Compte/CreationMDS")]
+        [Route("Compte/CreationMDS/{hash?}")]
         [HttpGet]
-        public ActionResult CreationMDS()
+        public ActionResult CreationMDS(string hash)
         {
             ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
             {
@@ -274,16 +378,19 @@ namespace SPU.Controllers
                 Text = e.utilisateur.UserName
             }).ToList();
 
-             return View(); 
+            var MDS = CreateSHA512("MDS");
+
+            if (hash == MDS)
+                return View("CreationMDS");
+            else
+                return View(); // a changer avec le role du coordo quand on va être rendu au role !! 
         }
 
         //CREATION MDS
-        //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
         {
-
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -329,8 +436,7 @@ namespace SPU.Controllers
 
             var Entreprise = _spuContext.Employeurs.Where(x => x.Id == vm.idEmployeurSelectionne).Include(u => u.utilisateur).FirstOrDefault();
             //Nom utilisateur pour l'entreprise = nom d'entreprise OBLIGATOIRE
-            
-            
+
             var MDs = new MDS
             {
                 utilisateur = toCreate,
@@ -350,22 +456,125 @@ namespace SPU.Controllers
         }
 
 
-        [AllowAnonymous]
+        
+        //EDIT MDS
+        [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
-        public ActionResult CreationEntreprise()
+        public async Task<IActionResult> EditMDS(Guid id)
         {
-            return View();
+            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+                return NotFound();
+
+
+            var userMDS = await _spuContext.MDS.Where(x => x.UtilisateurId == user.Id).FirstOrDefaultAsync();
+
+            if (userMDS == null)
+                return NotFound();
+
+            //var empId = await _spuContext.Employeurs.Where(userMDS.emp)
+
+            var modifUser = new MDSEditVM
+            {
+                Id = userMDS.Id,
+                userName = userMDS.utilisateur.UserName,
+                Nom = userMDS.utilisateur.Nom,
+                Prenom = userMDS.utilisateur.Prenom,
+                PhoneNumber = userMDS.utilisateur.PhoneNumber,
+                MatriculeId = userMDS.MatriculeId,
+                Civilite = userMDS.civilite,
+                //NomEmployeur = userMDS.NomEmployeur,
+                telMaison = userMDS.telMaison,
+                TypeEmployeur = userMDS.typeEmployeur,
+                idEmployeurSelectionne = userMDS.EmployeurId,
+                Email = userMDS.utilisateur.Email,
+
+            };
+
+
+            return View(modifUser);
+        }
+
+
+       
+        [Authorize(Roles = "Coordonnateur")]
+        [HttpPost]
+        public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
+        {
+            if (!ModelState.IsValid)
+                return View(vm);
+
+            var aEditer = await _userManager.FindByIdAsync(id.ToString()) ?? throw new ArgumentOutOfRangeException(nameof(id));
+            var MdsaEditer = _spuContext.MDS.Where(x => x.UtilisateurId == aEditer.Id).FirstOrDefault();
+
+            aEditer.Nom = vm.Nom;
+            aEditer.Prenom = vm.Prenom;
+            aEditer.PhoneNumber = vm.PhoneNumber;
+            aEditer.Email = vm.Email;
+            aEditer.UserName = vm.userName;
+
+            MdsaEditer.utilisateur = aEditer;
+
+            MdsaEditer.MatriculeId = vm.MatriculeId;
+            MdsaEditer.civilite = vm.Civilite;
+            //MdsaEditer.NomEmployeur = vm.NomEmployeur;
+            MdsaEditer.EmployeurId = vm.idEmployeurSelectionne;
+            MdsaEditer.telMaison = vm.telMaison;
+            MdsaEditer.typeEmployeur = vm.TypeEmployeur;
+
+
+            var works = await _userManager.UpdateAsync(aEditer);
+
+            if (works != null)
+            {
+                TempData["SuccessMessage"] = "Modifications succeeded";
+
+                _spuContext.MDS.Update(MdsaEditer);
+                await _spuContext.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Manage));
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Request failed";
+                return View(vm);
+            }
+
+        }
+
+        #endregion
+
+        #region CreationEmployeur et EditEmployeur
+        [AllowAnonymous]
+        [Route("Compte/CreationEmployeur")]
+        [Route("Compte/CreationEmployeur/{hash?}")]
+        [HttpGet]
+        public ActionResult CreationEmployeur(string hash)
+        {
+            var Employeur = CreateSHA512("Employeyr");
+
+            if (hash == Employeur)
+                return View("CreationEmployeur");
+            else
+                return View(); // a changer avec le role du coordo quand on va être rendu au role !! 
         }
 
         //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> CreationEntreprise(EntrepriseCreationVM vm)
+        public async Task<IActionResult> CreationEmployeur(EmployeurCreationVM vm)
         {
 
             if (!ModelState.IsValid)
                 return View(vm);
-            
+
 
             var roles = await _roleManager.Roles.ToListAsync();
 
@@ -432,136 +641,14 @@ namespace SPU.Controllers
         }
 
 
-        //EDIT STAGIAIRE/COORDO/ENSEIGNANT
-        [Authorize(Roles = "Coordinateur")]
-        public async Task<IActionResult> EditUtilisateur(Guid id)
-        {
-            var user = await _userManager.FindByIdAsync(id.ToString());
-            if (user == null)
-                return NotFound();
-
-
-            var roles = await _roleManager.Roles.ToListAsync();
-            var selectedRole = roles.FirstOrDefault(r => r.Name == ViewBag.SelectedRole);
-
-            var modifUser = new UtilisateurEditVM
-            {
-
-                Nom = user.Nom,
-                Prenom = user.Prenom,
-                PhoneNumber = user.PhoneNumber,
-                userName = user.UserName,
-                role = selectedRole.Name
-            };
-           
-                
-            return View(modifUser);
-        }
-
-        [Authorize(Roles = "Coordinateur")]
-        [HttpPost]
-        public async Task<IActionResult> EditUtilisateur(Guid id, UtilisateurEditVM vm)
-        {
-            if (!ModelState.IsValid)
-                return View(vm);
-
-         
-            var aEditer = await _userManager.FindByIdAsync(id.ToString()) ?? throw new ArgumentOutOfRangeException(nameof(id));
-
-            aEditer.Nom = vm.Nom;
-            aEditer.Prenom = vm.Prenom;
-            aEditer.PhoneNumber = vm.PhoneNumber;
-            aEditer.Email = vm.Email; 
-            aEditer.UserName = vm.userName;
-
-            var works = _userManager.UpdateAsync(aEditer);
-            if (works != null)
-                TempData["SuccessMessage"] = "Modifications succeeded";
-            else
-                TempData["ErrorMessage"] = "Request failed";
 
 
 
-            await _spuContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Manage));
-        }
 
-
-        //EDIT MDS
-        [Authorize(Roles = "Coordinateur")]
-        public async Task<IActionResult> EditMDS(Guid id)
-        {
-            var user = await _userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
-                return NotFound();
- 
-            
-            var userMDS = await _spuContext.MDS.Where(x => x.UtilisateurId == user.Id).FirstOrDefaultAsync();
-
-            if(userMDS == null)
-                return NotFound();
-
-            var modifUser = new MDSEditVM
-            {
-                Id = userMDS.Id,
-                Nom = userMDS.utilisateur.Nom,
-                Prenom = userMDS.utilisateur.Prenom,
-                PhoneNumber = userMDS.utilisateur.PhoneNumber,
-                userName = userMDS.utilisateur.UserName,
-                MatriculeId = userMDS.MatriculeId,
-                civilite = userMDS.civilite,
-                NomEmployeur = userMDS.NomEmployeur,
-                telMaison = userMDS.telMaison,
-                TypeEmployeur = userMDS.typeEmployeur,
-                Email = userMDS.utilisateur.Email,
-                
-            };
-
-            
-            return View(modifUser);
-        }
-
-        [Authorize(Roles = "Coordinateur")]
-        [HttpPost]
-        public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
-        {
-          
-            if (!ModelState.IsValid)
-                return View(vm);
-
-            var aEditer = await _userManager.FindByIdAsync(id.ToString()) ?? throw new ArgumentOutOfRangeException(nameof(id));
-            var MdsaEditer = _spuContext.MDS.Where(x => x.UtilisateurId == aEditer.Id).FirstOrDefault();
-
-            aEditer.Nom = vm.Nom;
-            aEditer.Prenom = vm.Prenom;
-            aEditer.PhoneNumber = vm.PhoneNumber;
-            aEditer.Email = vm.Email;
-            aEditer.UserName = vm.userName;
-            MdsaEditer.MatriculeId = vm.MatriculeId;
-            MdsaEditer.utilisateur = aEditer;
-            MdsaEditer.civilite = vm.civilite;
-            MdsaEditer.NomEmployeur = vm.NomEmployeur;
-            MdsaEditer.telMaison = vm.telMaison;
-            MdsaEditer.typeEmployeur = vm.TypeEmployeur;
-
-
-            var works = _userManager.UpdateAsync(aEditer);
-          
-            if (works != null)
-                TempData["SuccessMessage"] = "Modifications succeeded";
-            else
-                TempData["ErrorMessage"] = "Request failed";
-           
-            _spuContext.MDS.Update(MdsaEditer);
-            await _spuContext.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Manage));
-        }
-
-
+       
         //EDIT EMPLOYEUR
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
+        [HttpGet]
         public async Task<IActionResult> EditEmployeur(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
@@ -572,25 +659,25 @@ namespace SPU.Controllers
 
             var userEmployeur = await _spuContext.Employeurs.Where(x => x.UtilisateurId == user.Id).FirstOrDefaultAsync();
 
+            var userAdresse = await _spuContext.Employeurs.Where(a => a.AdresseId == userEmployeur.AdresseId).Select(a => a.adresse).FirstOrDefaultAsync();
+
             if (userEmployeur == null)
                 return NotFound();
 
-            var modifUser = new EntrepriseEditVM
+            var modifUser = new EmployeurEditVM
             {
                 Id = userEmployeur.Id,
+                userName = userEmployeur.utilisateur.UserName,
                 Nom = userEmployeur.utilisateur.Nom,
                 Prenom = userEmployeur.utilisateur.Prenom,
                 PhoneNumber = userEmployeur.utilisateur.PhoneNumber,
-                userName = userEmployeur.utilisateur.UserName,
-                codePostal = userEmployeur.adresse.CodePostal,
-                NomDeRue = userEmployeur.adresse.Rue,
-                NumeroDeRue = userEmployeur.adresse.NoCivique,
-                pays = userEmployeur.adresse.Pays,
-                province = userEmployeur.adresse.Province,
-                ville = userEmployeur.adresse.Ville,
-                Email = userEmployeur.utilisateur.Email
-                
-               
+                Email = userEmployeur.utilisateur.Email,
+                CodePostal = userAdresse.CodePostal,
+                NomDeRue = userAdresse.Rue,
+                NumeroDeRue = userAdresse.NoCivique,
+                Pays = userAdresse.Pays,
+                Province = userAdresse.Province,
+                Ville = userAdresse.Ville
 
             };
 
@@ -598,9 +685,11 @@ namespace SPU.Controllers
             return View(modifUser);
         }
 
-        [Authorize(Roles = "Coordinateur")]
+
+        //[AllowAnonymous]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
-        public async Task<IActionResult> EditEmployeur(Guid id, EntrepriseEditVM vm)
+        public async Task<IActionResult> EditEmployeur(Guid id, EmployeurEditVM vm)
         {
 
             if (!ModelState.IsValid)
@@ -609,56 +698,223 @@ namespace SPU.Controllers
             var aEditer = await _userManager.FindByIdAsync(id.ToString()) ?? throw new ArgumentOutOfRangeException(nameof(id));
             var userEmployeur = _spuContext.Employeurs.Where(x => x.UtilisateurId == aEditer.Id).FirstOrDefault();
 
+            var userAdresse = await _spuContext.Employeurs.Where(a => a.AdresseId == userEmployeur.AdresseId).Select(a => a.adresse).FirstOrDefaultAsync();
+
             aEditer.Nom = vm.Nom;
             aEditer.Prenom = vm.Prenom;
             aEditer.PhoneNumber = vm.PhoneNumber;
             aEditer.Email = vm.Email;
             aEditer.UserName = vm.userName;
-            userEmployeur.adresse.Province = vm.province;
-            userEmployeur.adresse.NoCivique = vm.NumeroDeRue;
-            userEmployeur.adresse.Rue = vm.NomDeRue;
-            userEmployeur.adresse.CodePostal = vm.codePostal;
-            userEmployeur.adresse.Ville = vm.ville;
+
             userEmployeur.utilisateur = aEditer;
 
-
+            userAdresse.Province = vm.Province;
+            userAdresse.NoCivique = vm.NumeroDeRue;
+            userAdresse.Rue = vm.NomDeRue;
+            userAdresse.CodePostal = vm.CodePostal;
+            userAdresse.Ville = vm.Ville;
 
 
             var works = _userManager.UpdateAsync(aEditer);
 
             if (works != null)
+            {
                 TempData["SuccessMessage"] = "Modifications succeeded";
+
+                _spuContext.Adresses.Update(userAdresse);
+                _spuContext.Employeurs.Update(userEmployeur);
+                await _spuContext.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Manage));
+            }
             else
+            {
                 TempData["ErrorMessage"] = "Request failed";
+                return View(vm);
+            }
 
-            _spuContext.Employeurs.Update(userEmployeur);
-            await _spuContext.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Manage));
         }
+        #endregion
 
-
-
+        #region Remove 
+        
         //REMOVE POUR TOUS LE MONDE 
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
-        public async Task<IActionResult> Remove(Guid id)
+        public async Task<IActionResult> Remove(Guid id, string role)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound();
+            }
 
+            switch (role)
+            {
+                case "Stagiaire":
+                    var stagiaire = _spuContext.Stagiaires.FirstOrDefault(x => x.utilisateur == user);
+                    if (stagiaire == null)
+                        return NotFound();
+                    _spuContext.Remove(stagiaire);
+                    break;
+                case "Coordonnateur":
+                    var coordonnateur = _spuContext.Coordonnateurs.FirstOrDefault(x => x.utilisateur == user);
+                    if (coordonnateur == null)
+                        return NotFound();
+                    _spuContext.Remove(coordonnateur);
+                    break;
+                case "Enseignant":
+                    var enseignant = _spuContext.Enseignants.FirstOrDefault(x => x.utilisateur == user);
+                    if (enseignant == null)
+                        return NotFound();
+                    _spuContext.Remove(enseignant);
+                    break;
+                case "Employeur":
+                    var employeur = _spuContext.Employeurs.FirstOrDefault(x => x.utilisateur == user);
+                    if (employeur == null)
+                        return NotFound();
+                    _spuContext.Remove(employeur);
+                    break;
+                case "MDS":
+                    var mds = _spuContext.MDS.FirstOrDefault(x => x.utilisateur == user);
+                    if (mds == null)
+                        return NotFound();
+                    _spuContext.Remove(mds);
+                    break;
+                default:
+                    return NotFound();
+            }
 
-            var result = await _userManager.DeleteAsync(user!);
-
+            var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Impossible de supprimer un utilisateur. Veuillez réessayer.");
                 return View();
             }
+
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Remove" });
         }
-    }
 
+        #endregion
+
+        #region Relier 
+
+        [Authorize(Roles = "Coordonnateur")]
+        [HttpGet]
+        public async Task<IActionResult> Relier()
+        {
+            var vm = new List<StagiairesEditVM>();
+
+            ViewBag.Enseignants = _spuContext.Enseignants.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+            
+            ViewBag.Mds = _spuContext.MDS.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+
+            try
+            {
+                foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
+                {
+                    List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
+
+                    vm.Add(new StagiairesEditVM
+                    {
+                        Id = user.Id,
+                        Prenom = user.utilisateur?.Prenom,
+                        Nom = user.utilisateur?.Nom,
+                        idEnseignantSelectionne = user.EnseignantId,
+                        idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
+                        idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Erreur d'affichage des stagiaires. Veuillez réessayer.";
+            }
+            return View(vm);
+        }
+
+        [Authorize(Roles = "Coordonnateur")]
+        [HttpPost]
+        public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Relier");
+            }
+            
+
+            if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null && idEnseignantSelectionne == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
+            {
+                TempData["ErrorMessage"] = "Le même maître de stage a été sélectionné deux fois ou aucun maître de stage n'a été sélectionné. Veuillez sélectionner des maîtres de stage différents.";
+
+                return RedirectToAction("Relier");
+            }
+
+            if (idEnseignantSelectionne == null)
+            {
+                TempData["ErrorMessage"] = "Veuillez sélectionner un enseignant.";
+
+                return RedirectToAction("Relier");
+            }
+
+            var Stagiaire = _spuContext.Stagiaires.Find(idStagiaire);
+            if (Stagiaire == null)
+            {
+                TempData["ErrorMessage"] = "Stagiaire introuvable.";
+                return RedirectToAction("Relier");
+            }
+
+            var MdsaEditer1 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne1).FirstOrDefault();
+            var MdsaEditer2 = _spuContext.MDS.Where(x => x.Id == idMdsSelectionne2).FirstOrDefault();
+            var StagiaireAediter = _spuContext.Stagiaires.Where(x => x.Id == idStagiaire).FirstOrDefault();
+
+            var anciensMds = _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToList();
+
+            foreach (var mds in anciensMds)
+            {
+                if (mds.Id != idMdsSelectionne1 && mds.Id != idMdsSelectionne2)
+                {
+                    mds.StagiaireId = null; 
+                }
+            }
+
+            if (MdsaEditer1 != null)
+            {
+                MdsaEditer1.StagiaireId = idStagiaire;
+                _spuContext.MDS.Update(MdsaEditer1);
+            }
+
+            if (MdsaEditer2 != null && idMdsSelectionne2 != idMdsSelectionne1)
+            {
+                MdsaEditer2.StagiaireId = idStagiaire;
+                _spuContext.MDS.Update(MdsaEditer2);
+            }
+
+            if (StagiaireAediter != null)
+            {
+                StagiaireAediter.EnseignantId = idEnseignantSelectionne;
+                _spuContext.Stagiaires.Update(StagiaireAediter);
+            }
+
+            await _spuContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Modifications réussies";
+
+            return RedirectToAction("Relier");
+        }
+        #endregion
+
+
+    }
 
 }
 

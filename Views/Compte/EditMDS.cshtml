@@ -1,21 +1,19 @@
-﻿@model SPU.ViewModels.MDSCreationVM
+﻿@model SPU.ViewModels.MDSEditVM
 @using SPU.Enum
+
 @{
-    ViewData["Title"] = "S'enregistrer";
+    ViewData["Title"] = "Modifier";
 }
 
-
 <div class="mt-2 mb-2">
-    @Html.ActionLink("Back", "Index", "Home",
-            new { }, new { @class = "btn btn-secondary" })
+    @Html.ActionLink("Back", "Manage", new { }, new { @class = "btn btn-secondary" })
 </div>
 
+<div class="mt-2">
+    <p>Utilisateur choisi <b>@Model.userName</b> pour modifier</p>
+</div>
 
-@Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-<form asp-action="CreationMDS">
-    <h1>Inscription Maître de Stage</h1>
-    <hr />
+<form id="user-form" asp-action="EditMDS" asp-controller="Compte" method="post">
     <div class="row">
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -25,19 +23,14 @@
                 <span asp-validation-for="userName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Prenom" class="control-label"></label>
-                <input asp-for="Prenom" class="form-control" />
-                <span asp-validation-for="Prenom" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Nom" class="control-label"></label>
                 <input asp-for="Nom" class="form-control" />
                 <span asp-validation-for="Nom" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <label asp-for="Prenom" class="control-label"></label>
+                <input asp-for="Prenom" class="form-control" />
+                <span asp-validation-for="Prenom" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PhoneNumber" class="control-label"></label>
@@ -45,14 +38,9 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="pwd" class="control-label"></label>
-                <input asp-for="pwd" class="form-control" />
-                <span asp-validation-for="pwd" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="confirmationpwd" class="control-label"></label>
-                <input asp-for="confirmationpwd" class="form-control" />
-                <span asp-validation-for="confirmationpwd" class="text-danger"></span>
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MatriculeId" class="control-label"></label>
@@ -70,11 +58,11 @@
                 </select>
             </div>
             <div class="form-group">
-                <label asp-for="civilite" class="control-label"></label>
-                <select asp-for="civilite" asp-items="Html.GetEnumSelectList<Civilite>()" class="form-control">
+                <label asp-for="Civilite" class="control-label"></label>
+                <select asp-for="Civilite" asp-items="Html.GetEnumSelectList<Civilite>()" class="form-control">
                     <option value="">Sélectionnez...</option>
                 </select>
-                <span asp-validation-for="civilite" class="text-danger"></span>
+                <span asp-validation-for="Civilite" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TypeEmployeur" class="control-label"></label>
@@ -89,10 +77,9 @@
                 <input asp-for="telMaison" class="form-control" />
                 <span asp-validation-for="telMaison" class="text-danger"></span>
             </div>
-            <input asp-for="role" class="form-control" type="hidden" value="MDS" />
             <div class="form-group">
                 <div class="form-group mt-2 mb-2">
-                    <input type="submit" value="Créer" class="btn btn-primary" />
+                    <input type="submit" value="Modifier" class="btn btn-primary" />
                 </div>
             </div>
         </div>
@@ -100,7 +87,5 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    
 }

@@ -1,0 +1,85 @@
+﻿@model SPU.ViewModels.EmployeurEditVM
+
+@{
+    ViewData["Title"] = "Modifier";
+}
+
+<div class="mt-2 mb-2">
+    @Html.ActionLink("Back", "Manage", new { }, new { @class = "btn btn-secondary" })
+</div>
+
+<div class="mt-2">
+    <p>Utilisateur choisi <b>@Model.userName</b> pour modifier</p>
+</div>
+
+<form id="user-form" asp-action="EditEmployeur" asp-controller="Compte" method="post">
+    <div class="row">
+        <div class="col-md-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="userName" class="control-label"></label>
+                <input asp-for="userName" class="form-control" />
+                <span asp-validation-for="userName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nom" class="control-label"></label>
+                <input asp-for="Nom" class="form-control" />
+                <span asp-validation-for="Nom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Prenom" class="control-label"></label>
+                <input asp-for="Prenom" class="form-control" />
+                <span asp-validation-for="Prenom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumeroDeRue" class="control-label"></label>
+                <input asp-for="NumeroDeRue" class="form-control" />
+                <span asp-validation-for="NumeroDeRue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NomDeRue" class="control-label"></label>
+                <input asp-for="NomDeRue" class="form-control" />
+                <span asp-validation-for="NomDeRue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ville" class="control-label"></label>
+                <input asp-for="Ville" class="form-control" />
+                <span asp-validation-for="Ville" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Province" class="control-label"></label>
+                <input asp-for="Province" class="form-control" />
+                <span asp-validation-for="Province" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Pays" class="control-label"></label>
+                <input asp-for="Pays" class="form-control" />
+                <span asp-validation-for="Pays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CodePostal" class="control-label"></label>
+                <input asp-for="CodePostal" class="form-control" />
+                <span asp-validation-for="CodePostal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="form-group mt-2 mb-2">
+                    <input type="submit" value="Modifier" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    
+}

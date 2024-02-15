@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SPU.Domain.Entites;
+using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
 {
-    public class EntrepriseEditVM
+    public class EmployeurCreationVM 
     {
-        public Guid Id { get; set; }
         [Display(Name = "Nom d'utilisateur")]
         public string userName { get; set; }
         [Display(Name = "Prénom")]
@@ -31,6 +31,6 @@ namespace SPU.ViewModels
         public string codePostal { get; set; }
         [Display(Name = " Courriel")]
         public string Email { get; set; }
-
+        public string role { get; set; }
     }
 }

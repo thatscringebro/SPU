@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
@@ -15,5 +16,15 @@ namespace SPU.ViewModels
         [Display(Name = "Se souvenir de moi")]
         public bool RememberMe { get; set; } = false;
 
+    }
+
+    public class ConnexionVMValidation : AbstractValidator<ConnexionVM> 
+    { 
+        public ConnexionVMValidation() 
+        {
+            RuleFor(vm => vm.UserName).NotEmpty().WithMessage("Le nom d'utilisateur est requis!");
+
+            RuleFor(vm => vm.Pwd).NotEmpty().WithMessage("Le mot de passe est requis!");
+        }
     }
 }
