@@ -237,8 +237,42 @@
           @foreach (var eval in evals)
           {
             <tr>
-              <td>
-              </td>
+              <td>@(eval.consulter ? "Consulté" : "Non-consulté")</td>
+              <td onclick="setConsultation('@eval.Id', '@eval.lienGoogleForm')">@eval.lienGoogleForm</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <script>
+      function setConsultation(idEval, url){
+        $.ajax({
+          type: 'POST',
+          url: '@Url.Action("setConsultation", "Evaluation")',
+          data: { idEval: idEval, status: true },
+          success: function(data) {
+            open(url);
+          },
+          error: function(xhr, status, error) {
+            console.error('Failed:', error);
+          }
+        });
+      }
+      </script>
+    }
+    else if(mds != null){
+      List<Evaluation> evals = context.Evaluations.Where(x => x.MDSId == mds.Id && x.actif == true).OrderBy(x => x.lienGoogleForm).ToList();
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Statut</th>
+            <th>Lien externe</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var eval in evals)
+          {
+            <tr>
+              <td>@(eval.consulter ? "Consulté" : "Non-consulté")</td>
               <td onclick="setConsultation('@eval.Id', '@eval.lienGoogleForm')">@eval.lienGoogleForm</td>
             </tr>
           }
