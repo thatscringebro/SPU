@@ -7,6 +7,7 @@ using System.Security.Claims;
 using SPU.Models;
 using SPU.Domain;
 using SPU.Domain.Entites;
+using Microsoft.EntityFrameworkCore;
 
 namespace SPU.Controllers;
 
@@ -96,5 +97,38 @@ public class EvaluationController : Controller
       _context.SaveChanges();
 
       return Ok();
+    }
+
+    [Authorize]
+    public IActionResult setActif(Guid idEval, bool status)
+    {
+      Evaluation eval = _context.Evaluations.FirstOrDefault(x => x.Id == idEval);
+
+      eval.actif = status;
+
+      _context.SaveChanges();
+
+      return Ok();
+    }
+
+    [Authorize]
+    public IActionResult setConsultation(Guid idEval, bool status)
+    {
+      Console.WriteLine(idEval);
+      Evaluation eval = _context.Evaluations.FirstOrDefault(x => x.Id == idEval);
+
+      eval.consulter = status;
+
+      _context.SaveChanges();
+
+      return Ok();
+    }
+
+    [Authorize]
+    public IActionResult GetEvaluationsByURL(string url)
+    {
+      List<Evaluation> evals = _context.Evaluations.Include(x => x.mds).ThenInclude(x => x.utilisateur).Include(x => x.stagiaire).ThenInclude(x => x.utilisateur).Where(x => x.lienGoogleForm == url).ToList();
+
+      return Ok(Json(new { data = evals }));
     }
 }
