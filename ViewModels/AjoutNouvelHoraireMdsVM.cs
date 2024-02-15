@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using SPU.Domain.Entites;
 using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
@@ -11,6 +12,11 @@ namespace SPU.ViewModels
 
         [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime DateTimeFinStage { get; set; }
+
+        public List<MDS> listeMaitreDeStage { get; set; } = new List<MDS>();
+
+        public MDS choixMds1 { get; set; }
+        public MDS? choixMds2 { get; set; }
     }
 
     public class Validator : AbstractValidator<AjoutNouvelHoraireMdsVM>

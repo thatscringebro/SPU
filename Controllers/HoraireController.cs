@@ -87,18 +87,30 @@ namespace SPU.Controllers
 
 
         public IActionResult AjoutNouvelHoraireMDS()
-        { 
-            return View(); 
+        {
+            Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
+
+            Coordonateur? coordo = _context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+            AjoutNouvelHoraireMdsVM vm = new AjoutNouvelHoraireMdsVM();
+
+            if(mds != null)
+            {
+                vm.listeMaitreDeStage.Add(mds);
+            }
+            else if(coordo != null)
+            {
+                vm.listeMaitreDeStage = _context.MDS.ToList();
+            }
+
+            return View(vm); 
         }
 
 
         [HttpPost]
         public IActionResult AjoutNouvelHoraireMDS(AjoutNouvelHoraireMdsVM vm)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(vm);
-            }
 
             //Doit entrer le id de la personne
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
@@ -106,13 +118,22 @@ namespace SPU.Controllers
             Coordonateur? coordo = _context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
             MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
+            //Changer ce code pour le user
+
+            vm.choixMds1 = mds;
+
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(vm);
+            //}
+
             Horaire nouvelleHoraire = new Horaire();
             
             // Si c'est un maître de stage connecté
             if (mds != null)
             {
-                nouvelleHoraire.mds = mds;
-                nouvelleHoraire.MDSId = mds.Id;
+                nouvelleHoraire.mds = vm.choixMds1;
+                nouvelleHoraire.MDSId = vm.choixMds1.Id;
                 nouvelleHoraire.Id = Guid.NewGuid();
 
                 TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
