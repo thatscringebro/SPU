@@ -595,7 +595,7 @@ namespace SPU.Controllers
         //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> CreationEntreprise(EntrepriseCreationVM vm)
+        public async Task<IActionResult> CreationEntreprise(EmployeurCreationVM vm)
         {
 
             if (!ModelState.IsValid)
@@ -869,14 +869,15 @@ namespace SPU.Controllers
 
         [Authorize(Roles = "Coordonateur")]
         [HttpPost]
-        public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid idEnseignantSelectionne)
+        public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne)
         {
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("Relier");
             }
+            
 
-            if ((idMdsSelectionne1 == null || idMdsSelectionne2 == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
+            if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null && idEnseignantSelectionne == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
             {
                 TempData["ErrorMessage"] = "Le même maître de stage a été sélectionné deux fois ou aucun maître de stage n'a été sélectionné. Veuillez sélectionner des maîtres de stage différents.";
 
