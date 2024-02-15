@@ -803,12 +803,13 @@ namespace SPU.Controllers
                 Value = e.Id.ToString(),
                 Text = e.utilisateur.UserName
             }).ToList();
-
+            
             ViewBag.Mds = _spuContext.MDS.Select(e => new SelectListItem
             {
                 Value = e.Id.ToString(),
                 Text = e.utilisateur.UserName
             }).ToList();
+
             try
             {
                 foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
