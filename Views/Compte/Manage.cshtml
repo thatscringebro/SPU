@@ -2,68 +2,134 @@
 
 @{
     ViewData["Title"] = "Gestion Utilisateurs";
+
+}
+@functions {
+    string GetLinkForRole(string role)
+    {
+        switch (role)
+        {
+            case "Stagiaire":
+                return "https://localhost:44301/Compte/CreationNormal/b835f4a697ef4d5691e3962fbbdc41b995e1eb09281456eaefdc4173afb6274d67357f1d52b2bd38d85c9c0244eb0dcb6be37a356136c38854bcaca6a9fcbce7";
+            case "MDS":
+                return "https://localhost:44301/Compte/CreationMDS/7920186fc61d7c42261827c7ebcbffc737fbedb8a10dea1b239dc9f091a60c8995954eefffbc1e763d5094fa562109658ad444390b3172cfcc1fbca79a9a5635";
+            case "Enseignant":
+                return "https://localhost:44301/Compte/CreationNormal/dc71899a377cfc8c33599f3769b33bd81c9a5cd451c74f98439c925bd19f6c7b79a66cd595c81dda3de14e90f128f77d70e99dd9a89013d103f5b1869c56f3ce";
+            case "Employeur":
+                return "https://localhost:44301/Compte/CreationEmployeur/5b12e01ef175f3a61ecad6552b9aad3bff089620725cc83fb762c643a148ac2eac538fa1ddbff121ee3391bdcf252783579cfa00fee595ff207aec950b70067b";
+            case "Coordonnateur":
+                return "https://localhost:44301/Compte/CreationNormal/c56b210e44db6bbe01808f315a5d30077189e184158196fc25349239116c9ef67b0fedf1e721b6bb74b16e738fe47e4f008d05242e81de1d57243280464cd1e5";
+            default:
+                return "";
+        }
+    }
 }
 
 <h1>Gérer les utilisateurs<br></h1>
 
 <div class="mt-2 mb-2">
-    @Html.ActionLink("Créer un nouvel utilisateur", "CreationNormal", "Compte",
+    @Html.ActionLink("Créer un nouvel utilisateur", "ChoixCreation", "Compte",
             new { }, new { @class = "btn btn-primary" })
 </div>
 
+<div class="mt-2 mb-2">
+    @Html.ActionLink("Effectuer des liaisons", "Relier", "Compte",
+            new { }, new { @class = "btn btn-primary" })
+</div>
+
+@if (!string.IsNullOrEmpty(ViewBag.UserListErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Html.Raw(ViewBag.UserListErrorMessage)
+    </div>
+}
+
+@* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.role)
+                Rôle
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nom)
+                Nom
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Prenom)
+                Prénom
+            </th>
+            <th>
+                Action
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var role in new List<string> { "Stagiaire", "MDS", "Enseignant", "Employeur", "Coordonnateur" })
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.role)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nom)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Prenom)
-                </td>
-                <td>
-                    <button>Modifier</button>
-                    @* 
-                    <form asp-action="Remove" asp-route-id="@item.ID" class="d-inline-block">
-                        <button type="button" class="btn btn-danger delete-button" data-name="@item.NomUtilisateur">
-                            Supprimer
-                        </button>
-                    </form> *@
-                </td>
+                <td colspan="4" class="bg-dark text-white">@role <button class="btn btn-primary copy-link" data-link="@GetLinkForRole(role)">Copier lien</button></td>
             </tr>
+            @foreach (var item in Model.Where(x => x.role == role))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.role)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Prenom)
+                    </td>
+                    <td>
+                        @if (item.role == "MDS")
+                        {
+                            @Html.ActionLink("Modifier", "EditMDS", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        }
+                        else if (item.role == "Employeur")
+                        {
+                            @Html.ActionLink("Modifier", "EditEmployeur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Modifier", "EditUtilisateur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        }
+                        <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
+                            <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
 
 @section Scripts {
-    @* <script>
-        $(function() {
-            $('.delete-button').click(function() {
-                const name = $(this).data('name') || "this item";
+    <script>
 
-                const message = `Voulez-vous vraiment supprimer ${name}?`;
+        $(function () {
+            $('.delete-button').click(function () {
+                const nomComplet = $(this).data('prenom') + ' ' + $(this).data('nom') || "this item";
 
-                if(confirm(message)) {
+                const message = `Voulez-vous vraiment supprimer ${nomComplet}?`;
+
+                if (confirm(message)) {
                     $(this).parent("form").submit();
                 }
             });
+
+            $('.copy-link').click(function () {
+                const link = $(this).data('link');
+                const tempInput = $('<input>');
+                $('body').append(tempInput);
+                tempInput.val(link).select();
+                document.execCommand('copy');
+                tempInput.remove();
+                alert('Le lien a été copié.');
+            });
         });
-    </script> *@
+
+       
+    </script>
 }

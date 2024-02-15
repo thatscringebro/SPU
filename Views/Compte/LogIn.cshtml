@@ -7,6 +7,14 @@
 
 <link rel="stylesheet" href="~/css/login.css"/>
 
+@if (TempData["LogoutSuccessMessage"] != null)
+{
+	<div class="alert alert-success">
+		@TempData["LogoutSuccessMessage"]
+	</div>
+}
+@* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
+
 <div class="containerLogin">
 	<div class="screen">
 		<div class="screen__content">
@@ -39,9 +47,9 @@
 				</button>
 				
 			</form>
-			<div class="mt-4 mb-4 buttonReg">
+			@* <div class="mt-4 mb-4 buttonReg">
 				@Html.ActionLink("S'inscrire", "CreationNormal", "Compte", new { }, new { @class = "btn btn-primary" })
-			</div>
+			</div> *@
 		</div>
 		<div class="screen__background">
 			<span class="screen__background__shape screen__background__shape4"></span>

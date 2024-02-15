@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using SPU.Domain.Entites;
 using SPU.Enum;
+using System;
 using System.Net;
+using System.Security.Cryptography;
 
 namespace SPU.Domain
 {
@@ -12,7 +14,7 @@ namespace SPU.Domain
 
 		public static void Seed(this ModelBuilder builder)
 		{
-			var coordonateur = AddRole(builder, "Coordonateur");
+			var coordonnateur = AddRole(builder, "Coordonnateur");
             var employeur = AddRole(builder, "Employeur");
             var enseignant = AddRole(builder, "Enseignant");
             var mds = AddRole(builder, "MDS");
@@ -33,7 +35,7 @@ namespace SPU.Domain
 
 			AddUserToRole(builder, user1, enseignant);
 			AddUserToRole(builder, user2, employeur);
-			AddUserToRole(builder, user3, coordonateur);
+			AddUserToRole(builder, user3, coordonnateur);
 			AddUserToRole(builder, user4, stagiaire);
 			AddUserToRole(builder, user5, mds);
 			
@@ -51,9 +53,60 @@ namespace SPU.Domain
 				"0987654321", "AccreditationX", "Commentaire exemple", "Commentaire CIUSS",
 				"EmployeurX", stagiaire0, employeur0, chat);
 
-			//var horaire = AddHoraire(builder, stagiaire0, mds0, ecole);
+            // Enseignants
+            var user6 = AddUser(builder, "enseignant1", "Enseignant123!", "Noah", "Roux", "enseignant1@gmail.com", "1234567896");
+            var user7 = AddUser(builder, "enseignant2", "Enseignant123!", "Alice", "Petit", "enseignant2@gmail.com", "1234567897");
+            AddUserToRole(builder, user6, enseignant);
+            AddUserToRole(builder, user7, enseignant);
+            var enseignant1 = AddEnseignant(builder, user6, ecole);
+            var enseignant2 = AddEnseignant(builder, user7, ecole1);
 
-		}
+            // Employeuryeurs
+            var user8 = AddUser(builder, "employeur1", "Employeur123!", "Ethan", "Lefebvre", "employeur1@gmail.com", "1234567898");
+            var user9 = AddUser(builder, "employeur2", "Employeur123!", "Léa", "Girard", "employeur2@gmail.com", "1234567899");
+            AddUserToRole(builder, user8, employeur);
+            AddUserToRole(builder, user9, employeur);
+            var employeur1 = AddEmployeur(builder, user8, adresse);
+            var employeur2 = AddEmployeur(builder, user9, adresse1);
+
+            //// Coordinateurs
+            //var user10 = AddUser(builder, "coordo1", "Coordo123!", "Gabriel", "David", "coordo1@gmail.com", "1234567800");
+            //var user11 = AddUser(builder, "coordo2", "Coordo123!", "Jade", "Simon", "coordo2@gmail.com", "1234567801");
+            //AddUserToRole(builder, user10, coordonateur);
+            //AddUserToRole(builder, user11, coordonateur);
+            //var coordo1 = AddCoordo(builder, user10, ecole1);
+            //var coordo2 = AddCoordo(builder, user11, ecole);
+
+
+            // Stagiaires
+            var user12 = AddUser(builder, "stagiaire1", "Stagiaire123!", "Maxime", "Chevalier", "stagiaire1@gmail.com", "1234567802");
+            var user13 = AddUser(builder, "stagiaire2", "Stagiaire123!", "Zoé", "Blanc", "stagiaire2@gmail.com", "1234567803");
+
+            var chat1 = AddChat(builder, user12, enseignant1, coordo0);
+            var chat2 = AddChat(builder, user13, enseignant2, coordo0);
+
+            AddUserToRole(builder, user12, stagiaire);
+            AddUserToRole(builder, user13, stagiaire);
+            var stagiaire1 = AddStagiaire(builder, user12, enseignant1, chat1, employeur1, ecole);
+            var stagiaire2 = AddStagiaire(builder, user13, enseignant2, chat2, employeur2, ecole1);
+
+
+            // MDS
+            var user14 = AddUser(builder, "mds1", "Mds123!", "Thomas", "Richard", "mds1@gmail.com", "1234567804");
+            var user15 = AddUser(builder, "mds2", "Mds123!", "Anna", "Dufour", "mds2@gmail.com", "1234567805");
+            AddUserToRole(builder, user14, mds);
+            AddUserToRole(builder, user15, mds);
+            var mds1 = AddMds(builder, user14, "SPU123457", Status.Incomplet, Civilite.M, TypeEmployeur.CIUSSS, false,
+                "0987654322", "AccreditationY", "Commentaire mds1", "Commentaire CIUSS mds1",
+                "EmployeuryeurY", stagiaire1, employeur1, chat1);
+            var mds2 = AddMds(builder, user15, "SPU123458", Status.Refusé, Civilite.Mme, TypeEmployeur.CISSS, true,
+                "0987654323", "AccreditationZ", "Commentaire mds2", "Commentaire CIUSS mds2",
+                "EmployeuryeurZ", stagiaire2, employeur2, chat2);
+
+
+            //var horaire = AddHoraire(builder, stagiaire0, mds0, ecole);
+
+        }
 
         private static Ecole AddEcole(ModelBuilder builder, string nom, string numTel, Adresse adresse)
         {
@@ -148,15 +201,15 @@ namespace SPU.Domain
             return newAddress;
         }
 
-        private static Coordonateur AddCoordo(ModelBuilder builder, Utilisateur user, Ecole ecole)
+        private static Coordonnateur AddCoordo(ModelBuilder builder, Utilisateur user, Ecole ecole)
 		{
-			var newUser = new Coordonateur()
+			var newUser = new Coordonnateur()
             {
                 Id = Guid.NewGuid(),
 				UtilisateurId=user.Id,
 				EcoleId = ecole.id,
             };
-			builder.Entity<Coordonateur>().HasData(newUser);
+			builder.Entity<Coordonnateur>().HasData(newUser);
 			return newUser;
 		}
 
@@ -203,10 +256,10 @@ namespace SPU.Domain
 			};
 			builder.Entity<MDS>().HasData(newUser);
 
-			return newUser;
+            return newUser;
         }
 
-        private static Chat AddChat(ModelBuilder builder, Utilisateur user, Enseignant enseignant, Coordonateur coordonateur)
+        private static Chat AddChat(ModelBuilder builder, Utilisateur user, Enseignant enseignant, Coordonnateur coordonateur)
         {
             var newChat = new Chat()
             {

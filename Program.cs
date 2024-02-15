@@ -1,14 +1,20 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SignalRChat.Hubs;
 using SPU.Domain;
 using SPU.Domain.Entites;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddDbContext<SpuContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("defaultConnection")));
 builder.Services.AddIdentity<Utilisateur, IdentityRole<Guid>>()
@@ -29,6 +35,10 @@ builder.Services.Configure<IdentityOptions>(options =>
 	// User settings.
 	options.User.RequireUniqueEmail = false;
 });
+
+//FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
