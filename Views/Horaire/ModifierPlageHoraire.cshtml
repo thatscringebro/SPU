@@ -48,7 +48,7 @@
         </div>
         <div>
             Date : <input class="form-control" type="date" asp-for="DateDebutPlageHoraire" asp-format="{0:yyyy-MM-dd}" />
-            <span asp-validation-for="DateDebutPlageHoraire" class="text-danger"></span>
+            <span asp-validation-for="DateDebutPlageHoraire.Date" class="text-danger"></span>
         </div>
         <div class="row">
             <div class="col-6">
@@ -79,7 +79,7 @@
         </div>
         <div>
             Date : <input class="form-control" type="date" asp-for="DateFinPlageHoraire" asp-format="{0:yyyy-MM-dd}" />
-            <span asp-validation-for="DateFinPlageHoraire" class="text-danger"></span>
+            <span asp-validation-for="DateFinPlageHoraire.Date" class="text-danger"></span>
         </div>
         <div class="row">
             <div class="col-6">
@@ -113,7 +113,7 @@
             </div>
             <div class="col-6">
                 <label>
-                    <input id="absentCheckbox" type="checkbox" value="false" style="transform: scale(1.5);" />
+                    <input id="absentCheckbox" @(Model.EstPresent == false ? "checked='checked'" : "") asp-for="EstPresent" type="checkbox" value="false" style="transform: scale(1.5); ">
                     Absent
                 </label>
             </div>
@@ -150,6 +150,11 @@
     const presentCheckbox = document.getElementById("presentCheckbox");
     const absentCheckbox = document.getElementById("absentCheckbox");
     const commentaireInput = document.getElementById("commentaireInput");
+
+    if (absentCheckbox.checked == true)
+    {
+        commentaireInput.disabled = false;
+    }
 
     presentCheckbox.addEventListener("change", function () {
         if (presentCheckbox.checked) {

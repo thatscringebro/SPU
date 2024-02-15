@@ -6,6 +6,6 @@ namespace SPU.ViewModels
     {
         public int idHoraire { get; set; }
         public string DateDebutFinStageNom { get; set; }
-        public List<Horaire> listeHoraireMds { get; set; }
+        public List<Horaire> listeHoraire { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace SPU.ViewModels
         [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime DateDebutPlageHoraire { get; set; }
 
-        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateFinPlageHoraire { get; set; }
 
         public int HeureDebutPlageHoraire { get; set; }
@@ -35,7 +35,6 @@ namespace SPU.ViewModels
                     .NotEmpty().WithMessage("Veuillez entrer une date de fin de plage horaire")
                     .GreaterThan(DateTime.MinValue).WithMessage("La date de fin de plage horaire ne peut pas être vide")
                     .LessThan(x => x.DateDebutPlageHoraire.AddHours(x.HeureDebutPlageHoraire).AddMinutes(x.MinutesDebutPlageHoraire).AddHours(24)).WithMessage("La plage horaire doit avoir une durée de moins de 24 heures");
-
             }
 
         }
