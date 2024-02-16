@@ -47,7 +47,7 @@ namespace SPU.ViewComponents
             else if (stag != null)
             {
                 //À vérfier ici
-                Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
+                Horaire horaire = _context.Horaires.Where(x => x.StagiaireId == stag.Id).FirstOrDefault();
 
                 if (horaire != null)
                     journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaireId).ToList().Select(x => new JourneeTravailleVM

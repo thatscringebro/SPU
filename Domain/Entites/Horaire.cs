@@ -10,7 +10,6 @@ namespace SPU.Domain.Entites
 
         public Stagiaire? stagiaire { get; set; }
         public MDS mds { get; set; }
-
     }
 
 
