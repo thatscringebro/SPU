@@ -11,6 +11,13 @@ namespace SPU.ViewModels
         public string Prenom { get; set; }
         [Display(Name = "Nom")]
         public string Nom {  get; set; }
+
+        public string Matricule { get; set; }
+
+        [Display(Name = "Courriel")]
+        public string Courriel { get; set; }
+        [Display(Name = "Numéro de téléphone")]
+        public string Telephone { get; set; }
       
 
     }

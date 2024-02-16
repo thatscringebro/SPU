@@ -25,6 +25,8 @@
     }
 }
 
+<link rel="stylesheet" href="~/css/site.css" />
+
 <h1>Gérer les utilisateurs<br></h1>
 
 <div class="mt-2 mb-2">
@@ -45,11 +47,13 @@
 }
 
 @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
+
+@* Maitre de stage *@
 <table class="table">
     <thead>
         <tr>
             <th>
-                Rôle
+                Matricule
             </th>
             <th>
                 Nom
@@ -58,21 +62,33 @@
                 Prénom
             </th>
             <th>
+                Email
+            </th>
+            <th>
+                Téléphone
+            </th>
+            <th>
+                Détails
+            </th>
+            <th>
+                Horaire
+            </th>
+            <th>
                 Action
             </th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var role in new List<string> { "Stagiaire", "MDS", "Enseignant", "Employeur", "Coordonnateur" })
+    <tr>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayMds')">Maître de stage <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("MDS")">Copier lien</button></td>
+    </tr>
+    <tbody id="displayMds" class="">
+        @foreach (var item in Model)
         {
-            <tr>
-                <td colspan="4" class="bg-dark text-white">@role <button class="btn btn-primary copy-link" data-link="@GetLinkForRole(role)">Copier lien</button></td>
-            </tr>
-            @foreach (var item in Model.Where(x => x.role == role))
+            @if (item.role == "MDS")
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.role)
+                        @Html.DisplayFor(modelItem => item.Matricule)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Nom)
@@ -81,18 +97,20 @@
                         @Html.DisplayFor(modelItem => item.Prenom)
                     </td>
                     <td>
-                        @if (item.role == "MDS")
-                        {
-                            @Html.ActionLink("Modifier", "EditMDS", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
-                        }
-                        else if (item.role == "Employeur")
-                        {
-                            @Html.ActionLink("Modifier", "EditEmployeur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
-                        }
-                        else
-                        {
-                            @Html.ActionLink("Modifier", "EditUtilisateur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
-                        }
+                        @Html.DisplayFor(modelItem => item.Courriel)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telephone)
+                    </td>
+                    <td>
+                        details
+                    </td>
+                    <td>
+                        horaire
+                    </td>
+                    <td>
+                        @Html.ActionLink("Mettre à jour", "EditMDS", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        
                         <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
                             <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
                                 Supprimer
@@ -105,8 +123,215 @@
     </tbody>
 </table>
 
+
+@* Employeur *@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nom
+            </th>
+            <th>
+                Prénom
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Téléphone
+            </th>
+            <th>
+                Détails
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tr>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayEmp')">Employeur <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Employeur")">Copier lien</button></td>
+    </tr>
+    <tbody id="displayEmp">
+        @foreach (var item in Model)
+        {
+            @if (item.role == "Employeur")
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Prenom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Courriel)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telephone)
+                    </td>
+                    <td>
+                        details
+                    </td>
+                    <td>
+                        @Html.ActionLink("Mettre à jour", "EditEmployeur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        
+                        <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
+                            <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@* Stagiaire *@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nom
+            </th>
+            <th>
+                Prénom
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Téléphone
+            </th>
+            <th>
+                Détails
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tr>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displaySt')">Stagiaire <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Stagiaire")">Copier lien</button></td>
+    </tr>
+    <tbody id="displaySt">
+        @foreach (var item in Model)
+        {
+            @if (item.role == "Stagiaire")
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Prenom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Courriel)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telephone)
+                    </td>
+                    <td>
+                        details
+                    </td>
+                    <td>
+                        @Html.ActionLink("Mettre à jour", "EditUtilisateur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        
+                        <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
+                            <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@* Enseignant *@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nom
+            </th>
+            <th>
+                Prénom
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Téléphone
+            </th>
+            <th>
+                Détails
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tr>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayEns')">Enseignant <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Enseignant")">Copier lien</button></td>
+    </tr>
+    <tbody id="displayEns">
+        @foreach (var item in Model)
+        {
+            @if (item.role == "Enseignant")
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Prenom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Courriel)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telephone)
+                    </td>
+                    <td>
+                        details
+                    </td>
+                    <td>
+                        @Html.ActionLink("Mettre à jour", "EditUtilisateur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+
+                        <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
+                            <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
 @section Scripts {
     <script>
+
+        /* displayEmp, displaySt, displayMds, displayEns */
+
+        function userDisplay(ObjHiddenId) {
+            var cls = document.getElementById(ObjHiddenId);
+            if (cls.className === "hidden") { 
+                cls.className = "";
+            }
+            else
+            {
+                cls.className = "hidden";
+            }
+        }
+
 
         $(function () {
             $('.delete-button').click(function () {

@@ -5,6 +5,10 @@
 
 }
 
+<link rel="stylesheet" href="~/bootstrap.min.css/" />
+
+<script type="text/javascript" src="~/bootstrap.min.js"></script>
+
 <h1>Gérer les stagiaires<br></h1>
 
 <div class="mt-2 mb-2">
@@ -61,7 +65,8 @@
                                         @Html.DisplayFor(modelItem => item.Prenom)
                                 </td>
                                 <td>
-                                    <select class="form-control" name="idMdsSelectionne1">
+                            @* <select class="selectpicker" disabled> *@
+                            <select class="form-control selectpicker" name="idMdsSelectionne1" data-live-search="true">
                                         <option value="">Sélectionnez le maitre de stage 1</option>
                                             @foreach (var mds in ViewBag.Mds)
                                             {

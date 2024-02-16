@@ -138,12 +138,17 @@ namespace SPU.Controllers
                 {
                     foreach (var userRoles in await _userManager.GetRolesAsync(user))
                     {
+                        var matriculeMds = _spuContext.MDS.Where(x => x.UtilisateurId == user.Id).Select(x=> x.MatriculeId).FirstOrDefault();
+                        
                         vm.Add(new UtilisateurDetailVM
                         {
                             role = userRoles,
                             Id = user.Id,
+                            Matricule = matriculeMds,
+                            Nom = user.Nom,
                             Prenom = user.Prenom,
-                            Nom = user.Nom
+                            Courriel = user.Email,
+                            Telephone = user.PhoneNumber
                         });
                     }
                 }
