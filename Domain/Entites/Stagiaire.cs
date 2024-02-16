@@ -31,6 +31,8 @@ namespace SPU.Domain.Entites
         public Ecole ecole { get; set; }
 
         //public List<MDS> mds = new();
+        public DateTime? DateDebutStage { get; set; }
+        public DateTime? DateFinStage { get; set; }
 
     }
 }

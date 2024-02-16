@@ -77,8 +77,22 @@ namespace SPU.Controllers
                     if (horaire != null)
                     {
                         ViewBag.horaireId = horaire.Id;
-                        vm.DateDebutStage = horaire.DateDebutStage.Date;
-                        vm.DateFinStage = horaire.DateFinStage.Date;
+                        vm.DateCreationHoraire = mds.DateCreationHoraire;
+                        vm.DateExpiration = mds.DateExpiration;
+                    }
+                }
+                else if(stag != null)
+                {
+                    vm.nomMds = string.Concat(mds.utilisateur.Prenom + " " + mds.utilisateur.Nom);
+
+                    horaire = _context.Horaires.Where(x => x.StagiaireId == stag.Id && x.Id == horaireId).FirstOrDefault();
+
+                    if (horaire != null)
+                    {
+                        //Changer pour stag.DateDebutStage
+                        ViewBag.horaireId = horaire.Id;
+                        vm.DateDebutStage = new DateTime(2024,02,12);
+                        vm.DateFinStage = new DateTime(2024, 05, 16);
                     }
                 }
             }
@@ -86,26 +100,52 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-
+        [HttpPost]
         public IActionResult AjoutNouvelHoraireMDS()
         {
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
 
             Coordonnateur? coordo = _context.Coordonnateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
             MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
-            AjoutNouvelHoraireMdsVM vm = new AjoutNouvelHoraireMdsVM();
+            Horaire nouvelleHoraire = new Horaire();
 
-            if(mds != null)
+            // Si c'est un maître de stage connecté
+            if (mds != null)
             {
-                vm.listeMaitreDeStage.Add(mds);
+                nouvelleHoraire.mds = mds;
+                nouvelleHoraire.MDSId = mds.Id;
+                nouvelleHoraire.Id = Guid.NewGuid();
+
+                TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
+                DateTime horaireDebut = TimeZoneInfo.ConvertTime(new DateTime(vm.DateTimeDebutStage.Year,
+                                          vm.DateTimeDebutStage.Month,
+                                          vm.DateTimeDebutStage.Day,
+                                          0, 0, 0), localTimeZone);
+
+                DateTime horaireFin = TimeZoneInfo.ConvertTime(new DateTime(vm.DateTimeFinStage.Year,
+                                          vm.DateTimeFinStage.Month,
+                                          vm.DateTimeFinStage.Day,
+                                          23, 59, 59), localTimeZone);
+
+                //Données temporaires
+                //nouvelleHoraire.DateDebutStage = vm.DateTimeDebutStage.ToUniversalTime();
+                //nouvelleHoraire.DateFinStage = vm.DateTimeFinStage.ToUniversalTime();
+
+                _context.Add(nouvelleHoraire);
+                _context.SaveChanges();
+
+                ViewBag.horaireId = nouvelleHoraire.Id;
             }
-            else if(coordo != null)
+            else if(stag != null)
             {
-                vm.listeMaitreDeStage = _context.MDS.ToList();
+
+
             }
 
-            return View(vm); 
+            return RedirectToAction("Horaire", "Horaire", new { horaireId = nouvelleHoraire.Id });
         }
 
 
@@ -152,8 +192,8 @@ namespace SPU.Controllers
                                           23,59,59), localTimeZone);
 
                 //Données temporaires
-                nouvelleHoraire.DateDebutStage = vm.DateTimeDebutStage.ToUniversalTime();
-                nouvelleHoraire.DateFinStage = vm.DateTimeFinStage.ToUniversalTime();
+                //nouvelleHoraire.DateDebutStage = vm.DateTimeDebutStage.ToUniversalTime();
+                //nouvelleHoraire.DateFinStage = vm.DateTimeFinStage.ToUniversalTime();
 
                 _context.Add(nouvelleHoraire);
                 _context.SaveChanges();

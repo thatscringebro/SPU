@@ -10,8 +10,7 @@ namespace SPU.Domain.Entites
 
         public Stagiaire? stagiaire { get; set; }
         public MDS mds { get; set; }
-        public DateTime DateDebutStage { get; set; }
-        public DateTime DateFinStage { get; set; }
+
     }
 
 
