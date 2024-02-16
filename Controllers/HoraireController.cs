@@ -70,6 +70,7 @@ namespace SPU.Controllers
                 if (mds != null)
                 {
                     vm.nomMds =  string.Concat(mds.utilisateur.Prenom + " " + mds.utilisateur.Nom);
+                    vm.Role = "MDS";
                 
                     horaire = _context.Horaires.Where(x => x.MDSId == mds.Id && x.Id == horaireId).FirstOrDefault();
 

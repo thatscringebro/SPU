@@ -35,11 +35,14 @@
             }
         </div>
     </div>
-    <div style="text-align: center;">
-        <a id="horaire-ajoutPlageHoraire-button" asp-route-horaireId="@ViewBag.horaireId" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout plage horaire</a>
-    </div>
+    @if (Model.Role == "MDS")
+    {
+        <div style="text-align: center;">
+            <a id="horaire-ajoutPlageHoraire-button" asp-route-horaireId="@ViewBag.horaireId" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout plage horaire</a>
+        </div>
+    }
 </div>
-<br/>
+<br />
 <div class="horizontal-list">
     <vc:schedule-day horaire-id="@ViewBag.horaireId"></vc:schedule-day>
 </div>
