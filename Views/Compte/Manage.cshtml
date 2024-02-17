@@ -54,7 +54,8 @@
 @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
 
 @* Maitre de stage *@
-<table class="table">
+<br />
+<table class="table mt-3">
     <thead>
         <tr>
             <th>
@@ -130,7 +131,8 @@
 
 
 @* Employeur *@
-<table class="table">
+<br />
+<table class="table mt-3">
     <thead>
         <tr>
             <th>
@@ -194,7 +196,8 @@
 
 
 @* Stagiaire *@
-<table class="table">
+<br />
+<table class="table mt-3">
     <thead>
         <tr>
             <th>
@@ -258,7 +261,8 @@
 
 
 @* Enseignant *@
-<table class="table">
+<br />
+<table class="table mt-3">
     <thead>
         <tr>
             <th>
@@ -329,17 +333,18 @@
         function userDetails(user) {
             console.log(user);
             let userDetailsHtml = `
-            <span>Nom:</span> ${user.Nom}<br>
-            <span>Prénom:</span> ${user.Prenom}<br>
-            <span>Email:</span> ${user.Courriel}<br>
-            <span>Téléphone:</span> ${user.Telephone}<br>
+                   <strong>Nom: </strong> ${user.nom ? user.nom : 'Non disponible'}<br>
+                   <strong>Prénom: </strong> ${user.prenom ? user.prenom : 'Non disponible'}<br>
+                   <strong>Email: </strong> ${user.courriel ? user.courriel : 'Non disponible'} <br>
+                   <strong>Téléphone: </strong> ${user.telephone ? user.telephone : 'Non disponible'}<br>
         `;
 
             if (user.role === "MDS") {
                 userDetailsHtml += `
-                    <span>Matricule:</span> ${user.Matricule}<br>
+                    <strong>Matricule:</strong> ${user.matricule ? user.matricule : 'Non disponible'}<br>
                 `;
             }
+
             // if (user.role === "Employeur") {
             // userDetails.html += `
             //                     <span>Nom:</span> ${user.Matricule}<br>
@@ -350,8 +355,6 @@
             Swal.fire({
                 icon: "info",
                 title: "Détails de l'utilisateur",
-                image: "/images/user_icon.png",
-                text: "Hi!",
                 html: userDetailsHtml
             });
 
