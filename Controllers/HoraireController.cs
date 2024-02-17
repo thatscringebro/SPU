@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SPU.Domain;
 using SPU.Domain.Entites;
 using SPU.ViewModels;
+using System.Linq;
 using System.Security.Claims;
 
 namespace SPU.Controllers
@@ -59,6 +60,41 @@ namespace SPU.Controllers
                 {
                     vm.nomMds =  string.Concat(mds.utilisateur.Prenom + " " + mds.utilisateur.Nom);
                 
+                    horaire = _context.Horaires.Where(x => x.MDSId == mds.Id && x.Id == horaireId).FirstOrDefault();
+
+                    if (horaire != null)
+                    {
+                        ViewBag.horaireId = horaire.Id;
+                        vm.DateDebutStage = horaire.DateDebutStage.Date;
+                        vm.DateFinStage = horaire.DateFinStage.Date;
+                    }
+                }
+            }
+
+            return View(vm);
+        }
+
+        public IActionResult HoraireMds(Guid userId)
+        {
+            var vm = new HorairePageVM();
+
+            Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id == userId);
+            Horaire horaire = new Horaire();
+            var Mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == userId);
+            Guid horaireId = _context.Horaires.Where(x => x.Id == Mds.Id).Select(x => x.Id).FirstOrDefault();
+
+            if (user != null)
+            {
+                Coordonnateur? coordo = _context.Coordonnateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
+                Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
+                Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
+                MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+
+                if (mds != null)
+                {
+                    vm.nomMds = string.Concat(mds.utilisateur.Prenom + " " + mds.utilisateur.Nom);
+
                     horaire = _context.Horaires.Where(x => x.MDSId == mds.Id && x.Id == horaireId).FirstOrDefault();
 
                     if (horaire != null)
