@@ -265,7 +265,7 @@ namespace SPU.Domain
             {
                 Id = Guid.NewGuid(),
 				EnseignantId = enseignant.Id,
-				CoordonateurId = coordonateur.Id
+				//CoordonateurId = coordonateur.Id
             };
             builder.Entity<Chat>().HasData(newChat);
 

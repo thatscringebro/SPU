@@ -115,7 +115,7 @@
         </header>
         <ul id="listChat">
       @{
-        List<Chat> chats = context.Chats.Where(x => x.CoordonateurId == coordo.Id).ToList();
+        List<Chat> chats = context.Chats.ToList();
       }
             @foreach (var chat in chats)
             {
@@ -242,3 +242,4 @@
     }
   }
 </script>
+ 
