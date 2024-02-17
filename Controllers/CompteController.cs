@@ -927,7 +927,8 @@ namespace SPU.Controllers
             ViewBag.Mds = _spuContext.MDS.Select(e => new SelectListItem
             {
                 Value = e.Id.ToString(),
-                Text = e.utilisateur.UserName
+                //Text = e.utilisateur.UserName
+                Text = e.MatriculeId.ToString()
             }).ToList();
 
             try
