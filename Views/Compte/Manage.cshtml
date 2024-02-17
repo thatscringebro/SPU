@@ -16,14 +16,16 @@
             case "Enseignant":
                 return "https://localhost:44301/Compte/CreationNormal/dc71899a377cfc8c33599f3769b33bd81c9a5cd451c74f98439c925bd19f6c7b79a66cd595c81dda3de14e90f128f77d70e99dd9a89013d103f5b1869c56f3ce";
             case "Employeur":
-                return "https://localhost:44301/Compte/CreationEntreprise/5b12e01ef175f3a61ecad6552b9aad3bff089620725cc83fb762c643a148ac2eac538fa1ddbff121ee3391bdcf252783579cfa00fee595ff207aec950b70067b";
+                return "https://localhost:44301/Compte/CreationEmployeur/5b12e01ef175f3a61ecad6552b9aad3bff089620725cc83fb762c643a148ac2eac538fa1ddbff121ee3391bdcf252783579cfa00fee595ff207aec950b70067b";
             case "Coordonnateur":
-                return "https://localhost:44301/Compte/CreationNormal/15c093c3a66c7add4450860d7cfcb84003e19b5044f006d8085b3f8efc6dec44e42c1f46edfde0d0d86d89c56d680017034106272d278550058825a57851e558";
+                return "https://localhost:44301/Compte/CreationNormal/c56b210e44db6bbe01808f315a5d30077189e184158196fc25349239116c9ef67b0fedf1e721b6bb74b16e738fe47e4f008d05242e81de1d57243280464cd1e5";
             default:
                 return "";
         }
     }
 }
+
+<a class="btn btn-success" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a></button>
 
 <link rel="stylesheet" href="~/css/site.css" />
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

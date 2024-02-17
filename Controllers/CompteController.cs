@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
+using ClosedXML.Excel;
 
 namespace SPU.Controllers
 {
@@ -87,7 +88,7 @@ namespace SPU.Controllers
                 var role = await _userManager.GetRolesAsync(user);
                 var roleUser = role.FirstOrDefault();
 
-                if (roleUser == "Coordonateur")
+                if (roleUser == "Coordonnateur")
                     return RedirectToAction(nameof(Manage));
 
                 if (!string.IsNullOrEmpty(returnUrl))
@@ -119,7 +120,7 @@ namespace SPU.Controllers
 
         #region Manage
         //[AllowAnonymous]
-        [Authorize(Roles = "Coordonateur")]
+        [Authorize(Roles = "Coordonnateur")]
         public ActionResult ChoixCreation()
         {
             return View();
@@ -128,7 +129,7 @@ namespace SPU.Controllers
 
         //CRUD pour utilisateur 
         //[AllowAnonymous] 
-        [Authorize(Roles = "Coordonateur")]
+        [Authorize(Roles = "Coordonnateur")]
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
         {
             var vm = new List<UtilisateurDetailVM>();
@@ -222,25 +223,33 @@ namespace SPU.Controllers
 
             var stagiaire = CreateSHA512("Stagiaire");
             var enseignant = CreateSHA512("Enseignant");
-            var Coordo = CreateSHA512("Coordonateur");
+            var Coordo = CreateSHA512("Coordonnateur");
 
-
-            if (hash == enseignant)
-                return View("CreationEnseignant");
-            else if (hash == Coordo)
-                return View("CreationCoordonateur");
+            if(hash == null)
+            {
+                switch (vue)
+                {
+                    case "CreationCoordonnateur": //Creation coordo
+                        return View("CreationCoordonnateur");
+                    case "CreationEnseignant": //Creation enseignant
+                        return View("CreationEnseignant");
+                    default:
+                        //Retourne STAGIAIRE si aucun choix
+                        return View();
+                }
+            }
             else
-                return View();
-            //switch (vue)
-            //{
-            //    case "CreationCoordonateur": //Creation coordo
-            //        return View("CreationCoordonateur");
-            //    case "CreationEnseignant": //Creation enseignant
-            //        return View("CreationEnseignant");
-            //    default:
-            //        //Retourne STAGIAIRE si aucun choix
-            //        return View();
-            //}
+            {
+
+                if (hash == enseignant)
+                    return View("CreationEnseignant");
+                else if (hash == Coordo)
+                    return View("CreationCoordonnateur");
+                else
+                    return View();
+            }
+
+           
         }
 
 
@@ -309,16 +318,16 @@ namespace SPU.Controllers
                 _spuContext.Stagiaires.Add(Stagiaire);
 
             }
-            else if (selectedRole.Name == "Coordonateur")
+            else if (selectedRole.Name == "Coordonnateur")
             {
-                var Coordo = new Coordonateur
+                var Coordo = new Coordonnateur
                 {
                     UtilisateurId = toCreate.Id,
                     utilisateur = toCreate,
                     ecole = ecole,
                     EcoleId = vm.idEcoleSelectionne
                 };
-                _spuContext.Coordonateurs.Add(Coordo);
+                _spuContext.Coordonnateurs.Add(Coordo);
 
             }
             else if (selectedRole.Name == "Enseignant")
@@ -340,7 +349,7 @@ namespace SPU.Controllers
 
         //[AllowAnonymous]
         //EDIT STAGIAIRE/COORDO/ENSEIGNANT
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> EditUtilisateur(Guid id)
         {
@@ -364,7 +373,7 @@ namespace SPU.Controllers
         }
 
         //[AllowAnonymous]
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> EditUtilisateur(Guid id, UtilisateurEditVM vm)
         {
@@ -489,7 +498,7 @@ namespace SPU.Controllers
 
         
         //EDIT MDS
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> EditMDS(Guid id)
         {
@@ -535,7 +544,7 @@ namespace SPU.Controllers
 
 
        
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
         {
@@ -584,15 +593,15 @@ namespace SPU.Controllers
 
         #region CreationEmployeur et EditEmployeur
         [AllowAnonymous]
-        [Route("Compte/CreationEntreprise")]
-        [Route("Compte/CreationEntreprise/{hash?}")]
+        [Route("Compte/CreationEmployeur")]
+        [Route("Compte/CreationEmployeur/{hash?}")]
         [HttpGet]
-        public ActionResult CreationEntreprise(string hash)
+        public ActionResult CreationEmployeur(string hash)
         {
             var Employeur = CreateSHA512("Employeyr");
 
             if (hash == Employeur)
-                return View("CreationEntreprise");
+                return View("CreationEmployeur");
             else
                 return View(); // a changer avec le role du coordo quand on va être rendu au role !! 
         }
@@ -600,7 +609,7 @@ namespace SPU.Controllers
         //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> CreationEntreprise(EmployeurCreationVM vm)
+        public async Task<IActionResult> CreationEmployeur(EmployeurCreationVM vm)
         {
 
             if (!ModelState.IsValid)
@@ -678,7 +687,7 @@ namespace SPU.Controllers
 
        
         //EDIT EMPLOYEUR
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> EditEmployeur(Guid id)
         {
@@ -718,7 +727,7 @@ namespace SPU.Controllers
 
 
         //[AllowAnonymous]
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> EditEmployeur(Guid id, EmployeurEditVM vm)
         {
@@ -770,7 +779,7 @@ namespace SPU.Controllers
         #region Remove 
         
         //REMOVE POUR TOUS LE MONDE 
-        [Authorize(Roles = "Coordinateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> Remove(Guid id, string role)
         {
@@ -788,11 +797,11 @@ namespace SPU.Controllers
                         return NotFound();
                     _spuContext.Remove(stagiaire);
                     break;
-                case "Coordonateur":
-                    var coordonateur = _spuContext.Coordonateurs.FirstOrDefault(x => x.utilisateur == user);
-                    if (coordonateur == null)
+                case "Coordonnateur":
+                    var coordonnateur = _spuContext.Coordonnateurs.FirstOrDefault(x => x.utilisateur == user);
+                    if (coordonnateur == null)
                         return NotFound();
-                    _spuContext.Remove(coordonateur);
+                    _spuContext.Remove(coordonnateur);
                     break;
                 case "Enseignant":
                     var enseignant = _spuContext.Enseignants.FirstOrDefault(x => x.utilisateur == user);
@@ -831,7 +840,7 @@ namespace SPU.Controllers
 
         #region Relier 
 
-        [Authorize(Roles = "Coordonateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> Relier()
         {
@@ -842,12 +851,13 @@ namespace SPU.Controllers
                 Value = e.Id.ToString(),
                 Text = e.utilisateur.UserName
             }).ToList();
-
+            
             ViewBag.Mds = _spuContext.MDS.Select(e => new SelectListItem
             {
                 Value = e.Id.ToString(),
                 Text = e.utilisateur.UserName
             }).ToList();
+
             try
             {
                 foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
@@ -872,7 +882,7 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-        [Authorize(Roles = "Coordonateur")]
+        [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne)
         {
@@ -946,7 +956,73 @@ namespace SPU.Controllers
         }
         #endregion
 
+        [Authorize(Roles = "Coordonnateur")]
+        public IActionResult ExportContrat()
+        {
+          using (var workbook = new XLWorkbook())
+        {
+            var worksheet = workbook.Worksheets.Add("ententes_de_stage");
 
+            worksheet.Cell("A1").Value = "No";
+            worksheet.Cell("B1").Value = "Millieu stage";
+            worksheet.Cell("C1").Value = "Signataire contrat";
+            worksheet.Cell("E1").Value = "Fonction";
+            worksheet.Cell("F1").Value = "Courriel du signataire";
+            worksheet.Cell("G1").Value = "Tél.";
+            worksheet.Cell("H1").Value = "Adresse";
+            worksheet.Cell("I1").Value = "Ville";
+            worksheet.Cell("J1").Value = "Prov";
+            worksheet.Cell("K1").Value = "Code postal";
+            worksheet.Cell("L1").Value = "Superviseur milieu stage";
+            worksheet.Cell("M1").Value = "Stagiaire";
+            worksheet.Cell("N1").Value = "Prénom";
+            worksheet.Cell("O1").Value = "Secteur";
+            worksheet.Cell("P1").Value = "Program";
+            worksheet.Cell("Q1").Value = "Type de stage";
+            worksheet.Cell("R1").Value = "Dates stage";
+            worksheet.Cell("S1").Value = "Superviseur collège";
+            worksheet.Cell("T1").Value = "Poste";
+            
+            List<Stagiaire> stagiaires = _spuContext.Stagiaires.ToList(); 
+           
+            for (int i = 2; i < stagiaires.Count(); i++)
+            {
+                worksheet.Cell($"A{i}").Value = "";
+                worksheet.Cell($"B{i}").Value = "";
+                worksheet.Cell($"C{i}").Value = "Signataire contrat";
+                worksheet.Cell($"E{i}").Value = "Fonction";
+                worksheet.Cell($"F{i}").Value = "Courriel du signataire";
+                worksheet.Cell($"G{i}").Value = "Tél.";
+                worksheet.Cell($"H{i}").Value = "Adresse";
+                worksheet.Cell($"I{i}").Value = "Ville";
+                worksheet.Cell($"J{i}").Value = "Prov";
+                worksheet.Cell($"K{i}").Value = "Code postal";
+                worksheet.Cell($"L{i}").Value = "Superviseur milieu stage";
+                worksheet.Cell($"M{i}").Value = "Stagiaire";
+                worksheet.Cell($"N{i}").Value = "Prénom";
+                worksheet.Cell($"O{i}").Value = "Secteur";
+                worksheet.Cell($"P{i}").Value = "Program";
+                worksheet.Cell($"Q{i}").Value = "Type de stage";
+                worksheet.Cell($"R{i}").Value = "Dates stage";
+                worksheet.Cell($"S{i}").Value = "Superviseur collège";
+                worksheet.Cell($"T{i}").Value = "Poste";
+            }
+          
+
+            var worksheet2 = workbook.Worksheets.Add("mds_source");
+
+            using (var stream = new MemoryStream())
+            {
+                workbook.SaveAs(stream);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                return File(stream.ToArray(), contentType, "example.xlsx");
+            }
+        }
+        }
     }
 
 }

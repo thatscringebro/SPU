@@ -63,7 +63,7 @@ namespace SignalRChat.Hubs
             _context.SaveChanges();
 
             var coordoReal = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).CoordonateurId;
-            string coordo = _context.Coordonateurs.FirstOrDefault(x => x.Id == coordoReal).UtilisateurId.ToString();
+            string coordo = _context.Coordonnateurs.FirstOrDefault(x => x.Id == coordoReal).UtilisateurId.ToString();
             var enseignantReal = _context.Chats.FirstOrDefault(x => x.Id.ToString() == room).EnseignantId;
             string enseignant = _context.Enseignants.FirstOrDefault(x => x.Id == enseignantReal).UtilisateurId.ToString();
             string stag = _context.Stagiaires.FirstOrDefault(x => x.ChatId.ToString() == room).UtilisateurId.ToString();

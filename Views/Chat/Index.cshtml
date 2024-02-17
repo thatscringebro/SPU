@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = "Home Page";
     SpuContext context = new SpuContext();
-    Coordonateur coordo = context.Coordonateurs.FirstOrDefault(x => x.UtilisateurId == Model.Id);
+    Coordonnateur coordo = context.Coordonnateurs.FirstOrDefault(x => x.UtilisateurId == Model.Id);
     Enseignant ens = context.Enseignants.FirstOrDefault(x => x.UtilisateurId == Model.Id); 
     Stagiaire stag = context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == Model.Id);
     MDS mds = context.MDS.FirstOrDefault(x => x.UtilisateurId == Model.Id);
