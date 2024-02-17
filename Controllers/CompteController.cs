@@ -13,6 +13,8 @@ using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using ClosedXML.Excel;
+using Microsoft.Extensions.Logging.Abstractions;
+using Humanizer;
 
 namespace SPU.Controllers
 {
@@ -867,15 +869,36 @@ namespace SPU.Controllers
                 {
                     List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
 
-                    vm.Add(new StagiairesEditVM
+
+                    if(user.finStage != null & user.debutStage != null)
                     {
-                        Id = user.Id,
-                        Prenom = user.utilisateur?.Prenom,
-                        Nom = user.utilisateur?.Nom,
-                        idEnseignantSelectionne = user.EnseignantId,
-                        idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
-                        idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id
-                    });
+                        vm.Add(new StagiairesEditVM
+                        {
+                            Id = user.Id,
+                            Prenom = user.utilisateur?.Prenom,
+                            Nom = user.utilisateur?.Nom,
+                            idEnseignantSelectionne = user.EnseignantId,
+                            idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
+                            idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
+                            debutStage = user.debutStage!.Value.Date,
+                            finStage = user.finStage!.Value.Date
+                        });
+                    }
+                    else
+                    {
+                        vm.Add(new StagiairesEditVM
+                        {
+                            Id = user.Id,
+                            Prenom = user.utilisateur?.Prenom,
+                            Nom = user.utilisateur?.Nom,
+                            idEnseignantSelectionne = user.EnseignantId,
+                            idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
+                            idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
+                            debutStage = null,
+                            finStage = null
+                        });
+                    }
+                   
                 }
             }
             catch (Exception ex)
@@ -887,7 +910,7 @@ namespace SPU.Controllers
 
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
-        public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne)
+        public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne, DateTime? debutStage, DateTime? finStage)
         {
             if (!ModelState.IsValid)
             {
@@ -955,6 +978,12 @@ namespace SPU.Controllers
                
                 ChatsStagiaire.EnseignantId = idEnseignantSelectionne;
 
+                if(debutStage != null && finStage != null)
+                {
+                    StagiaireAediter.debutStage = debutStage.Value.ToUniversalTime();
+                    StagiaireAediter.finStage = finStage.Value.ToUniversalTime();
+                }
+
                 _spuContext.Stagiaires.Update(StagiaireAediter);
             }
 
@@ -966,74 +995,79 @@ namespace SPU.Controllers
         }
         #endregion
 
+        #region Exportation
         [Authorize(Roles = "Coordonnateur")]
         public IActionResult ExportContrat()
         {
-          using (var workbook = new XLWorkbook())
-        {
-            var worksheet = workbook.Worksheets.Add("ententes_de_stage");
-
-            worksheet.Cell("A1").Value = "No";
-            worksheet.Cell("B1").Value = "Millieu stage";
-            worksheet.Cell("C1").Value = "Signataire contrat";
-            worksheet.Cell("E1").Value = "Fonction";
-            worksheet.Cell("F1").Value = "Courriel du signataire";
-            worksheet.Cell("G1").Value = "Tél.";
-            worksheet.Cell("H1").Value = "Adresse";
-            worksheet.Cell("I1").Value = "Ville";
-            worksheet.Cell("J1").Value = "Prov";
-            worksheet.Cell("K1").Value = "Code postal";
-            worksheet.Cell("L1").Value = "Superviseur milieu stage";
-            worksheet.Cell("M1").Value = "Stagiaire";
-            worksheet.Cell("N1").Value = "Prénom";
-            worksheet.Cell("O1").Value = "Secteur";
-            worksheet.Cell("P1").Value = "Program";
-            worksheet.Cell("Q1").Value = "Type de stage";
-            worksheet.Cell("R1").Value = "Dates stage";
-            worksheet.Cell("S1").Value = "Superviseur collège";
-            worksheet.Cell("T1").Value = "Poste";
-            
-            List<Stagiaire> stagiaires = _spuContext.Stagiaires.ToList(); 
-           
-            for (int i = 2; i < stagiaires.Count(); i++)
+            using (var workbook = new XLWorkbook())
             {
-                worksheet.Cell($"A{i}").Value = "";
-                worksheet.Cell($"B{i}").Value = "";
-                worksheet.Cell($"C{i}").Value = "Signataire contrat";
-                worksheet.Cell($"E{i}").Value = "Fonction";
-                worksheet.Cell($"F{i}").Value = "Courriel du signataire";
-                worksheet.Cell($"G{i}").Value = "Tél.";
-                worksheet.Cell($"H{i}").Value = "Adresse";
-                worksheet.Cell($"I{i}").Value = "Ville";
-                worksheet.Cell($"J{i}").Value = "Prov";
-                worksheet.Cell($"K{i}").Value = "Code postal";
-                worksheet.Cell($"L{i}").Value = "Superviseur milieu stage";
-                worksheet.Cell($"M{i}").Value = "Stagiaire";
-                worksheet.Cell($"N{i}").Value = "Prénom";
-                worksheet.Cell($"O{i}").Value = "Secteur";
-                worksheet.Cell($"P{i}").Value = "Program";
-                worksheet.Cell($"Q{i}").Value = "Type de stage";
-                worksheet.Cell($"R{i}").Value = "Dates stage";
-                worksheet.Cell($"S{i}").Value = "Superviseur collège";
-                worksheet.Cell($"T{i}").Value = "Poste";
+                var worksheet = workbook.Worksheets.Add("ententes_de_stage");
+
+                worksheet.Cell("A1").Value = "No";
+                worksheet.Cell("B1").Value = "Millieu stage";
+                worksheet.Cell("C1").Value = "Signataire contrat";
+                worksheet.Cell("E1").Value = "Fonction";
+                worksheet.Cell("F1").Value = "Courriel du signataire";
+                worksheet.Cell("G1").Value = "Tél.";
+                worksheet.Cell("H1").Value = "Adresse";
+                worksheet.Cell("I1").Value = "Ville";
+                worksheet.Cell("J1").Value = "Prov";
+                worksheet.Cell("K1").Value = "Code postal";
+                worksheet.Cell("L1").Value = "Superviseur milieu stage";
+                worksheet.Cell("M1").Value = "Stagiaire";
+                worksheet.Cell("N1").Value = "Prénom";
+                worksheet.Cell("O1").Value = "Secteur";
+                worksheet.Cell("P1").Value = "Program";
+                worksheet.Cell("Q1").Value = "Type de stage";
+                worksheet.Cell("R1").Value = "Dates stage";
+                worksheet.Cell("S1").Value = "Superviseur collège";
+                worksheet.Cell("T1").Value = "Poste";
+
+                List<Stagiaire> stagiaires = _spuContext.Stagiaires.ToList();
+
+                for (int i = 2; i < stagiaires.Count(); i++)
+                {
+                    worksheet.Cell($"A{i}").Value = "";
+                    worksheet.Cell($"B{i}").Value = "";
+                    worksheet.Cell($"C{i}").Value = "Signataire contrat";
+                    worksheet.Cell($"E{i}").Value = "Fonction";
+                    worksheet.Cell($"F{i}").Value = "Courriel du signataire";
+                    worksheet.Cell($"G{i}").Value = "Tél.";
+                    worksheet.Cell($"H{i}").Value = "Adresse";
+                    worksheet.Cell($"I{i}").Value = "Ville";
+                    worksheet.Cell($"J{i}").Value = "Prov";
+                    worksheet.Cell($"K{i}").Value = "Code postal";
+                    worksheet.Cell($"L{i}").Value = "Superviseur milieu stage";
+                    worksheet.Cell($"M{i}").Value = "Stagiaire";
+                    worksheet.Cell($"N{i}").Value = "Prénom";
+                    worksheet.Cell($"O{i}").Value = "Secteur";
+                    worksheet.Cell($"P{i}").Value = "Program";
+                    worksheet.Cell($"Q{i}").Value = "Type de stage";
+                    worksheet.Cell($"R{i}").Value = "Dates stage";
+                    worksheet.Cell($"S{i}").Value = "Superviseur collège";
+                    worksheet.Cell($"T{i}").Value = "Poste";
+                }
+
+
+                var worksheet2 = workbook.Worksheets.Add("mds_source");
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                    return File(stream.ToArray(), contentType, "example.xlsx");
+                }
             }
-          
-
-            var worksheet2 = workbook.Worksheets.Add("mds_source");
-
-            using (var stream = new MemoryStream())
-            {
-                workbook.SaveAs(stream);
-
-                stream.Seek(0, SeekOrigin.Begin);
-
-                string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-                return File(stream.ToArray(), contentType, "example.xlsx");
-            }
-        }
         }
     }
+
+    #endregion
+
+
 
 }
 

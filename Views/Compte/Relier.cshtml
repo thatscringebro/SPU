@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SPU.ViewModels.StagiairesEditVM> 
+﻿@model IEnumerable<SPU.ViewModels.StagiairesEditVM>
 
 @{
     ViewData["Title"] = "Gestion des Stagiaires";
@@ -13,7 +13,7 @@
 
 <div class="mt-2 mb-2">
     @Html.ActionLink("Gérer les utilisateurs", "Manage", "Compte",
-            new { }, new { @class = "btn btn-primary" })
+    new { }, new { @class = "btn btn-primary" })
 </div>
 
 @if (TempData["ErrorMessage"] != null)
@@ -31,100 +31,132 @@
 }
 
 <div class="row">
-        <div class="col-md-12">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <table class="table">
-                <thead>
+    <div class="col-md-12">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Nom)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Prenom)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Mds)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Mds)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Enseignants)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.debutStage)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.finStage)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <form asp-action="Relier" asp-controller="Compte" method="post">
                     <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Nom)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Prenom)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Mds)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Mds)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Enseignants)
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <form asp-action="Relier" asp-controller="Compte" method="post">
-                            <tr>
-                                <td>
-                                        @Html.DisplayFor(modelItem => item.Nom)
-                                </td>
-                                <td>
-                                        @Html.DisplayFor(modelItem => item.Prenom)
-                                </td>
-                                <td>
-                            @* <select class="selectpicker" disabled> *@
+                        <td>
+                                @Html.DisplayFor(modelItem => item.Nom)
+                        </td>
+                        <td>
+                                @Html.DisplayFor(modelItem => item.Prenom)
+                        </td>
+                        <td>
+                                @* <select class="selectpicker" disabled> *@
                             <select class="form-control selectpicker" name="idMdsSelectionne1" data-live-search="true">
-                                        <option value="">Sélectionnez le maitre de stage 1</option>
-                                            @foreach (var mds in ViewBag.Mds)
-                                            {
-                                                 if (mds.Value == item.idMdsSelectionne1?.ToString())
-                                                 {
-                                                 <option value="@mds.Value" selected="selected">@mds.Text</option>
-                                                 }
-                                                 else
-                                                 {
-                                                 <option value="@mds.Value">@mds.Text</option>
-                                                 }
-                                            }
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-control" name="idMdsSelectionne2">
-                                        <option value="">Sélectionnez le maitre de stage 2</option>
-                                            @foreach (var mds in ViewBag.Mds)
-                                            {
-                                                if (mds.Value == item.idMdsSelectionne2?.ToString())
-                                                {
-                                                <option value="@mds.Value" selected="selected">@mds.Text</option>
-                                                }
-                                                else
-                                                {
-                                                <option value="@mds.Value">@mds.Text</option>
-                                                }
+                                <option value="">Sélectionnez le maitre de stage 1</option>
+                                    @foreach (var mds in ViewBag.Mds)
+                                    {
+                                        if (mds.Value == item.idMdsSelectionne1?.ToString())
+                                        {
+                                        <option value="@mds.Value" selected="selected">@mds.Text</option>
+                                        }
+                                        else
+                                        {
+                                        <option value="@mds.Value">@mds.Text</option>
+                                        }
+                                    }
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control" name="idMdsSelectionne2">
+                                <option value="">Sélectionnez le maitre de stage 2</option>
+                                    @foreach (var mds in ViewBag.Mds)
+                                    {
+                                        if (mds.Value == item.idMdsSelectionne2?.ToString())
+                                        {
+                                        <option value="@mds.Value" selected="selected">@mds.Text</option>
+                                        }
+                                        else
+                                        {
+                                        <option value="@mds.Value">@mds.Text</option>
+                                        }
 
-                                            }
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-control" name="idEnseignantSelectionne">
-                                            <option value="">Sélectionnez l'enseignant</option>
-                                                @foreach (var ens in ViewBag.Enseignants)
-                                                {
-                                                    if (ens.Value == item.idEnseignantSelectionne?.ToString())
-                                                    {
-                                                    <option value="@ens.Value" selected="selected">@ens.Text</option>
-                                                    }
-                                                    else
-                                                    {
-                                                    <option value="@ens.Value">@ens.Text</option>
-                                                    }
-                                                }
-                                     </select>
-                                </td>
-                                <td>
-                                    <input type="hidden" name="idStagiaire" value="@item.Id" />
-                                    <button type="submit" class="btn btn-success">Relier</button>
-                                </td>
-                            </tr>
-                        </form>
-                    }
-                </tbody>
-            </table>
-        </div>
+                                    }
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control" name="idEnseignantSelectionne">
+                                <option value="">Sélectionnez l'enseignant</option>
+                                    @foreach (var ens in ViewBag.Enseignants)
+                                    {
+                                        if (ens.Value == item.idEnseignantSelectionne?.ToString())
+                                        {
+                                        <option value="@ens.Value" selected="selected">@ens.Text</option>
+                                        }
+                                        else
+                                        {
+                                        <option value="@ens.Value">@ens.Text</option>
+                                        }
+                                    }
+                            </select>
+                        </td>
+                        <td>
+                                @if (item.debutStage.HasValue)
+                                {
+                                <input class="form-control date-input" type="date" asp-for="@item.debutStage" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+                                <input class="form-control date-input" type="text" value="@item.debutStage.Value.ToString("yyyy-MM-dd")" />
+                                }
+                                else
+                                {
+                                <input class="form-control date-input" type="date" name="debutStage" />
+                                }
+                            <span asp-validation-for="@item.debutStage" class="text-danger"></span>
+                        </td>
+
+                        <td>
+                                @if (item.finStage.HasValue)
+                                {
+                                <input class="form-control date-input" type="date" asp-for="@item.finStage" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+                                <input class="form-control date-input" type="text" value="@item.finStage.Value.ToString("yyyy-MM-dd")" />
+                                }
+                                else
+                                {
+                                <input class="form-control date-input" type="date" name="finStage" />
+                                }
+                            <span asp-validation-for="@item.finStage" class="text-danger"></span>
+                        </td>
+
+                        <td>
+                            <input type="hidden" name="idStagiaire" value="@item.Id" />
+                            <button type="submit" class="btn btn-success">Relier</button>
+                        </td>
+                    </tr>
+                    </form>
+                }
+            </tbody>
+        </table>
     </div>
+</div>
 
 
 

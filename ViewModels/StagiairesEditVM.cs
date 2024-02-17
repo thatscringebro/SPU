@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
@@ -10,8 +11,10 @@ namespace SPU.ViewModels
         public string Prenom { get; set; }
         [Display(Name = "Nom")]
         public string Nom {  get; set; }
-
-
+        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true), Display(Name = "Début de stage ")]
+        public DateTime? debutStage { get; set; }
+        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true), Display(Name = "Fin de stage")]
+        public DateTime? finStage { get; set; }
 
         [Display(Name = "Choisir maître de stage 1")]
         public Guid? idMdsSelectionne1 { get; set; }
