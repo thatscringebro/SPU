@@ -15,6 +15,7 @@ using System.Text;
 using ClosedXML.Excel;
 using Microsoft.Extensions.Logging.Abstractions;
 using Humanizer;
+using DocumentFormat.OpenXml.InkML;
 
 namespace SPU.Controllers
 {
@@ -25,7 +26,7 @@ namespace SPU.Controllers
         private readonly SignInManager<Utilisateur> _signInManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly SpuContext _spuContext;
-        
+
         public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
             _roleManager = roleManager;
@@ -34,7 +35,7 @@ namespace SPU.Controllers
             _spuContext = spuContext;
 
         }
-    
+
         public string CreateSHA512(string strData)
         {
             var message = Encoding.UTF8.GetBytes(strData);
@@ -50,7 +51,7 @@ namespace SPU.Controllers
                 return hex;
             }
         }
-     
+
 
         #region login
         [AllowAnonymous]
@@ -83,7 +84,7 @@ namespace SPU.Controllers
                     return View(vm);
                 }
 
-                var user =  _userManager.Users.FirstOrDefault(r => r.UserName == vm.UserName);
+                var user = _userManager.Users.FirstOrDefault(r => r.UserName == vm.UserName);
                 var role = await _userManager.GetRolesAsync(user);
                 var roleUser = role.FirstOrDefault();
 
@@ -94,8 +95,8 @@ namespace SPU.Controllers
                     return Redirect(returnUrl);
 
 
-               
-                    return RedirectToAction("Index", "Home");
+
+                return RedirectToAction("Index", "Home");
 
             }
             catch
@@ -155,7 +156,7 @@ namespace SPU.Controllers
                             Telephone = user.PhoneNumber,
                         };
 
-                        if (Stagiaire != null )
+                        if (Stagiaire != null)
                         {
                             var Ecole = _spuContext.Ecole.FirstOrDefault(x => x.id == Stagiaire.EcoleId);
                             userDetail.PartagerInfoContact = Stagiaire?.PartagerInfoContact ?? false;
@@ -187,7 +188,7 @@ namespace SPU.Controllers
                             userDetail.Ecole = Ecole.Nom;
                         }
 
-                        if (Mds != null ) 
+                        if (Mds != null)
                         {
                             userDetail.actif = Mds?.actif ?? false;
                             userDetail.status = Mds.status;
@@ -241,10 +242,10 @@ namespace SPU.Controllers
 
         [Authorize(Roles = "Employeur")]
         public async Task<IActionResult> ManageMds()
-		{
-			var vm = new List<MdsDetailVM>();
-			try
-			{
+        {
+            var vm = new List<MdsDetailVM>();
+            try
+            {
                 var idUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 if (idUser == null)
@@ -257,25 +258,25 @@ namespace SPU.Controllers
 
                 foreach (var user in await _spuContext.MDS.Where(m => m.EmployeurId == idEmp).Include(u => u.utilisateur).ToListAsync())
                 {
-					vm.Add(new MdsDetailVM
-					{
-						Id = user.Id,
+                    vm.Add(new MdsDetailVM
+                    {
+                        Id = user.Id,
                         Prenom = user.utilisateur.Prenom,
-						Nom = user.utilisateur.Nom
-					});
-				}
-			}
-			catch (Exception ex)
-			{
-				ViewBag.UserListErrorMessage = "Erreur d'affichage des maîtres de stages. Veuillez réessayer!" + ex.Message;
-			}
+                        Nom = user.utilisateur.Nom
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.UserListErrorMessage = "Erreur d'affichage des maîtres de stages. Veuillez réessayer!" + ex.Message;
+            }
 
-			return View(vm);
-		}
-		#endregion
+            return View(vm);
+        }
+        #endregion
 
-		#region CreationNormal et EditNormal
-		[AllowAnonymous]
+        #region CreationNormal et EditNormal
+        [AllowAnonymous]
         [Route("Compte/CreationNormal")]
         [Route("Compte/CreationNormal/{hash?}")]
         [HttpGet]
@@ -291,7 +292,7 @@ namespace SPU.Controllers
             var enseignant = CreateSHA512("Enseignant");
             var Coordo = CreateSHA512("Coordonnateur");
 
-            if(hash == null)
+            if (hash == null)
             {
                 switch (vue)
                 {
@@ -315,7 +316,7 @@ namespace SPU.Controllers
                     return View();
             }
 
-           
+
         }
 
 
@@ -329,7 +330,7 @@ namespace SPU.Controllers
             {
                 return View(vm);
             }
-            
+
             var roles = await _roleManager.Roles.ToListAsync();
 
             var selectedRole = roles.FirstOrDefault(r => r.Name == vm.role);
@@ -386,7 +387,7 @@ namespace SPU.Controllers
                     ChatId = Chat.Id,
                     PartagerInfoContact = vm.PartagerInfoContact
                 };
-             
+
                 _spuContext.Stagiaires.Add(Stagiaire);
 
             }
@@ -568,7 +569,7 @@ namespace SPU.Controllers
         }
 
 
-        
+
         //EDIT MDS
         [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
@@ -615,7 +616,7 @@ namespace SPU.Controllers
         }
 
 
-       
+
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
@@ -757,7 +758,7 @@ namespace SPU.Controllers
 
 
 
-       
+
         //EDIT EMPLOYEUR
         [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
@@ -849,7 +850,7 @@ namespace SPU.Controllers
         #endregion
 
         #region Remove 
-        
+
         //REMOVE POUR TOUS LE MONDE 
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
@@ -923,7 +924,7 @@ namespace SPU.Controllers
                 Value = e.Id.ToString(),
                 Text = e.utilisateur.UserName
             }).ToList();
-            
+
             ViewBag.Mds = _spuContext.MDS.Select(e => new SelectListItem
             {
                 Value = e.Id.ToString(),
@@ -938,7 +939,7 @@ namespace SPU.Controllers
                     List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
 
 
-                    if(user.finStage != null & user.debutStage != null)
+                    if (user.finStage != null & user.debutStage != null)
                     {
                         vm.Add(new StagiairesEditVM
                         {
@@ -966,7 +967,7 @@ namespace SPU.Controllers
                             finStage = null
                         });
                     }
-                   
+
                 }
             }
             catch (Exception ex)
@@ -984,7 +985,7 @@ namespace SPU.Controllers
             {
                 return RedirectToAction("Relier");
             }
-            
+
 
             if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null && idEnseignantSelectionne == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
             {
@@ -1018,7 +1019,7 @@ namespace SPU.Controllers
             {
                 if (mds.Id != idMdsSelectionne1 && mds.Id != idMdsSelectionne2)
                 {
-                    mds.StagiaireId = null; 
+                    mds.StagiaireId = null;
                     mds.ChatId = null;
                     mds.chat = null;
                 }
@@ -1043,10 +1044,10 @@ namespace SPU.Controllers
             if (StagiaireAediter != null)
             {
                 StagiaireAediter.EnseignantId = idEnseignantSelectionne;
-               
+
                 ChatsStagiaire.EnseignantId = idEnseignantSelectionne;
 
-                if(debutStage != null && finStage != null)
+                if (debutStage != null && finStage != null)
                 {
                     StagiaireAediter.debutStage = debutStage.Value.ToUniversalTime();
                     StagiaireAediter.finStage = finStage.Value.ToUniversalTime();
@@ -1131,11 +1132,23 @@ namespace SPU.Controllers
                 }
             }
         }
-    }
+        #endregion
 
-    #endregion
+
+        #region Filtre
+        [HttpGet]
+        public IActionResult GetFilteredData(string filter)
+        {
+            var filteredData = _spuContext.MDS.Where(item => item.MatriculeId.StartsWith(filter)).Select(item => item.MatriculeId).ToList();
+            return Json(filteredData);
+        }
+
+        #endregion
+    }
 
 
 
 }
+
+
 

@@ -72,7 +72,7 @@
                         </td>
                         <td>
                                 @* <select class="selectpicker" disabled> *@
-                            <select class="form-control selectpicker" name="idMdsSelectionne1" data-live-search="true">
+                            <select id="selecteur" class="form-control selectpicker" name="idMdsSelectionne1" data-live-search="true">
                                 <option value="">Sélectionnez le maitre de stage 1</option>
                                     @foreach (var mds in ViewBag.Mds)
                                     {
@@ -88,7 +88,7 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-control" name="idMdsSelectionne2">
+                            <select id="selecteur" class="form-control" name="idMdsSelectionne2">
                                 <option value="">Sélectionnez le maitre de stage 2</option>
                                     @foreach (var mds in ViewBag.Mds)
                                     {
@@ -105,7 +105,7 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-control" name="idEnseignantSelectionne">
+                            <select id="selecteur"  class="form-control" name="idEnseignantSelectionne">
                                 <option value="">Sélectionnez l'enseignant</option>
                                     @foreach (var ens in ViewBag.Enseignants)
                                     {
@@ -159,4 +159,24 @@
 
 
 @section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#selecteur').on('input', function () {
+                var filter = $(this).val().toUpperCase();
+                $.ajax({
+                    url: '@Url.Action("GetFilteredData", "Compte")',
+                    type: 'GET',
+                    data: { filter: filter },
+                    success: function (data) {
+                        $('#selecteur').empty(); 
+                        $('#selecteur').append($('<option>').text('Choisir une option'));
+                        $.each(data, function (index, value) {
+                            $('#selecteur').append($('<option>').text(value).attr('value', value));
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 }
