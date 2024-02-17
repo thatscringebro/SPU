@@ -130,30 +130,96 @@ namespace SPU.Controllers
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
         {
             var vm = new List<UtilisateurDetailVM>();
+
             try
             {
                 foreach (var user in await _userManager.Users.ToListAsync())
                 {
                     foreach (var userRoles in await _userManager.GetRolesAsync(user))
                     {
-                        var matriculeMds = _spuContext.MDS.Where(x => x.UtilisateurId == user.Id).Select(x=> x.MatriculeId).FirstOrDefault();
-                        
-                        vm.Add(new UtilisateurDetailVM
+                        var Mds = _spuContext.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+                        var Stagiaire = _spuContext.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
+                        var Employeur = _spuContext.Employeurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
+                        var Enseignant = _spuContext.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+                        var userDetail = new UtilisateurDetailVM
                         {
                             role = userRoles,
                             Id = user.Id,
-                            Matricule = matriculeMds,
+                            userName = user.UserName,
                             Nom = user.Nom,
                             Prenom = user.Prenom,
                             Courriel = user.Email,
-                            Telephone = user.PhoneNumber
-                        });
+                            Telephone = user.PhoneNumber,
+                        };
+
+                        if (Stagiaire != null )
+                        {
+                            var Ecole = _spuContext.Ecole.FirstOrDefault(x => x.id == Stagiaire.EcoleId);
+                            userDetail.PartagerInfoContact = Stagiaire?.PartagerInfoContact ?? false;
+
+                            if (Stagiaire?.debutStage.HasValue == true)
+                            {
+                                userDetail.debutStage = Stagiaire.debutStage.Value.ToUniversalTime();
+                            }
+                            else
+                            {
+                                userDetail.debutStage = null;
+                            }
+
+                            if (Stagiaire?.finStage.HasValue == true)
+                            {
+                                userDetail.finStage = Stagiaire.finStage.Value.ToUniversalTime();
+                            }
+                            else
+                            {
+                                userDetail.finStage = null;
+                            }
+                            userDetail.Ecole = Ecole.Nom;
+                        }
+
+                        if (Enseignant != null)
+                        {
+                            var Ecole = _spuContext.Ecole.FirstOrDefault(x => x.id == Enseignant.EcoleId);
+                            userDetail.Ecole = Ecole.Nom;
+                        }
+
+                        if (Mds != null ) 
+                        {
+                            userDetail.actif = Mds?.actif ?? false;
+                            userDetail.status = Mds.status;
+                            userDetail.Matricule = Mds?.MatriculeId;
+                            userDetail.civilite = Mds.civilite;
+                            userDetail.NomEmployeur = Mds?.NomEmployeur;
+                            userDetail.TypeEmployeur = Mds.typeEmployeur;
+                            userDetail.telMaison = Mds?.telMaison;
+                            userDetail.accreditation = Mds?.accreditation;
+                            userDetail.commentaire = Mds?.commentaire;
+                            userDetail.commentaireCIUSS = Mds?.commentaireCIUSS;
+                        }
+
+                        if (Employeur != null)
+                        {
+                            var Adresse = _spuContext.Adresses.FirstOrDefault(x => x.Id == Employeur.AdresseId);
+                            if (Adresse != null)
+                            {
+                                userDetail.NumeroDeRue = Adresse.NoCivique;
+                                userDetail.NomDeRue = Adresse.Rue;
+                                userDetail.Ville = Adresse.Ville;
+                                userDetail.Province = Adresse.Province;
+                                userDetail.Pays = Adresse.Pays;
+                                userDetail.CodePostal = Adresse.CodePostal;
+                            }
+                        }
+
+                        vm.Add(userDetail);
                     }
+
                 }
             }
             catch (Exception ex)
             {
-                ViewBag.UserListErrorMessage = "Erreur d'affichage des utilisateurs. Veuillez réessayé." + ex.Message;
+                ViewBag.UserListErrorMessage = "Erreur d'affichage des utilisateurs. Veuillez réessayer." + ex.Message;
             }
 
             //if (success)
@@ -315,7 +381,7 @@ namespace SPU.Controllers
                     EcoleId = vm.idEcoleSelectionne,
                     chat = Chat,
                     ChatId = Chat.Id,
-                    
+                    PartagerInfoContact = vm.PartagerInfoContact
                 };
              
                 _spuContext.Stagiaires.Add(Stagiaire);

@@ -110,10 +110,10 @@
                         @Html.DisplayFor(modelItem => item.Telephone)
                     </td>
                     <td>
-                        <i class="faa fa-solid fa-user" style="color: #2386d1;" onclick='userDetails(@Html.Raw(Json.Serialize(item)))'></i>
+                        <i class="fa fa-solid fa-user" style="color: #2386d1;" onclick='userDetails(@Html.Raw(Json.Serialize(item)))'></i>
                     </td>
                     <td>
-                        horaire
+                        @Html.ActionLink("Horaire", "EditMDS", "Compte", new { id = item.Id }, new { @class = "btn btn-success" })
                     </td>
                     <td>
                         @Html.ActionLink("Mettre à jour", "EditMDS", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
@@ -178,7 +178,7 @@
                         @Html.DisplayFor(modelItem => item.Telephone)
                     </td>
                     <td>
-                        details
+                        <i class="fa fa-solid fa-user" style="color: #2386d1;" onclick='userDetails(@Html.Raw(Json.Serialize(item)))'></i>
                     </td>
                     <td>
                         @Html.ActionLink("Mettre à jour", "EditEmployeur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
@@ -236,14 +236,21 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Prenom)
                     </td>
+                    @if (item.PartagerInfoContact)
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Courriel)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Telephone)
+                        </td>
+                    }
+                    else
+                    {
+                        <td colspan="2"></td>
+                    }
                     <td>
-                        @Html.DisplayFor(modelItem => item.Courriel)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Telephone)
-                    </td>
-                    <td>
-                        details
+                        <i class="fa fa-solid fa-user" style="color: #2386d1;" onclick='userDetails(@Html.Raw(Json.Serialize(item)))'></i>
                     </td>
                     <td>
                         @Html.ActionLink("Mettre à jour", "EditUtilisateur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
@@ -308,7 +315,7 @@
                         @Html.DisplayFor(modelItem => item.Telephone)
                     </td>
                     <td>
-                        details
+                        <i class="fa fa-solid fa-user" style="color: #2386d1;" onclick='userDetails(@Html.Raw(Json.Serialize(item)))'></i>
                     </td>
                     <td>
                         @Html.ActionLink("Mettre à jour", "EditUtilisateur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
@@ -334,32 +341,74 @@
         function userDetails(user) {
             console.log(user);
             let userDetailsHtml = `
+                    <strong>Nom d'utilisateur: </strong> ${user.userName ? user.userName : 'Non disponible'}<br>
                    <strong>Nom: </strong> ${user.nom ? user.nom : 'Non disponible'}<br>
                    <strong>Prénom: </strong> ${user.prenom ? user.prenom : 'Non disponible'}<br>
-                   <strong>Email: </strong> ${user.courriel ? user.courriel : 'Non disponible'} <br>
-                   <strong>Téléphone: </strong> ${user.telephone ? user.telephone : 'Non disponible'}<br>
-        `;
+            `;
 
+            //Mds
             if (user.role === "MDS") {
                 userDetailsHtml += `
-                    <strong>Matricule:</strong> ${user.matricule ? user.matricule : 'Non disponible'}<br>
+                <strong>Matricule:</strong> ${user.matricule ? user.matricule : 'Non disponible'}<br>
+                <strong>Civilité:</strong> ${user.civilite ? user.civilite : 'Non disponible'}<br>
+                <strong>Type d'employeur:</strong> ${user.typeEmployeur ? user.typeEmployeur : 'Non disponible'}<br>
+                <strong>Téléphone de maison:</strong> ${user.telMaison ? user.telMaison : 'Non disponible'}<br>
+                <strong>Nom de l'employeur:</strong> ${user.nomEmployeur ? user.nomEmployeur : 'Non disponible'}<br>
+                <strong>Status:</strong> ${user.status ? user.status : 'Non disponible'}<br>
+                <strong>Actif:</strong> ${user.actif ? 'Oui' : 'Non'}<br>
+                <strong>Accréditation:</strong> ${user.accreditation ? user.accreditation : 'Non disponible'}<br>
+                <strong>Commentaire:</strong> ${user.commentaire ? user.commentaire : 'Non disponible'}<br>
+                <strong>Commentaire CIUSS:</strong> ${user.commentaireCIUSS ? user.commentaireCIUSS : 'Non disponible'}<br>
+            `;
+            }
+
+            //Stagiaire
+            if (user.role === "Stagiaire") {
+                userDetailsHtml += `
+                            <strong>École: </strong> ${user.ecole ? user.ecole : 'Non disponible'}<br>
+                            <strong>Email: </strong> ${user.debutStage ? user.debutStage : 'Non disponible'} <br>
+                            <strong>Téléphone: </strong> ${user.finStage ? user.finStage : 'Non disponible'}<br>
+                                    `;
+
+                if (user.partagerInfoContact) {
+                    userDetailsHtml += `
+                           <strong>Email: </strong> ${user.courriel ? user.courriel : 'Non disponible'} <br>
+                           <strong>Téléphone: </strong> ${user.telephone ? user.telephone : 'Non disponible'}<br>
+                    `;
+                }
+            } else {
+                userDetailsHtml += `
+                                   <strong>Email: </strong> ${user.courriel ? user.courriel : 'Non disponible'} <br>
+                                   <strong>Téléphone: </strong> ${user.telephone ? user.telephone : 'Non disponible'}<br>
+                        `;
+            }
+
+            //Employeur
+            if (user.role === "Employeur") {
+                userDetailsHtml += `
+                    <strong>Numéro de rue: </strong> ${user.numeroDeRue ? user.numeroDeRue : 'Non disponible'}<br>
+                    <strong>Nom de rue: </strong> ${user.nomDeRue ? user.nomDeRue : 'Non disponible'}<br>
+                    <strong>Ville: </strong> ${user.ville ? user.ville : 'Non disponible'}<br>
+                    <strong>Province: </strong> ${user.province ? user.province : 'Non disponible'}<br>
+                    <strong>Pays: </strong> ${user.pays ? user.pays : 'Non disponible'}<br>
+                    <strong>Code postal: </strong> ${user.codePostal ? user.codePostal : 'Non disponible'}<br>
                 `;
             }
 
-            // if (user.role === "Employeur") {
-            // userDetails.html += `
-            //                     <span>Nom:</span> ${user.Matricule}<br>
-
-            //                 `
-            // }
+            //Enseignant
+            if (user.role === "Enseignant") {
+                userDetailsHtml += `
+                    <strong>École: </strong> ${user.ecole ? user.ecole : 'Non disponible'}<br>
+                `;
+            }
 
             Swal.fire({
                 icon: "info",
                 title: "Détails de l'utilisateur",
                 html: userDetailsHtml
             });
-
         }
+
 
 
         /* displayEmp, displaySt, displayMds, displayEns */

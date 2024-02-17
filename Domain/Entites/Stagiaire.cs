@@ -15,6 +15,8 @@ namespace SPU.Domain.Entites
         public DateTime? debutStage { get; set; }
         public DateTime? finStage { get; set; }
 
+        public bool PartagerInfoContact { get; set; }
+
         //[ForeignKey(nameof(MDS))] virtual
         //public MDS MDS2 { get; set; }
         //public Guid? MDSId2 { get; set; }

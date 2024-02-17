@@ -25,6 +25,9 @@ namespace SPU.ViewModels
         [Display(Name = " Courriel")]
         public string Email { get; set; }
 
+        [Display(Name = "Voulez-vous partager vos informations de contact")]
+        public bool PartagerInfoContact { get; set; }
+
         public List<SelectListItem> Ecoles { get; set; } = new List<SelectListItem>();
 
     }
