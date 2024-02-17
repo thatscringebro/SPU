@@ -162,7 +162,8 @@ namespace SPU.Controllers
 
                             if (Stagiaire?.debutStage.HasValue == true)
                             {
-                                userDetail.debutStage = Stagiaire.debutStage.Value.ToUniversalTime();
+                                userDetail.debutStage = Stagiaire.debutStage.Value.ToUniversalTime().Date.ToString("yyyy-MM-dd"); ;
+                                //Value.Date.ToString("yyyy-MM-dd");
                             }
                             else
                             {
@@ -171,7 +172,7 @@ namespace SPU.Controllers
 
                             if (Stagiaire?.finStage.HasValue == true)
                             {
-                                userDetail.finStage = Stagiaire.finStage.Value.ToUniversalTime();
+                                userDetail.finStage = Stagiaire.finStage.Value.ToUniversalTime().Date.ToString("yyyy-MM-dd"); ;
                             }
                             else
                             {

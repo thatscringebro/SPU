@@ -123,12 +123,11 @@
                         <td>
                                 @if (item.debutStage.HasValue)
                                 {
-                                <input class="form-control date-input" type="date" asp-for="@item.debutStage" asp-format="{0:yyyy-MM-ddTHH:mm}" />
-                                <input class="form-control date-input" type="text" value="@item.debutStage.Value.ToString("yyyy-MM-dd")" />
+                                <input class="form-control date-input" type="date" asp-for="@item.debutStage" value="@item.debutStage.Value.ToString("yyyy-MM-dd")" />
                                 }
                                 else
                                 {
-                                <input class="form-control date-input" type="date" name="debutStage" />
+                                <input class="form-control date-input" type="date" asp-for="@item.debutStage" />
                                 }
                             <span asp-validation-for="@item.debutStage" class="text-danger"></span>
                         </td>
@@ -136,12 +135,11 @@
                         <td>
                                 @if (item.finStage.HasValue)
                                 {
-                                <input class="form-control date-input" type="date" asp-for="@item.finStage" asp-format="{0:yyyy-MM-ddTHH:mm}" />
-                                <input class="form-control date-input" type="text" value="@item.finStage.Value.ToString("yyyy-MM-dd")" />
+                                <input class="form-control date-input" type="date" asp-for="@item.finStage" value="@item.finStage.Value.ToString("yyyy-MM-dd")" />
                                 }
                                 else
                                 {
-                                <input class="form-control date-input" type="date" name="finStage" />
+                                <input class="form-control date-input" type="date" asp-for="@item.finStage" />
                                 }
                             <span asp-validation-for="@item.finStage" class="text-danger"></span>
                         </td>

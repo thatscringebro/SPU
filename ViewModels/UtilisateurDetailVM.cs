@@ -1,4 +1,5 @@
-﻿using SPU.Enum;
+﻿using Microsoft.AspNetCore.Mvc;
+using SPU.Enum;
 using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
@@ -24,8 +25,10 @@ namespace SPU.ViewModels
         //Stagiaire
         [Display(Name = "Partager contact")]
         public bool PartagerInfoContact { get; set; }
-        public DateTime? debutStage { get; set; }
-        public DateTime? finStage { get; set; }
+        //[BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true), Display(Name = "Début de stage ")]
+        public string? debutStage { get; set; }
+       // [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddT}", ApplyFormatInEditMode = true), Display(Name = "Fin de stage")]
+        public string? finStage { get; set; }
 
         //Enseignant
         public string Ecole { get; set; }
