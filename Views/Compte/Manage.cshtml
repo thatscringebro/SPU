@@ -87,6 +87,9 @@
     </thead>
     <tr>
         <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayMds')">Maître de stage <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("MDS")">Copier lien</button></td>
+        <td>
+            <input type="text" class="form-control" id="MDSSearchInput" placeholder="Rechercher un maître de stage..." />
+        </td>
     </tr>
     <tbody id="displayMds" class="">
         @foreach (var item in Model)
@@ -133,7 +136,7 @@
 
 @* Employeur *@
 <br />
-<table class="table mt-3">
+<table  class="table mt-3">
     <thead>
         <tr>
             <th>
@@ -158,6 +161,9 @@
     </thead>
     <tr>
         <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayEmp')">Employeur <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Employeur")">Copier lien</button></td>
+        <td>
+            <input type="text" class="form-control" id="EmpSearchInput" placeholder="Rechercher un employeur..." />
+        </td>
     </tr>
     <tbody id="displayEmp">
         @foreach (var item in Model)
@@ -223,7 +229,11 @@
     </thead>
     <tr>
         <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displaySt')">Stagiaire <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Stagiaire")">Copier lien</button></td>
+        <td>
+            <input type="text" class="form-control" id="stagiaireSearchInput" placeholder="Rechercher un stagiaire..."/>
+        </td>
     </tr>
+   
     <tbody id="displaySt">
         @foreach (var item in Model)
         {
@@ -295,6 +305,9 @@
     </thead>
     <tr>
         <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayEns')">Enseignant <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Enseignant")">Copier lien</button></td>
+        <td>
+            <input type="text" class="form-control" id="EnsSearchInput" placeholder="Rechercher un employeur..." />
+        </td>
     </tr>
     <tbody id="displayEns">
         @foreach (var item in Model)
@@ -336,6 +349,8 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 @section Scripts {
     <script>
         function userDetails(user) {
@@ -447,6 +462,119 @@
             });
         });
 
+
        
+   //Stagiaire
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchBar = document.getElementById("stagiaireSearchInput");
+            const tableRows = document.querySelectorAll("#displaySt tr");
+
+            searchBar.addEventListener("input", function () {
+                const searchTerm = searchBar.value.trim().toLowerCase();
+
+                tableRows.forEach(function (row) {
+                    const cells = row.querySelectorAll("td");
+                    let found = false;
+
+                    cells.forEach(function (cell) {
+                        const cellText = cell.textContent.trim().toLowerCase();
+                        if (cellText.includes(searchTerm)) {
+                            found = true;
+                        }
+                    });
+
+                    if (found) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+
+        //MDS
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchBar = document.getElementById("MDSSearchInput");
+            const tableRows = document.querySelectorAll("#displayMds tr");
+
+            searchBar.addEventListener("input", function () {
+                const searchTerm = searchBar.value.trim().toLowerCase();
+
+                tableRows.forEach(function (row) {
+                    const cells = row.querySelectorAll("td");
+                    let found = false;
+
+                    cells.forEach(function (cell) {
+                        const cellText = cell.textContent.trim().toLowerCase();
+                        if (cellText.includes(searchTerm)) {
+                            found = true;
+                        }
+                    });
+
+                    if (found) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+
+        //Employeur
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchBar = document.getElementById("EmpSearchInput");
+            const tableRows = document.querySelectorAll("#displayEmp tr");
+
+            searchBar.addEventListener("input", function () {
+                const searchTerm = searchBar.value.trim().toLowerCase();
+
+                tableRows.forEach(function (row) {
+                    const cells = row.querySelectorAll("td");
+                    let found = false;
+
+                    cells.forEach(function (cell) {
+                        const cellText = cell.textContent.trim().toLowerCase();
+                        if (cellText.includes(searchTerm)) {
+                            found = true;
+                        }
+                    });
+
+                    if (found) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+
+        //Enseignant
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchBar = document.getElementById("EnsSearchInput");
+            const tableRows = document.querySelectorAll("#displayEns tr");
+
+            searchBar.addEventListener("input", function () {
+                const searchTerm = searchBar.value.trim().toLowerCase();
+
+                tableRows.forEach(function (row) {
+                    const cells = row.querySelectorAll("td");
+                    let found = false;
+
+                    cells.forEach(function (cell) {
+                        const cellText = cell.textContent.trim().toLowerCase();
+                        if (cellText.includes(searchTerm)) {
+                            found = true;
+                        }
+                    });
+
+                    if (found) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+
     </script>
 }
