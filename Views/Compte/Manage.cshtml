@@ -54,6 +54,13 @@
     </div>
 }
 
+@if (TempData["HoraireIntrouvable"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["HoraireIntrouvable"]
+    </div>
+}
+
 @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
 
 @* Maitre de stage *@
@@ -119,7 +126,7 @@
                         <i class="fa fa-solid fa-user" style="color: #2386d1;" onclick='userDetails(@Html.Raw(Json.Serialize(item)))'></i>
                     </td>
                     <td>
-                        @Html.ActionLink("Horaire", "HoraireMds", "Horaire", new { id = item.Id }, new { @class = "btn btn-success" })
+                        @Html.ActionLink("Horaire", "HoraireMds", "Horaire", new { Id = item.Id }, new { @class = "btn btn-success" })
                     </td>
                     <td>
                         @Html.ActionLink("Mettre à jour", "EditMDS", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
