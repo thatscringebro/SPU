@@ -91,6 +91,14 @@ namespace SPU.Controllers
                 if (roleUser == "Coordonnateur")
                     return RedirectToAction(nameof(Manage));
 
+                if (roleUser == "Enseignant")
+                    return RedirectToAction(nameof(ManageEnseignant));
+
+                if (roleUser == "Employeur")
+                    return RedirectToAction(nameof(ManageMds));
+                    
+                //Redirection home ? ou horaire ? mais si les mds/stagiaire n'as pas encore d'horaire ? 
+
                 if (!string.IsNullOrEmpty(returnUrl))
                     return Redirect(returnUrl);
 
@@ -273,6 +281,41 @@ namespace SPU.Controllers
 
             return View(vm);
         }
+
+        [Authorize(Roles = "Enseignant")]
+        public async Task<IActionResult> ManageEnseignant()
+        {
+            var vm = new List<UtilisateurDetailVM>();
+            try
+            {
+                var idUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (idUser == null)
+                {
+                    ViewBag.UserListErrorMessage = "Erreur d'affichage. Veuillez réessayer!";
+                }
+
+                Guid idEns = _spuContext.Enseignants.FirstOrDefault(a => a.UtilisateurId == Guid.Parse(idUser)).Id;
+
+
+                foreach (var user in await _spuContext.Stagiaires.Where(m => m.EnseignantId == idEns).Include(u => u.utilisateur).ToListAsync())
+                {
+                    vm.Add(new UtilisateurDetailVM
+                    {
+                        Id = user.Id,
+                        Prenom = user.utilisateur.Prenom,
+                        Nom = user.utilisateur.Nom
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.UserListErrorMessage = "Erreur d'affichage des maîtres de stages. Veuillez réessayer!" + ex.Message;
+            }
+
+            return View(vm);
+        }
+
         #endregion
 
         #region CreationNormal et EditNormal
