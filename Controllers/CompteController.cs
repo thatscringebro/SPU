@@ -36,6 +36,11 @@ namespace SPU.Controllers
 
         }
 
+        /// <summary>
+        /// Méthode pour hasher le rôle de l'utilisateur pour le comparé au url
+        /// </summary>
+        /// <param name="strData">Rôle</param>
+        /// <returns>Le nom hasher</returns>
         public string CreateSHA512(string strData)
         {
             var message = Encoding.UTF8.GetBytes(strData);
@@ -54,6 +59,11 @@ namespace SPU.Controllers
 
 
         #region login
+        /// <summary>
+        /// Action pour se connecter
+        /// </summary>
+        /// <param name="returnUrl">Url de retour</param>
+        /// <returns>la vue</returns>
         [AllowAnonymous]
         public IActionResult LogIn(string? returnUrl = "")
         {
@@ -63,6 +73,12 @@ namespace SPU.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Retourne le formulaire pour la confirmation des données
+        /// </summary>
+        /// <param name="vm">View Model de la connexion</param>
+        /// <param name="returnUrl">url de retour</param>
+        /// <returns>Redirige au bon endroit</returns>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(ConnexionVM vm, string? returnUrl = "")
@@ -115,6 +131,10 @@ namespace SPU.Controllers
             }
         }
 
+        /// <summary>
+        /// Déconnexion de l'utilisateur
+        /// </summary>
+        /// <returns>Déconnecte l'utilisateur</returns>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogOut()
@@ -127,6 +147,10 @@ namespace SPU.Controllers
         #endregion
 
         #region Manage
+        /// <summary>
+        /// Donne un choix pour la création des utilisateurs pour le coordonnateur
+        /// </summary>
+        /// <returns>La vue choisi par le coordonnateur</returns>
         //[AllowAnonymous]
         [Authorize(Roles = "Coordonnateur")]
         public ActionResult ChoixCreation()
@@ -136,6 +160,12 @@ namespace SPU.Controllers
 
 
         //CRUD pour utilisateur 
+        /// <summary>
+        /// Affiche les listes des utilisateurs pour la gestion des utilisateurs
+        /// </summary>
+        /// <param name="success"></param>
+        /// <param name="actionType"></param>
+        /// <returns>La vue manage</returns>
         //[AllowAnonymous] 
         [Authorize(Roles = "Coordonnateur")]
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
@@ -248,6 +278,10 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+        /// <summary>
+        /// Retourne la liste des maîtres de stage pour les employeurs
+        /// </summary>
+        /// <returns>La vue avec la liste</returns>
         [Authorize(Roles = "Employeur")]
         public async Task<IActionResult> ManageMds()
         {
@@ -282,6 +316,10 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+        /// <summary>
+        /// Retourne la liste des stagiaires associé à l'enseignant
+        /// </summary>
+        /// <returns>Les stagiaires</returns>
         [Authorize(Roles = "Enseignant")]
         public async Task<IActionResult> ManageEnseignant()
         {
@@ -319,6 +357,12 @@ namespace SPU.Controllers
         #endregion
 
         #region CreationNormal et EditNormal
+        /// <summary>
+        /// Affiche la vue pour le formulaire de création des stagiaires/enseignants
+        /// </summary>
+        /// <param name="vue"></param>
+        /// <param name="hash"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [Route("Compte/CreationNormal")]
         [Route("Compte/CreationNormal/{hash?}")]
@@ -593,6 +637,8 @@ namespace SPU.Controllers
             var Entreprise = _spuContext.Employeurs.Where(x => x.Id == vm.idEmployeurSelectionne).Include(u => u.utilisateur).FirstOrDefault();
             //Nom utilisateur pour l'entreprise = nom d'entreprise OBLIGATOIRE
 
+            Horaire nouvelleHoraire = new Horaire();
+
             var MDs = new MDS
             {
                 utilisateur = toCreate,
@@ -606,6 +652,38 @@ namespace SPU.Controllers
 
             };
 
+
+
+            nouvelleHoraire.Id = Guid.NewGuid();
+            nouvelleHoraire.mds = MDs;
+            nouvelleHoraire.MDSId = MDs.Id;
+
+            // Obtenir la date et l'heure actuelles dans le fuseau horaire local
+            DateTime debutHoraire = DateTime.Now;
+
+
+            // Démarrer l'horaire à partir du dimanche prochain
+            while (debutHoraire.DayOfWeek != DayOfWeek.Sunday)
+            {
+                debutHoraire = debutHoraire.AddDays(1);
+            }
+
+            debutHoraire = new DateTime(debutHoraire.Year, debutHoraire.Month, debutHoraire.Day, 0, 0, 0);
+
+            // Ajouter deux ans
+            DateTime finHoraire = debutHoraire.AddYears(2);
+
+            TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
+            debutHoraire = TimeZoneInfo.ConvertTime(debutHoraire, localTimeZone);
+            finHoraire = TimeZoneInfo.ConvertTime(finHoraire, localTimeZone);
+
+            MDs.DateCreationHoraire = debutHoraire.ToUniversalTime();
+            MDs.DateExpiration = finHoraire.ToUniversalTime();
+
+      
+
+           _spuContext.Horaires.Add(nouvelleHoraire);
             _spuContext.Add(MDs);
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
