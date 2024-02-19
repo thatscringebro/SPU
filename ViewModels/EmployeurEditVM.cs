@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace SPU.ViewModels
 {
@@ -42,5 +44,33 @@ namespace SPU.ViewModels
         [Display(Name = " Courriel")]
         public string Email { get; set; }
 
+    }
+
+    public class EmployeurEditVMValidation : AbstractValidator<EmployeurEditVM>
+    {
+        public EmployeurEditVMValidation()
+        {
+            RuleFor(vm => vm.PhoneNumber)
+    .NotEmpty().WithMessage("Le numéro de cellulaire est requis!")
+    .Matches(new Regex(@"^\s*\d{3}-\d{3}-\d{4}\s*$")).WithMessage("Le format du téléphone est invalide! Utilisez le format XXX-XXX-XXXX.");
+
+            RuleFor(vm => vm.NumeroDeRue).NotEmpty().WithMessage("Le numéro de rue est requis!");
+
+            RuleFor(vm => vm.NomDeRue).NotEmpty().WithMessage("Le nom de rue est requis!");
+
+            RuleFor(vm => vm.Ville).NotEmpty().WithMessage("La ville est requise!");
+
+            RuleFor(vm => vm.Province).NotEmpty().WithMessage("La province est requise!");
+
+            RuleFor(vm => vm.Pays).NotEmpty().WithMessage("Le pays est requis!");
+
+            RuleFor(vm => vm.CodePostal)
+                .NotEmpty().WithMessage("Le code postal est requis!")
+                .Matches(new Regex(@"^[A-Z]{1}\d{1}[A-Z]{1} \d{1}[A-Z]{1}\d{1}$")).WithMessage("Le format du code postal est invalide! Utilisez le format A1B 2C3.");
+
+            RuleFor(vm => vm.Email)
+                .NotEmpty().WithMessage("L'email est requis!")
+                .EmailAddress().WithMessage("L'email n'est pas valide!");
+        }
     }
 }
