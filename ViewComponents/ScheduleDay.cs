@@ -21,6 +21,8 @@ namespace SPU.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync(Guid horaireId)
         {
+            CalendrierHoraireVM calendrier = new CalendrierHoraireVM();
+
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
 
             Coordonnateur? coordo = _context.Coordonnateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
@@ -33,9 +35,11 @@ namespace SPU.ViewComponents
 
             if (mds != null)
             {
+                calendrier.isMDS = true;
                 Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
 
                 if (horaire != null)
+                { 
                     journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaireId).ToList().Select(x => new JourneeTravailleVM
                     {
                         DateDebutQuart = x.DateDebut.ToLocalTime(),
@@ -43,13 +47,17 @@ namespace SPU.ViewComponents
                         Id = x.Id,
                         Present = x.ConfirmationPresence
                     }).ToList();
+
+                    calendrier.ListJournees = journeeTravailles;
+                }
             }
             else if (stag != null)
             {
                 //À vérfier ici
-                Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
+                Horaire horaire = _context.Horaires.Where(x => x.StagiaireId == stag.Id).FirstOrDefault();
 
                 if (horaire != null)
+                { 
                     journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaireId).ToList().Select(x => new JourneeTravailleVM
                     {
                         DateDebutQuart = x.DateDebut.ToLocalTime(),
@@ -57,6 +65,9 @@ namespace SPU.ViewComponents
                         Id = x.Id,
                         Present = x.ConfirmationPresence
                     }).ToList();
+
+                    calendrier.ListJournees = journeeTravailles;
+                }
             }
 
             // Aller chercher toutes les journées où la personne connectée travaille
@@ -93,7 +104,7 @@ namespace SPU.ViewComponents
             //    Present = true
             //});
             // Renvoyer la vue avec les données
-            return View(journeeTravailles);
+            return View(calendrier);
         }
 
     }
