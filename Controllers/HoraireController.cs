@@ -103,8 +103,18 @@ namespace SPU.Controllers
                         vm.DateDebutStage = horaire.DateDebutStage.Date;
                         vm.DateFinStage = horaire.DateFinStage.Date;
                     }
+                    else
+                    {
+                        TempData["HoraireIntrouvable"] = "L'horaire du maître de stage est introuvable ou inexistant!";
+                        //return NotFound();
+                        RedirectToAction("Manage", "Compte");
+                    }
                 }
             }
+
+            //TempData["HoraireIntrouvable"] = "L'horaire du maître de stage est introuvable ou inexistant!";
+            //        //return NotFound();
+            //        RedirectToAction("Manage", "Compte");
 
             return View(vm);
         }
