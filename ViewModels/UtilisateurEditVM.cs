@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace SPU.ViewModels
 {
@@ -17,5 +19,27 @@ namespace SPU.ViewModels
         
         [Display(Name = " Courriel")]
         public string Email { get; set; }
+    }
+
+    public class UtilisateurEditVMValidation : AbstractValidator<UtilisateurEditVM> 
+    { 
+        public UtilisateurEditVMValidation() 
+        {
+            RuleFor(vm => vm.userName).NotEmpty().WithMessage("Le nom d'utilisateur est requis!");
+
+            RuleFor(vm => vm.Prenom).NotEmpty().WithMessage("Le prénom est requis!");
+
+            RuleFor(vm => vm.Nom).NotEmpty().WithMessage("Le nom est requis!");
+
+            RuleFor(vm => vm.PhoneNumber)
+                .NotEmpty().WithMessage("Le numéro de cellulaire est requis!")
+                .Matches(new Regex(@"^\s*\d{3}-\d{3}-\d{4}\s*$")).WithMessage("Le format du téléphone est invalide! Utilisez le format XXX-XXX-XXXX.");
+
+
+            RuleFor(vm => vm.Email).NotEmpty().WithMessage("L'email est requis!")
+                .EmailAddress().WithMessage("L'email n'est pas valide!");
+
+        }
+
     }
 }

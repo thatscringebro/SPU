@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SPU.Enum;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace SPU.ViewModels
 {
@@ -37,5 +39,47 @@ namespace SPU.ViewModels
 
         public List<SelectListItem> Employeurs { get; set; } = new List<SelectListItem>();
 
+    }
+
+    public class MDSCreationVMValidation : AbstractValidator<MDSCreationVM>
+    {
+        public MDSCreationVMValidation()
+        {
+            RuleFor(vm => vm.userName).NotEmpty().WithMessage("Le nom d'utilisateur est requis!");
+
+            RuleFor(vm => vm.Prenom).NotEmpty().WithMessage("Le prénom est requis!");
+
+            RuleFor(vm => vm.Nom).NotEmpty().WithMessage("Le nom est requis!");
+
+            RuleFor(vm => vm.PhoneNumber)
+    .NotEmpty().WithMessage("Le numéro de cellulaire est requis!")
+    .Matches(new Regex(@"^\s*\d{3}-\d{3}-\d{4}\s*$")).WithMessage("Le format du téléphone est invalide! Utilisez le format XXX-XXX-XXXX.");
+
+            RuleFor(vm => vm.pwd).NotEmpty().WithMessage("Le mot de passe est requis!")
+                .Matches(new Regex(@"^[A-Z]")).WithMessage("Le mot de passe doit commencer par une majuscule!")
+                .MinimumLength(8).WithMessage("Le mot de passe doit contenir au moins 8 caractères!")
+                .Matches(new Regex(@"[!@#$%^&*(),.?\"":{ } |<>]")).WithMessage("Le mot de passe doit contenir au moins un caractère spécial!");
+
+            RuleFor(vm => vm.confirmationpwd)
+                .Equal(vm => vm.pwd).WithMessage("La confirmation du mot de passe ne correspond pas!");
+
+            RuleFor(vm => vm.MatriculeId)
+            .NotEmpty().WithMessage("Le numéro de matricule est requis!")
+            .Matches(new Regex(@"^[A-Z]{3}\d{4}$")).WithMessage("Le format du matricule est invalide! Utilisez le format XXX1234.");
+
+            RuleFor(vm => vm.civilite).IsInEnum().WithMessage("La civilité est invalide!");
+
+            RuleFor(vm => vm.TypeEmployeur).IsInEnum().WithMessage("Le type d'employeur est invalide!");
+
+            RuleFor(vm => vm.telMaison)
+    .NotEmpty().WithMessage("Le numéro de téléphone à la maison est requis!")
+    .Matches(new Regex(@"^\s*\d{3}-\d{3}-\d{4}\s*$")).WithMessage("Le format du téléphone est invalide! Utilisez le format XXX-XXX-XXXX.");
+
+            RuleFor(vm => vm.Email)
+                .NotEmpty().WithMessage("L'email est requis!")
+                .EmailAddress().WithMessage("L'email n'est pas valide!");
+
+            RuleFor(vm => vm.idEmployeurSelectionne).NotEmpty().WithMessage("Le choix de l'entreprise est requis!");
+        }
     }
 }

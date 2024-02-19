@@ -29,13 +29,15 @@
 <a class="btn btn-success" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a></button>
 
 <link rel="stylesheet" href="~/css/site.css" />
+<link rel="stylesheet" href="~/css/user.css" />
+
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 
 <h1>Gérer les utilisateurs<br></h1>
 
-<div class="mt-2 mb-2">
+@* <div class="mt-2 mb-2">
     @Html.ActionLink("Créer un nouvel utilisateur", "ChoixCreation", "Compte",
             new { }, new { @class = "btn btn-primary" })
 </div>
@@ -43,7 +45,7 @@
 <div class="mt-2 mb-2">
     @Html.ActionLink("Effectuer des liaisons", "Relier", "Compte",
             new { }, new { @class = "btn btn-primary" })
-</div>
+</div> *@
 
 @if (!string.IsNullOrEmpty(ViewBag.UserListErrorMessage))
 {
@@ -51,6 +53,14 @@
         @Html.Raw(ViewBag.UserListErrorMessage)
     </div>
 }
+
+@if (TempData["HoraireIntrouvable"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["HoraireIntrouvable"]
+    </div>
+}
+
 
 @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
 
@@ -86,10 +96,11 @@
         </tr>
     </thead>
     <tr>
-        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayMds')">Maître de stage <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("MDS")">Copier lien</button></td>
-        <td>
-            <input type="text" class="form-control" id="MDSSearchInput" placeholder="Rechercher un maître de stage..." />
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayMds')">Maître de stage <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("MDS")">Copier lien</button>
+            @* <input type="text" class="form-control" id="MDSSearchInput" placeholder="Rechercher un maître de stage..." /> *@
+        
         </td>
+        
     </tr>
     <tbody id="displayMds" class="">
         @foreach (var item in Model)
@@ -116,7 +127,7 @@
                         <i class="fa fa-solid fa-user" style="color: #2386d1;" onclick='userDetails(@Html.Raw(Json.Serialize(item)))'></i>
                     </td>
                     <td>
-                        @Html.ActionLink("Horaire", "HoraireMds", "Horaire", new { id = item.Id }, new { @class = "btn btn-success" })
+                        @Html.ActionLink("Horaire", "HoraireMds", "Horaire", new { userId = item.Id }, new { @class = "btn btn-success" })
                     </td>
                     <td>
                         @Html.ActionLink("Mettre à jour", "EditMDS", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
