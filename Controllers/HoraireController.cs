@@ -97,21 +97,20 @@ namespace SPU.Controllers
                 vm.nomMds = string.Concat(mdsHoraire.utilisateur.Prenom + " " + mdsHoraire.utilisateur.Nom);
                 vm.nomStagiaire = string.Concat(stagHoraire?.utilisateur.Prenom + " " + stagHoraire?.utilisateur.Nom);
 
+
+                vm.DateCreationHoraire = mds.DateCreationHoraire;
+                vm.DateExpiration = mds.DateExpiration;
+                vm.DateDebutStage = stagHoraire.DateDebutStage;
+                vm.DateFinStage = stagHoraire.DateFinStage;
+
                 //Pour gestion des rôles
                 if (mds != null)
                 {
-                    
                     vm.Role = "MDS";
-                    vm.DateCreationHoraire = mds.DateCreationHoraire;
-                    vm.DateExpiration = mds.DateExpiration;
-
                 }
                 else if(stag != null)
                 {
-                    
-                    ViewBag.horaireId = horaire.Id;
-                    vm.DateDebutStage = stagHoraire.DateDebutStage;
-                    vm.DateFinStage = stagHoraire.DateFinStage;
+                    vm.Role = "stagiaire";
                 }
             }
 
@@ -163,8 +162,8 @@ namespace SPU.Controllers
 
                 if (stagiaireFixif != null)
                 {
-                    stagiaireFixif.DateDebutStage = new DateTime(24,2,26).ToUniversalTime();
-                    stagiaireFixif.DateFinStage = new DateTime(24,5,26).ToUniversalTime();
+                    stagiaireFixif.DateDebutStage = new DateTime(2024,2,26).ToUniversalTime();
+                    stagiaireFixif.DateFinStage = new DateTime(2024,5,26).ToUniversalTime();
 
                     nouvelleHoraire.stagiaire = stagiaireFixif;
                     nouvelleHoraire.StagiaireId = stagiaireFixif.Id;
@@ -227,7 +226,7 @@ namespace SPU.Controllers
 
                     List<PlageHoraire> listePlageHoraire = new List<PlageHoraire>();
 
-                    while (plageHoraireDebut <= mds.DateCreationHoraire?.ToLocalTime() && plageHoraireFin <= mds.DateExpiration?.ToLocalTime())
+                    while (plageHoraireDebut >= mds.DateCreationHoraire?.ToLocalTime() && plageHoraireFin <= mds.DateExpiration?.ToLocalTime())
                     {
                         PlageHoraire plageHoraireRecurrence = new PlageHoraire();
                         plageHoraireRecurrence.Id = Guid.NewGuid();

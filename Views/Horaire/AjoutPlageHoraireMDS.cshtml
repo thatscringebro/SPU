@@ -53,8 +53,11 @@
             <h2 style="font-size:20px;">Plage horaire début</h2>
         </div>
         <div>
-            Date : <input class="form-control" type="date" asp-for="DateDebutPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            Date : <input class="form-control" type="date" asp-for="DateDebutPlageHoraire" asp-format="{0:yyyy-MM-dd}" />
             <span asp-validation-for="DateDebutPlageHoraire" class="text-danger"></span>
+            <span asp-validation-for="DateDebutPlageHoraire.Date" class="text-danger"></span>
+            <span asp-validation-for="DateDebutPlageHoraire.Hour" class="text-danger"></span>
+            <span asp-validation-for="DateDebutPlageHoraire.Minute" class="text-danger"></span>
         </div>
         <div class="row">
             <div class="col-6">
@@ -84,7 +87,7 @@
             <h2 style="font-size:20px;">Plage horaire fin</h2>
         </div>
         <div>
-            Date : <input class="form-control" type="date" asp-for="DateFinPlageHoraire" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+            Date : <input class="form-control" type="date" asp-for="DateFinPlageHoraire" asp-format="{0:yyyy-MM-dd}" />
             <span asp-validation-for="DateFinPlageHoraire" class="text-danger"></span>
         </div>
         <div class="row">
