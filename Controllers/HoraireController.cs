@@ -98,8 +98,8 @@ namespace SPU.Controllers
                 vm.nomStagiaire = string.Concat(stagHoraire?.utilisateur.Prenom + " " + stagHoraire?.utilisateur.Nom);
 
 
-                vm.DateCreationHoraire = mds.DateCreationHoraire;
-                vm.DateExpiration = mds.DateExpiration;
+                vm.DateCreationHoraire = mdsHoraire.DateCreationHoraire;
+                vm.DateExpiration = mdsHoraire.DateExpiration;
                 vm.DateDebutStage = stagHoraire.DateDebutStage;
                 vm.DateFinStage = stagHoraire.DateFinStage;
 
