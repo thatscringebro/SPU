@@ -12,7 +12,7 @@
     <h2>Horaire SPU</h2>
     <div>
         <label>
-            Horaire du : @Model.DateDebutStage.ToString("d MMMM yyyy") au @Model.DateFinStage.ToString("d MMMM yyyy")
+            Date début de stage : @(Model.DateDebutStage.HasValue ? Model.DateDebutStage.Value.ToString("d MMMM yyyy") : "N/A") | Date fin de stage : @(Model.DateFinStage.HasValue ? Model.DateFinStage.Value.ToString("d MMMM yyyy") : "N/A")
         </label>
     </div>
     <div>

@@ -144,8 +144,8 @@ namespace SPU.Controllers
                     if (horaire != null)
                     {
                         ViewBag.horaireId = horaire.Id;
-                        vm.DateDebutStage = horaire.DateDebutStage.Date;
-                        vm.DateFinStage = horaire.DateFinStage.Date;
+                        //vm.DateDebutStage = horaire.DateDebutStage.Date;
+                        //vm.DateFinStage = horaire.DateFinStage.Date;
                     }
                 }
             }
