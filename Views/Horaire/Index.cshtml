@@ -1,6 +1,6 @@
 ﻿@using SPU.ViewModels
 
-@model ListeHoraireVM
+@model HoraireIndexVM
 
 <style>
     .horaire-listehoraire-fullclass {
@@ -40,35 +40,19 @@
 <div class="horaire-listehoraire-fullclass">
     <div class="horaire-listehoraire-liste">
         <br />
-        <form asp-controller="Horaire" asp-action="AjoutNouvelHoraireMDS" method="get">
-            <button id="horaire-ajoutnouvelhorairemds-button" type="submit" class="btn btn-primary" style="font-size:20px;">Ajout nouvel horaire maître de stage</button>
-        </form>
-        <br />
 
-        <h1>Liste des horaires</h1>
-        <hr />
-        @if (Model.listeHoraireMds != null)
+        @if(Model.role == "MDS")
         {
-            @foreach (var item in Model.listeHoraireMds)
-            {
-
-                <div class="row" style="margin:20px;">
-                    <div class="row" style="font-size:26px; font-weight: bold;">
-                        Choix de l'horaire :
-                    </div>
-                    <br />
-                    <div class="row" style="font-size:22px; ">
-                        <label>
-                            Horaire du : @item.DateDebutStage.ToString("d MMMM yyyy") au @item.DateFinStage.ToString("d MMMM yyyy")
-                        </label>
-                    </div>
-                    <div class="row" id="horaire-listehoraire-id-@item.Id">
-                        <img class="submit" onclick="location.href ='@Url.Action("Horaire", "Horaire", new { horaireId = item.Id })'" src="/images/Horaire_miniature.png" style="width:200px" />
-                    </div>
-                </div>
-                <hr />
-            }
+            <form asp-controller="Horaire" asp-action="AjoutNouvelHoraireMDS" method="post">
+                <button id="horaire-ajoutnouvelhorairemds-button" type="submit" class="btn btn-primary" style="font-size:20px;">Ajout nouvel horaire maître de stage</button>
+            </form>
         }
+        else if(Model.role == "stagiaire")
+        {
+            <a>Horaire indisponible : L'assignation doit se faire avec un maître de stage afin de pouvoir avoir accès à l'horaire</a>
+        }
+        <br />
+        <hr />
     </div>
 </div>
 
