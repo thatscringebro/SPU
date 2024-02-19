@@ -1071,10 +1071,14 @@ namespace SPU.Controllers
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("ententes_de_stage");
+                worksheet.Columns().Width = 15;
+                worksheet.Row(1).Height = 40;
+                worksheet.Row(1).Style.Fill.BackgroundColor = XLColor.FromHtml("#d3d3d3");
 
                 worksheet.Cell("A1").Value = "No";
                 worksheet.Cell("B1").Value = "Millieu stage";
-                worksheet.Cell("C1").Value = "Signataire contrat";
+                worksheet.Cell("C1").Value = "Titre";
+                worksheet.Cell("D1").Value = "Signataire contrat";
                 worksheet.Cell("E1").Value = "Fonction";
                 worksheet.Cell("F1").Value = "Courriel du signataire";
                 worksheet.Cell("G1").Value = "Tél.";
@@ -1092,33 +1096,96 @@ namespace SPU.Controllers
                 worksheet.Cell("S1").Value = "Superviseur collège";
                 worksheet.Cell("T1").Value = "Poste";
 
-                List<Stagiaire> stagiaires = _spuContext.Stagiaires.ToList();
+                List<Stagiaire> stagiaires = _spuContext.Stagiaires
+                  .Include(x => x.utilisateur)
+                  .Include(x => x.employeur).ThenInclude(x => x.utilisateur)
+                  .Include(x => x.employeur).ThenInclude(x => x.adresse)
+                  .Include(x => x.enseignant).ThenInclude(x => x.utilisateur)
+                  .ToList();
 
                 for (int i = 2; i < stagiaires.Count(); i++)
                 {
+                    MDS mds = _spuContext.MDS.Include(x => x.utilisateur).FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
+
                     worksheet.Cell($"A{i}").Value = "";
-                    worksheet.Cell($"B{i}").Value = "";
-                    worksheet.Cell($"C{i}").Value = "Signataire contrat";
-                    worksheet.Cell($"E{i}").Value = "Fonction";
-                    worksheet.Cell($"F{i}").Value = "Courriel du signataire";
-                    worksheet.Cell($"G{i}").Value = "Tél.";
-                    worksheet.Cell($"H{i}").Value = "Adresse";
-                    worksheet.Cell($"I{i}").Value = "Ville";
-                    worksheet.Cell($"J{i}").Value = "Prov";
-                    worksheet.Cell($"K{i}").Value = "Code postal";
-                    worksheet.Cell($"L{i}").Value = "Superviseur milieu stage";
-                    worksheet.Cell($"M{i}").Value = "Stagiaire";
-                    worksheet.Cell($"N{i}").Value = "Prénom";
-                    worksheet.Cell($"O{i}").Value = "Secteur";
-                    worksheet.Cell($"P{i}").Value = "Program";
-                    worksheet.Cell($"Q{i}").Value = "Type de stage";
-                    worksheet.Cell($"R{i}").Value = "Dates stage";
-                    worksheet.Cell($"S{i}").Value = "Superviseur collège";
-                    worksheet.Cell($"T{i}").Value = "Poste";
+                    worksheet.Cell($"B{i}").Value = stagiaires[i].employeur.utilisateur.UserName;
+                    worksheet.Cell($"C{i}").Value = "";
+                    worksheet.Cell($"E{i}").Value = "";
+                    worksheet.Cell($"F{i}").Value = "";
+                    worksheet.Cell($"G{i}").Value = stagiaires[i].employeur.utilisateur.PhoneNumber;
+                    worksheet.Cell($"H{i}").Value = stagiaires[i].employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue;
+                    worksheet.Cell($"I{i}").Value = stagiaires[i].employeur.adresse.Ville;
+                    worksheet.Cell($"J{i}").Value = stagiaires[i].employeur.adresse.Province;
+                    worksheet.Cell($"K{i}").Value = stagiaires[i].employeur.adresse.CodePostal;
+                    worksheet.Cell($"L{i}").Value = mds.utilisateur.NomComplet + " / " + mds.MatriculeId;
+                    worksheet.Cell($"M{i}").Value = stagiaires[i].utilisateur.NomComplet;
+                    worksheet.Cell($"N{i}").Value = stagiaires[i].utilisateur.Prenom;
+                    worksheet.Cell($"O{i}").Value = mds.typeEmployeur == 0 ? "CISSS" : "CIUSSS";
+                    worksheet.Cell($"P{i}").Value = "";
+                    worksheet.Cell($"Q{i}").Value = "";
+                    worksheet.Cell($"R{i}").Value = stagiaires[i].debutStage != null ? stagiaires[i].debutStage.Value.ToLocalTime().ToString() + " - " + stagiaires[i].finStage.Value.ToLocalTime().ToString() : "";
+                    worksheet.Cell($"S{i}").Value = stagiaires[i].enseignant.utilisateur.NomComplet;
+                    worksheet.Cell($"T{i}").Value = "";
                 }
 
-
                 var worksheet2 = workbook.Worksheets.Add("mds_source");
+                worksheet2.Columns().Width = 15;
+                worksheet2.Row(1).Height = 40;
+                worksheet2.Row(1).Style.Fill.BackgroundColor = XLColor.FromHtml("#d3d3d3");
+
+                worksheet2.Cell("A1").Value = "Matricule";
+                worksheet2.Cell("B1").Value = "Statut";
+                worksheet2.Cell("C1").Value = "Civilité";
+                worksheet2.Cell("D1").Value = "Nom complet";
+                worksheet2.Cell("D1").Value = "Nom";
+                worksheet2.Cell("E1").Value = "Prénom";
+                worksheet2.Cell("F1").Value = "Tél. maison";
+                worksheet2.Cell("G1").Value = "Tél. cellulaire";
+                worksheet2.Cell("H1").Value = "Courriel";
+                worksheet2.Cell("I1").Value = "CISSS/CIUSSS";
+                worksheet2.Cell("J1").Value = "Employeur";
+                worksheet2.Cell("K1").Value = "CISSS/CIUSSS 2";
+                worksheet2.Cell("L1").Value = "Employeur 2";
+                worksheet2.Cell("M1").Value = "Commentaires";
+                worksheet2.Cell("N1").Value = "commentaireCIUSS";
+
+                List<MDS> maitresdestage = _spuContext.MDS
+                  .Include(x => x.utilisateur)
+                  .ToList();
+
+                for (int i = 2; i < maitresdestage.Count(); i++)
+                {
+                  if(maitresdestage[i].status == Status.Incomplet)//incomplet
+                  {
+                    worksheet2.Cell($"B{i}").Value = "incomplet";
+                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Yellow;
+                  }
+                  if(maitresdestage[i].status == Status.Accepté)//accepté
+                  {
+                    worksheet2.Cell($"B{i}").Value = "accepté";
+                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Green;
+                  }
+                  if(maitresdestage[i].status == Status.Refusé)//refusé
+                  {
+                    worksheet2.Cell($"B{i}").Value = "refusé";
+                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Red;
+                  }
+
+                  worksheet2.Cell($"A{i}").Value = maitresdestage[i].MatriculeId;
+                  worksheet2.Cell($"C{i}").Value = maitresdestage[i].civilite == 0 ? "M" : "Mme";
+                  worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.NomComplet;
+                  worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.Nom;
+                  worksheet2.Cell($"E{i}").Value = maitresdestage[i].utilisateur.Prenom;
+                  worksheet2.Cell($"F{i}").Value = maitresdestage[i].telMaison;
+                  worksheet2.Cell($"G{i}").Value = maitresdestage[i].utilisateur.PhoneNumber;
+                  worksheet2.Cell($"H{i}").Value = maitresdestage[i].utilisateur.Email;
+                  worksheet2.Cell($"I{i}").Value = maitresdestage[i].typeEmployeur == 0 ? "CISSS" : "CIUSSS";
+                  worksheet2.Cell($"J{i}").Value = maitresdestage[i].NomEmployeur;
+                  worksheet2.Cell($"K{i}").Value = "";
+                  worksheet2.Cell($"L{i}").Value = "";
+                  worksheet2.Cell($"M{i}").Value = maitresdestage[i].commentaire;
+                  worksheet2.Cell($"N{i}").Value = maitresdestage[i].commentaireCIUSS;
+                }
 
                 using (var stream = new MemoryStream())
                 {
@@ -1128,7 +1195,7 @@ namespace SPU.Controllers
 
                     string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-                    return File(stream.ToArray(), contentType, "example.xlsx");
+                    return File(stream.ToArray(), contentType, "exportation_donnees_SPU.xlsx");
                 }
             }
         }
