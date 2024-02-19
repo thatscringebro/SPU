@@ -118,49 +118,53 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-        public IActionResult HoraireMds(Guid userId)
+        public IActionResult HoraireMds(Guid userId, HorairePageVM vm)
         {
-            var vm = new HorairePageVM();
+            //var vm = new HorairePageVM();
 
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id == userId);
             Horaire horaire = new Horaire();
-            var Mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == userId);
-            Guid horaireId = _context.Horaires.Where(x => x.Id == Mds.Id).Select(x => x.Id).FirstOrDefault();
 
-            if (user != null)
+            var Mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == userId);
+            //Guid horaireId = _context.Horaires.Where(x => x.MDSId == mds.id).select
+
+            horaire = _context.Horaires.Where(x => x.MDSId == Mds.Id).FirstOrDefault();
+            ViewBag.horaireId = horaire.Id;
+
+            // Récupérer le message d'erreur de la session temporaire
+            string errorMessage = TempData["ErrorMessage"] as string;
+
+            // Passer le message d'erreur à la vue
+            ViewBag.ErrorMessage = errorMessage;
+
+            if (Mds != null)
             {
                 Coordonnateur? coordo = _context.Coordonnateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
+                MDS mdsHoraire = _context.MDS.Where(x => x.Id == horaire.MDSId).Include(c => c.utilisateur).FirstOrDefault();
+                Stagiaire? stagHoraire = _context.Stagiaires.Where(x => x.Id == horaire.StagiaireId).Include(c => c.utilisateur).FirstOrDefault();
 
-                if (mds != null)
-                {
-                    vm.nomMds = string.Concat(mds.utilisateur.Prenom + " " + mds.utilisateur.Nom);
+                vm.nomMds = string.Concat(mdsHoraire.utilisateur.Prenom + " " + mdsHoraire.utilisateur.Nom);
+                vm.nomStagiaire = string.Concat(stagHoraire?.utilisateur.Prenom + " " + stagHoraire?.utilisateur.Nom);
 
-                    horaire = _context.Horaires.Where(x => x.MDSId == mds.Id && x.Id == horaireId).FirstOrDefault();
 
-                    if (horaire != null)
-                    {
-                        ViewBag.horaireId = horaire.Id;
-                        //vm.DateDebutStage = horaire.DateDebutStage.Date;
-                        //vm.DateFinStage = horaire.DateFinStage.Date;
-                    }
-                    else
-                    {
-                        TempData["HoraireIntrouvable"] = "L'horaire du maître de stage est introuvable ou inexistant!";
-                        //return NotFound();
-                        RedirectToAction("Manage", "Compte");
-                    }
-                }
+                vm.DateCreationHoraire = mdsHoraire.DateCreationHoraire;
+                vm.DateExpiration = mdsHoraire.DateExpiration;
+                vm.DateDebutStage = stagHoraire.DateDebutStage;
+                vm.DateFinStage = stagHoraire.DateFinStage;
+
+                
             }
+
+            return View(vm);
 
             //TempData["HoraireIntrouvable"] = "L'horaire du maître de stage est introuvable ou inexistant!";
             //        //return NotFound();
             //        RedirectToAction("Manage", "Compte");
 
-            return View(vm);
         }
 
 
