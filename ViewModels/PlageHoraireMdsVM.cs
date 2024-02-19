@@ -8,10 +8,10 @@ namespace SPU.ViewModels
     {
         public Guid id { get; set; }
 
-        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateDebutPlageHoraire { get; set; }
 
-        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateFinPlageHoraire { get; set; }
 
         public int HeureDebutPlageHoraire { get; set; }
@@ -25,17 +25,6 @@ namespace SPU.ViewModels
         {
             public Validator()
             {
-                //RuleFor(vm => vm.HeureDebutPlageHoraire)
-                //.NotEmpty().WithMessage("Veuillez entrer une heure de début de plage horaire");
-
-                //RuleFor(vm => vm.MinutesDebutPlageHoraire)
-                //    .NotEmpty().WithMessage("Veuillez entrer des minutes de début de plage horaire");
-
-                //RuleFor(vm => vm.HeureFinPlageHoraire)
-                //    .NotEmpty().WithMessage("Veuillez entrer une heure de fin de plage horaire");
-
-                //RuleFor(vm => vm.MinutesFinPlageHoraire)
-                //    .NotEmpty().WithMessage("Veuillez entrer des minutes de fin de plage horaire");
 
                 RuleFor(vm => vm.DateDebutPlageHoraire)
                     .NotEmpty().WithMessage("Veuillez entrer une date de début de plage horaire")
@@ -43,9 +32,18 @@ namespace SPU.ViewModels
 
                 RuleFor(vm => vm.DateFinPlageHoraire)
                     .NotEmpty().WithMessage("Veuillez entrer une date de fin de plage horaire")
-                    .GreaterThan(DateTime.MinValue).WithMessage("La date de fin de plage horaire ne peut pas être vide")
-                    .LessThan(x => x.DateDebutPlageHoraire.AddHours(x.HeureDebutPlageHoraire).AddMinutes(x.MinutesDebutPlageHoraire).AddHours(24)).WithMessage("La plage horaire doit avoir une durée de moins de 24 heures");
+                    .GreaterThan(DateTime.MinValue).WithMessage("La date de fin de plage horaire ne peut pas être vide");
 
+                RuleFor(vm => vm.DateDebutPlageHoraire.AddHours(vm.HeureDebutPlageHoraire).AddMinutes(vm.MinutesDebutPlageHoraire))
+                    .LessThan(x => x.DateFinPlageHoraire.AddHours(x.HeureFinPlageHoraire).AddMinutes(x.MinutesFinPlageHoraire)).WithMessage("La date de début de la plage horaire doit être inférieur à la date de fin");
+
+                RuleFor(vm => vm.DateFinPlageHoraire.AddHours(vm.HeureFinPlageHoraire).AddMinutes(vm.MinutesFinPlageHoraire))
+                    .GreaterThan(x => x.DateDebutPlageHoraire.AddHours(x.HeureDebutPlageHoraire).AddMinutes(x.MinutesDebutPlageHoraire)).WithMessage("La date de fin de la plage horaire doit être supérieur à la date de début");
+
+                //Vérifier plus petit que 24 heures et plus grand ou égal à 15 minutes
+                RuleFor(vm => vm.DateFinPlageHoraire.AddHours(vm.HeureFinPlageHoraire).AddMinutes(vm.MinutesFinPlageHoraire))
+                    .LessThan(x => x.DateDebutPlageHoraire.AddHours(x.HeureDebutPlageHoraire).AddMinutes(x.MinutesDebutPlageHoraire).AddHours(24)).WithMessage("La plage horaire doit avoir une durée de moins de 24 heures")
+                    .GreaterThanOrEqualTo(x => x.DateDebutPlageHoraire.AddHours(x.HeureDebutPlageHoraire).AddMinutes(x.MinutesDebutPlageHoraire).AddMinutes(15)).WithMessage("La plage horaire doit être au minimum de 15 minutes");
             }
 
         }

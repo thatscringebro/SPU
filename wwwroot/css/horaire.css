@@ -1,12 +1,17 @@
 ﻿
 #horaire-ajoutPlageHoraire-button {
     display: inline-block;
-    padding: 10px 20px;
-    background-color: #3498db;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background: linear-gradient(to bottom, #2C99AD, #267287);
     color: #fff;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 0 0 20px 20px;
     transition: background-color 0.3s ease;
+    box-shadow: 0px 5px 10px rgba(5, 88, 111, 0.5);
+    width: 80%;
+    text-align: center;
 }
 
 #horaire-confirmationPlageHoraire-button {
@@ -55,10 +60,10 @@ img.submit:hover {
 }
 
 .horaire-horaire-entete {
-    background-color: darkgray;
-    color: white;
-    border: 2px solid #000000; /* Couleur grise pour la bordure */
-    border-radius: 10px; /* Coins arrondis */
+    color: #267287;
+    border: 2px solid #267287;
+    border-radius: 5px;
     padding: 10px;
     max-width: 600px;
+    box-shadow: 0px 5px 10px rgba(5, 88, 111, 0.5);
 }

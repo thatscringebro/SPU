@@ -113,7 +113,7 @@
             </div>
             <div class="col-6">
                 <label>
-                    <input id="absentCheckbox" type="checkbox" value="false" style="transform: scale(1.5);" />
+                    <input id="absentCheckbox" @(Model.EstPresent == false ? "checked='checked'" : "") asp-for="EstPresent" type="checkbox" value="false" style="transform: scale(1.5); ">
                     Absent
                 </label>
             </div>
@@ -150,6 +150,11 @@
     const presentCheckbox = document.getElementById("presentCheckbox");
     const absentCheckbox = document.getElementById("absentCheckbox");
     const commentaireInput = document.getElementById("commentaireInput");
+
+    if (absentCheckbox.checked == true)
+    {
+        commentaireInput.disabled = false;
+    }
 
     presentCheckbox.addEventListener("change", function () {
         if (presentCheckbox.checked) {

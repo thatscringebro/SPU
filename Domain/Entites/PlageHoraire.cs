@@ -16,5 +16,7 @@ namespace SPU.Domain.Entites
 
         //[ForeignKey(nameof(Id))] virtual
         public Horaire horaire { get; set; }
+
+        public string? remplacant { get; set; }
     }
 }
