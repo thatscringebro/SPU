@@ -132,9 +132,9 @@
                 <button id="horaire-modifierplagehoraire-buttonsupprimer" class="btn btn-danger">Supprimer</button>
             </div>
             <div class="col-4">
-                <button type="submit" style="margin-left:40px" class="btn btn-secondary">Annuler</button>
+                <button type="submit" asp-action="Horaire" asp-controller="Horaire" asp-route-horaireId="@Model.id" class="btn btn-secondary btn-pageHoraireMds-Annuler">Annuler</button>
             </div>
-            <input type="hidden" name="PlageHoraireId" value="@ViewBag.PlageHoraireId" />
+            <input type="hidden" name="PlageHoraireId" value="@ViewBag.horaireId" />
             <div class="col-4">
                 <button id="horaire-modifierplagehoraire-ajoutbutton" style="margin-left:40px" class="btn btn-primary">Confirmer</button>
             </div>
