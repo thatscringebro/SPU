@@ -36,6 +36,11 @@ namespace SPU.Controllers
 
         }
 
+        /// <summary>
+        /// Méthode pour hasher le rôle de l'utilisateur pour le comparé au url
+        /// </summary>
+        /// <param name="strData">Rôle</param>
+        /// <returns>Le nom hasher</returns>
         public string CreateSHA512(string strData)
         {
             var message = Encoding.UTF8.GetBytes(strData);
@@ -54,6 +59,11 @@ namespace SPU.Controllers
 
 
         #region login
+        /// <summary>
+        /// Action pour se connecter
+        /// </summary>
+        /// <param name="returnUrl">Url de retour</param>
+        /// <returns>la vue</returns>
         [AllowAnonymous]
         public IActionResult LogIn(string? returnUrl = "")
         {
@@ -63,6 +73,12 @@ namespace SPU.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Retourne le formulaire pour la confirmation des données
+        /// </summary>
+        /// <param name="vm">View Model de la connexion</param>
+        /// <param name="returnUrl">url de retour</param>
+        /// <returns>Redirige au bon endroit</returns>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(ConnexionVM vm, string? returnUrl = "")
@@ -91,6 +107,14 @@ namespace SPU.Controllers
                 if (roleUser == "Coordonnateur")
                     return RedirectToAction(nameof(Manage));
 
+                if (roleUser == "Enseignant")
+                    return RedirectToAction(nameof(ManageEnseignant));
+
+                if (roleUser == "Employeur")
+                    return RedirectToAction(nameof(ManageMds));
+                    
+                //Redirection home ? ou horaire ? mais si les mds/stagiaire n'as pas encore d'horaire ? 
+
                 if (!string.IsNullOrEmpty(returnUrl))
                     return Redirect(returnUrl);
 
@@ -107,6 +131,10 @@ namespace SPU.Controllers
             }
         }
 
+        /// <summary>
+        /// Déconnexion de l'utilisateur
+        /// </summary>
+        /// <returns>Déconnecte l'utilisateur</returns>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogOut()
@@ -119,6 +147,10 @@ namespace SPU.Controllers
         #endregion
 
         #region Manage
+        /// <summary>
+        /// Donne un choix pour la création des utilisateurs pour le coordonnateur
+        /// </summary>
+        /// <returns>La vue choisi par le coordonnateur</returns>
         //[AllowAnonymous]
         [Authorize(Roles = "Coordonnateur")]
         public ActionResult ChoixCreation()
@@ -128,6 +160,12 @@ namespace SPU.Controllers
 
 
         //CRUD pour utilisateur 
+        /// <summary>
+        /// Affiche les listes des utilisateurs pour la gestion des utilisateurs
+        /// </summary>
+        /// <param name="success"></param>
+        /// <param name="actionType"></param>
+        /// <returns>La vue manage</returns>
         //[AllowAnonymous] 
         [Authorize(Roles = "Coordonnateur")]
         public async Task<IActionResult> Manage(bool success = false, string actionType = "")
@@ -240,6 +278,10 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+        /// <summary>
+        /// Retourne la liste des maîtres de stage pour les employeurs
+        /// </summary>
+        /// <returns>La vue avec la liste</returns>
         [Authorize(Roles = "Employeur")]
         public async Task<IActionResult> ManageMds()
         {
@@ -273,9 +315,54 @@ namespace SPU.Controllers
 
             return View(vm);
         }
+
+        /// <summary>
+        /// Retourne la liste des stagiaires associé à l'enseignant
+        /// </summary>
+        /// <returns>Les stagiaires</returns>
+        [Authorize(Roles = "Enseignant")]
+        public async Task<IActionResult> ManageEnseignant()
+        {
+            var vm = new List<UtilisateurDetailVM>();
+            try
+            {
+                var idUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (idUser == null)
+                {
+                    ViewBag.UserListErrorMessage = "Erreur d'affichage. Veuillez réessayer!";
+                }
+
+                Guid idEns = _spuContext.Enseignants.FirstOrDefault(a => a.UtilisateurId == Guid.Parse(idUser)).Id;
+
+
+                foreach (var user in await _spuContext.Stagiaires.Where(m => m.EnseignantId == idEns).Include(u => u.utilisateur).ToListAsync())
+                {
+                    vm.Add(new UtilisateurDetailVM
+                    {
+                        Id = user.Id,
+                        Prenom = user.utilisateur.Prenom,
+                        Nom = user.utilisateur.Nom
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.UserListErrorMessage = "Erreur d'affichage des maîtres de stages. Veuillez réessayer!" + ex.Message;
+            }
+
+            return View(vm);
+        }
+
         #endregion
 
         #region CreationNormal et EditNormal
+        /// <summary>
+        /// Affiche la vue pour le formulaire de création des stagiaires/enseignants
+        /// </summary>
+        /// <param name="vue"></param>
+        /// <param name="hash"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [Route("Compte/CreationNormal")]
         [Route("Compte/CreationNormal/{hash?}")]
@@ -550,6 +637,8 @@ namespace SPU.Controllers
             var Entreprise = _spuContext.Employeurs.Where(x => x.Id == vm.idEmployeurSelectionne).Include(u => u.utilisateur).FirstOrDefault();
             //Nom utilisateur pour l'entreprise = nom d'entreprise OBLIGATOIRE
 
+            Horaire nouvelleHoraire = new Horaire();
+
             var MDs = new MDS
             {
                 utilisateur = toCreate,
@@ -563,6 +652,38 @@ namespace SPU.Controllers
 
             };
 
+
+
+            nouvelleHoraire.Id = Guid.NewGuid();
+            nouvelleHoraire.mds = MDs;
+            nouvelleHoraire.MDSId = MDs.Id;
+
+            // Obtenir la date et l'heure actuelles dans le fuseau horaire local
+            DateTime debutHoraire = DateTime.Now;
+
+
+            // Démarrer l'horaire à partir du dimanche prochain
+            while (debutHoraire.DayOfWeek != DayOfWeek.Sunday)
+            {
+                debutHoraire = debutHoraire.AddDays(1);
+            }
+
+            debutHoraire = new DateTime(debutHoraire.Year, debutHoraire.Month, debutHoraire.Day, 0, 0, 0);
+
+            // Ajouter deux ans
+            DateTime finHoraire = debutHoraire.AddYears(2);
+
+            TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
+            debutHoraire = TimeZoneInfo.ConvertTime(debutHoraire, localTimeZone);
+            finHoraire = TimeZoneInfo.ConvertTime(finHoraire, localTimeZone);
+
+            MDs.DateCreationHoraire = debutHoraire.ToUniversalTime();
+            MDs.DateExpiration = finHoraire.ToUniversalTime();
+
+      
+
+           _spuContext.Horaires.Add(nouvelleHoraire);
             _spuContext.Add(MDs);
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
@@ -1071,10 +1192,14 @@ namespace SPU.Controllers
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("ententes_de_stage");
+                worksheet.Columns().Width = 15;
+                worksheet.Row(1).Height = 40;
+                worksheet.Row(1).Style.Fill.BackgroundColor = XLColor.FromHtml("#d3d3d3");
 
                 worksheet.Cell("A1").Value = "No";
                 worksheet.Cell("B1").Value = "Millieu stage";
-                worksheet.Cell("C1").Value = "Signataire contrat";
+                worksheet.Cell("C1").Value = "Titre";
+                worksheet.Cell("D1").Value = "Signataire contrat";
                 worksheet.Cell("E1").Value = "Fonction";
                 worksheet.Cell("F1").Value = "Courriel du signataire";
                 worksheet.Cell("G1").Value = "Tél.";
@@ -1092,33 +1217,96 @@ namespace SPU.Controllers
                 worksheet.Cell("S1").Value = "Superviseur collège";
                 worksheet.Cell("T1").Value = "Poste";
 
-                List<Stagiaire> stagiaires = _spuContext.Stagiaires.ToList();
+                List<Stagiaire> stagiaires = _spuContext.Stagiaires
+                  .Include(x => x.utilisateur)
+                  .Include(x => x.employeur).ThenInclude(x => x.utilisateur)
+                  .Include(x => x.employeur).ThenInclude(x => x.adresse)
+                  .Include(x => x.enseignant).ThenInclude(x => x.utilisateur)
+                  .ToList();
 
                 for (int i = 2; i < stagiaires.Count(); i++)
                 {
+                    MDS mds = _spuContext.MDS.Include(x => x.utilisateur).FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
+
                     worksheet.Cell($"A{i}").Value = "";
-                    worksheet.Cell($"B{i}").Value = "";
-                    worksheet.Cell($"C{i}").Value = "Signataire contrat";
-                    worksheet.Cell($"E{i}").Value = "Fonction";
-                    worksheet.Cell($"F{i}").Value = "Courriel du signataire";
-                    worksheet.Cell($"G{i}").Value = "Tél.";
-                    worksheet.Cell($"H{i}").Value = "Adresse";
-                    worksheet.Cell($"I{i}").Value = "Ville";
-                    worksheet.Cell($"J{i}").Value = "Prov";
-                    worksheet.Cell($"K{i}").Value = "Code postal";
-                    worksheet.Cell($"L{i}").Value = "Superviseur milieu stage";
-                    worksheet.Cell($"M{i}").Value = "Stagiaire";
-                    worksheet.Cell($"N{i}").Value = "Prénom";
-                    worksheet.Cell($"O{i}").Value = "Secteur";
-                    worksheet.Cell($"P{i}").Value = "Program";
-                    worksheet.Cell($"Q{i}").Value = "Type de stage";
-                    worksheet.Cell($"R{i}").Value = "Dates stage";
-                    worksheet.Cell($"S{i}").Value = "Superviseur collège";
-                    worksheet.Cell($"T{i}").Value = "Poste";
+                    worksheet.Cell($"B{i}").Value = stagiaires[i].employeur.utilisateur.UserName;
+                    worksheet.Cell($"C{i}").Value = "";
+                    worksheet.Cell($"E{i}").Value = "";
+                    worksheet.Cell($"F{i}").Value = "";
+                    worksheet.Cell($"G{i}").Value = stagiaires[i].employeur.utilisateur.PhoneNumber;
+                    worksheet.Cell($"H{i}").Value = stagiaires[i].employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue;
+                    worksheet.Cell($"I{i}").Value = stagiaires[i].employeur.adresse.Ville;
+                    worksheet.Cell($"J{i}").Value = stagiaires[i].employeur.adresse.Province;
+                    worksheet.Cell($"K{i}").Value = stagiaires[i].employeur.adresse.CodePostal;
+                    worksheet.Cell($"L{i}").Value = mds.utilisateur.NomComplet + " / " + mds.MatriculeId;
+                    worksheet.Cell($"M{i}").Value = stagiaires[i].utilisateur.NomComplet;
+                    worksheet.Cell($"N{i}").Value = stagiaires[i].utilisateur.Prenom;
+                    worksheet.Cell($"O{i}").Value = mds.typeEmployeur == 0 ? "CISSS" : "CIUSSS";
+                    worksheet.Cell($"P{i}").Value = "";
+                    worksheet.Cell($"Q{i}").Value = "";
+                    worksheet.Cell($"R{i}").Value = stagiaires[i].debutStage != null ? stagiaires[i].debutStage.Value.ToLocalTime().ToString() + " - " + stagiaires[i].finStage.Value.ToLocalTime().ToString() : "";
+                    worksheet.Cell($"S{i}").Value = stagiaires[i].enseignant.utilisateur.NomComplet;
+                    worksheet.Cell($"T{i}").Value = "";
                 }
 
-
                 var worksheet2 = workbook.Worksheets.Add("mds_source");
+                worksheet2.Columns().Width = 15;
+                worksheet2.Row(1).Height = 40;
+                worksheet2.Row(1).Style.Fill.BackgroundColor = XLColor.FromHtml("#d3d3d3");
+
+                worksheet2.Cell("A1").Value = "Matricule";
+                worksheet2.Cell("B1").Value = "Statut";
+                worksheet2.Cell("C1").Value = "Civilité";
+                worksheet2.Cell("D1").Value = "Nom complet";
+                worksheet2.Cell("D1").Value = "Nom";
+                worksheet2.Cell("E1").Value = "Prénom";
+                worksheet2.Cell("F1").Value = "Tél. maison";
+                worksheet2.Cell("G1").Value = "Tél. cellulaire";
+                worksheet2.Cell("H1").Value = "Courriel";
+                worksheet2.Cell("I1").Value = "CISSS/CIUSSS";
+                worksheet2.Cell("J1").Value = "Employeur";
+                worksheet2.Cell("K1").Value = "CISSS/CIUSSS 2";
+                worksheet2.Cell("L1").Value = "Employeur 2";
+                worksheet2.Cell("M1").Value = "Commentaires";
+                worksheet2.Cell("N1").Value = "commentaireCIUSS";
+
+                List<MDS> maitresdestage = _spuContext.MDS
+                  .Include(x => x.utilisateur)
+                  .ToList();
+
+                for (int i = 2; i < maitresdestage.Count(); i++)
+                {
+                  if(maitresdestage[i].status == Status.Incomplet)//incomplet
+                  {
+                    worksheet2.Cell($"B{i}").Value = "incomplet";
+                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Yellow;
+                  }
+                  if(maitresdestage[i].status == Status.Accepté)//accepté
+                  {
+                    worksheet2.Cell($"B{i}").Value = "accepté";
+                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Green;
+                  }
+                  if(maitresdestage[i].status == Status.Refusé)//refusé
+                  {
+                    worksheet2.Cell($"B{i}").Value = "refusé";
+                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Red;
+                  }
+
+                  worksheet2.Cell($"A{i}").Value = maitresdestage[i].MatriculeId;
+                  worksheet2.Cell($"C{i}").Value = maitresdestage[i].civilite == 0 ? "M" : "Mme";
+                  worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.NomComplet;
+                  worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.Nom;
+                  worksheet2.Cell($"E{i}").Value = maitresdestage[i].utilisateur.Prenom;
+                  worksheet2.Cell($"F{i}").Value = maitresdestage[i].telMaison;
+                  worksheet2.Cell($"G{i}").Value = maitresdestage[i].utilisateur.PhoneNumber;
+                  worksheet2.Cell($"H{i}").Value = maitresdestage[i].utilisateur.Email;
+                  worksheet2.Cell($"I{i}").Value = maitresdestage[i].typeEmployeur == 0 ? "CISSS" : "CIUSSS";
+                  worksheet2.Cell($"J{i}").Value = maitresdestage[i].NomEmployeur;
+                  worksheet2.Cell($"K{i}").Value = "";
+                  worksheet2.Cell($"L{i}").Value = "";
+                  worksheet2.Cell($"M{i}").Value = maitresdestage[i].commentaire;
+                  worksheet2.Cell($"N{i}").Value = maitresdestage[i].commentaireCIUSS;
+                }
 
                 using (var stream = new MemoryStream())
                 {
@@ -1128,7 +1316,7 @@ namespace SPU.Controllers
 
                     string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-                    return File(stream.ToArray(), contentType, "example.xlsx");
+                    return File(stream.ToArray(), contentType, "exportation_donnees_SPU.xlsx");
                 }
             }
         }
