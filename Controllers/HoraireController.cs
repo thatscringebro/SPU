@@ -118,7 +118,7 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-        public IActionResult HoraireMds(Guid userId, HorairePageVM vm)
+        public IActionResult HoraireMds(Guid userId, Guid horaireId, HorairePageVM vm)
         {
             //var vm = new HorairePageVM();
 
@@ -126,10 +126,12 @@ namespace SPU.Controllers
             Horaire horaire = new Horaire();
 
             var Mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == userId);
-            //Guid horaireId = _context.Horaires.Where(x => x.MDSId == mds.id).select
+            //Guid horaireId = _context.Horaires.Where(x => x.MDSId == Mds.Id).Select(h => h.Id).FirstOrDefault();
+            //horaire = _context.Horaires.Where(x => x.MDSId == Mds.Id).FirstOrDefault();
 
-            horaire = _context.Horaires.Where(x => x.MDSId == Mds.Id).FirstOrDefault();
+            horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
             ViewBag.horaireId = horaire.Id;
+            ViewBag.userId = userId;
 
             // Récupérer le message d'erreur de la session temporaire
             string errorMessage = TempData["ErrorMessage"] as string;
