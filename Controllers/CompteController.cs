@@ -683,7 +683,7 @@ namespace SPU.Controllers
 
       
 
-           _spuContext.Horaires.Add(nouvelleHoraire);
+            _spuContext.Horaires.Add(nouvelleHoraire);
             _spuContext.Add(MDs);
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
@@ -1058,7 +1058,7 @@ namespace SPU.Controllers
                 foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
                 {
                     List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
-
+                   
 
                     if (user.finStage != null & user.debutStage != null)
                     {
@@ -1072,7 +1072,10 @@ namespace SPU.Controllers
                             idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
                             debutStage = user.debutStage!.Value.Date,
                             finStage = user.finStage!.Value.Date
-                        });
+                            
+
+
+                        }); 
                     }
                     else
                     {
@@ -1086,9 +1089,10 @@ namespace SPU.Controllers
                             idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
                             debutStage = null,
                             finStage = null
+                            
                         });
                     }
-
+                    
                 }
             }
             catch (Exception ex)
@@ -1136,13 +1140,26 @@ namespace SPU.Controllers
             var ChatsStagiaire = _spuContext.Chats.FirstOrDefault(x => x.Id == StagiaireAediter.ChatId);
             var anciensMds = _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToList();
 
+            var horaireMDS1 = _spuContext.Horaires.FirstOrDefault(m => m.MDSId == idMdsSelectionne1);
+    
+            
+
             foreach (var mds in anciensMds)
             {
                 if (mds.Id != idMdsSelectionne1 && mds.Id != idMdsSelectionne2)
                 {
+                    var ancienhoraire = _spuContext.Horaires.FirstOrDefault(m => m.MDSId == mds.Id);
+
+                    if(ancienhoraire.stagiaire != null)
+                    {
+                        ancienhoraire.stagiaire = null;
+                        ancienhoraire.StagiaireId = null;
+                    }
+                    mds.stagiaire = null;
                     mds.StagiaireId = null;
                     mds.ChatId = null;
-                    mds.chat = null;
+                    mds.chat = null;                
+                                 
                 }
             }
 
@@ -1151,6 +1168,9 @@ namespace SPU.Controllers
                 MdsaEditer1.StagiaireId = idStagiaire;
                 MdsaEditer1.chat = Stagiaire.chat;
                 MdsaEditer1.ChatId = Stagiaire.ChatId;
+                horaireMDS1.StagiaireId = Stagiaire.Id;
+                horaireMDS1.stagiaire = Stagiaire;
+                _spuContext.Horaires.Update(horaireMDS1);
                 _spuContext.MDS.Update(MdsaEditer1);
             }
 
@@ -1165,13 +1185,17 @@ namespace SPU.Controllers
             if (StagiaireAediter != null)
             {
                 StagiaireAediter.EnseignantId = idEnseignantSelectionne;
-
                 ChatsStagiaire.EnseignantId = idEnseignantSelectionne;
 
                 if (debutStage != null && finStage != null)
                 {
                     StagiaireAediter.debutStage = debutStage.Value.ToUniversalTime();
                     StagiaireAediter.finStage = finStage.Value.ToUniversalTime();
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Veuillez entré une date de début et de fin de stage";
+                    return RedirectToAction("Relier");
                 }
 
                 _spuContext.Stagiaires.Update(StagiaireAediter);
