@@ -6,7 +6,6 @@
 }
 
 <link rel="stylesheet" href="~/bootstrap.min.css/" />
-
 <script type="text/javascript" src="~/bootstrap.min.js"></script>
 
 <h1>Gérer les stagiaires<br></h1>
@@ -105,7 +104,7 @@
                             </select>
                         </td>
                         <td>
-                            <select id="selecteur"  class="form-control" name="idEnseignantSelectionne">
+                            <select id="selecteur" class="form-control" name="idEnseignantSelectionne">
                                 <option value="">Sélectionnez l'enseignant</option>
                                     @foreach (var ens in ViewBag.Enseignants)
                                     {
@@ -123,25 +122,25 @@
                         <td>
                                 @if (item.debutStage.HasValue)
                                 {
-                                <input class="form-control date-input" type="date" asp-for="@item.debutStage" value="@item.debutStage.Value.ToString("yyyy-MM-dd")" />
+                                <input class="form-control date-input" type="date" asp-for="@item.debutStage" name="debutStage" value="@item.debutStage.Value.ToString("yyyy-MM-dd")" />
                                 }
                                 else
                                 {
-                                <input class="form-control date-input" type="date" asp-for="@item.debutStage" />
+                                <input class="form-control date-input" type="date" name="debutStage" asp-for="@item.debutStage" />
                                 }
-                            <span asp-validation-for="@item.debutStage" class="text-danger"></span>
+                                @* <span asp-validation-for="@item.debutStage" class="text-danger"></span> *@
                         </td>
 
                         <td>
                                 @if (item.finStage.HasValue)
                                 {
-                                <input class="form-control date-input" type="date" asp-for="@item.finStage" value="@item.finStage.Value.ToString("yyyy-MM-dd")" />
+                                <input class="form-control date-input" type="date" asp-for="@item.finStage" name="finStage" value="@item.finStage.Value.ToString("yyyy-MM-dd")" />
                                 }
                                 else
                                 {
-                                <input class="form-control date-input" type="date" asp-for="@item.finStage" />
+                                <input class="form-control date-input" type="date" name="finStage" asp-for="@item.finStage" />
                                 }
-                            <span asp-validation-for="@item.finStage" class="text-danger"></span>
+                                @* <span asp-validation-for="@item.finStage" class="text-danger"></span> *@
                         </td>
 
                         <td>
@@ -159,24 +158,6 @@
 
 
 @section Scripts {
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#selecteur').on('input', function () {
-                var filter = $(this).val().toUpperCase();
-                $.ajax({
-                    url: '@Url.Action("GetFilteredData", "Compte")',
-                    type: 'GET',
-                    data: { filter: filter },
-                    success: function (data) {
-                        $('#selecteur').empty(); 
-                        $('#selecteur').append($('<option>').text('Choisir une option'));
-                        $.each(data, function (index, value) {
-                            $('#selecteur').append($('<option>').text(value).attr('value', value));
-                        });
-                    }
-                });
-            });
-        });
-    </script>
+
+
 }
