@@ -16,6 +16,7 @@ using ClosedXML.Excel;
 using Microsoft.Extensions.Logging.Abstractions;
 using Humanizer;
 using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Drawing;
 
 namespace SPU.Controllers
 {
@@ -394,7 +395,6 @@ namespace SPU.Controllers
             }
             else
             {
-
                 if (hash == enseignant)
                     return View("CreationEnseignant");
                 else if (hash == Coordo)
@@ -402,8 +402,15 @@ namespace SPU.Controllers
                 else
                     return View();
             }
+        }
 
-
+        private IEnumerable<SelectListItem> PopulateEcoles()
+        {
+            return _spuContext.Ecole.Select(e => new SelectListItem
+            {
+                Value = e.id.ToString(),
+                Text = e.Nom
+            }).ToList();
         }
 
 
@@ -413,9 +420,48 @@ namespace SPU.Controllers
         public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
         {
 
+            //ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
+            //{
+            //    Value = e.id.ToString(),
+            //    Text = e.Nom
+            //}).ToList();
+
+
+            /*
+            //var stagiaire = CreateSHA512("Stagiaire");
+            //var enseignant = CreateSHA512("Enseignant");
+            //var Coordo = CreateSHA512("Coordonnateur");
+
+            //if (hash == null)
+            //{
+            //    switch (vm.role)
+            //    {
+            //        case "Coordonnateur": 
+            //            return View("CreationCoordonnateur");
+            //        case "Enseignant": 
+            //            return View("CreationEnseignant");
+            //        default:
+            //            //Retourne STAGIAIRE si aucun choix
+            //            return View(vm);
+            //    }
+            //}
+            //else
+            //{
+
+            //    if (hash == enseignant)
+            //        return View("CreationEnseignant");
+            //    else if (hash == Coordo)
+            //        return View("CreationCoordonnateur");
+            //    else
+            //        return View();
+            //} */
+
+            ViewBag.Ecoles = PopulateEcoles();
+
             if (!ModelState.IsValid)
             {
                 return View(vm);
+                //RedirectToAction("CreationNormal", vm);
             }
 
             var roles = await _roleManager.Roles.ToListAsync();
@@ -436,7 +482,7 @@ namespace SPU.Controllers
             }
 
 
-            var toCreate = new Utilisateur(vm.Nom);
+            var toCreate = new Utilisateur(vm.userName);
 
             toCreate.Prenom = vm.Prenom;
             toCreate.Nom = vm.Nom;
@@ -591,6 +637,12 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
         {
+            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -613,7 +665,7 @@ namespace SPU.Controllers
                 return View(vm);
             }
 
-            var toCreate = new Utilisateur(vm.Nom);
+            var toCreate = new Utilisateur(vm.userName);
             toCreate.Prenom = vm.Prenom;
             toCreate.Nom = vm.Nom;
             toCreate.PhoneNumber = vm.PhoneNumber;
@@ -828,7 +880,7 @@ namespace SPU.Controllers
             }
 
 
-            var toCreate = new Utilisateur(vm.Nom);
+            var toCreate = new Utilisateur(vm.userName);
             toCreate.Prenom = vm.Prenom;
             toCreate.Nom = vm.Nom;
             toCreate.PhoneNumber = vm.PhoneNumber;

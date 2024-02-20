@@ -10,7 +10,7 @@
         position: relative;
         width: 100%;
         height: 100%;
-        overflow: hidden;
+        
     }
 
     .plagehorairemds-fullpage-class::before {
@@ -36,9 +36,9 @@
         z-index: 1;
     }
 
-    .btn-pageHoraireMds-Confirmer {
+/*    .btn-pageHoraireMds-Confirmer {
         left: 8px;
-    }
+    }*/
 
 </style>
 
@@ -126,10 +126,10 @@
         <br />
         <div class="row">
             <div class="col-6">
-                <button type="submit" asp-action="Horaire" asp-controller="Horaire" asp-route-horaireId="@ViewBag.horaireId" class="btn btn-secondary btn-pageHoraireMds-Annuler">Annuler</button>
+                <button type="submit" asp-action="Horaire" asp-controller="Horaire" asp-route-horaireId="@ViewBag.horaireId" class="btn btn-secondary btn-pageHoraireMds-Annuler" style="margin-bottom: 10px;">Annuler</button>
             </div>
             <div class="col-6">
-                <button type="submit" asp-action="AjoutPlageHoraireMDS" asp-route-horaireId="@ViewBag.horaireId" asp-controller="Horaire" class="btn btn-primary btn-pageHoraireMds-Confirmer">Confirmer</button>
+                <button type="submit" asp-action="AjoutPlageHoraireMDS" asp-route-horaireId="@ViewBag.horaireId" asp-controller="Horaire" class="btn btn-primary btn-pageHoraireMds-Confirmer" style="margin-bottom: 10px;">Confirmer</button>
             </div>
         </div>
     </form>
