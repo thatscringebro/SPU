@@ -180,7 +180,8 @@ namespace SPU.Controllers
 
             }
 
-            return View(vm);
+            //return View(vm);
+            return View("Horaire", vm);
         }
 
 
