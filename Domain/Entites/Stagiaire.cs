@@ -35,10 +35,5 @@ namespace SPU.Domain.Entites
         public Enseignant? enseignant { get; set; }
         public Employeur? employeur { get; set; }    
         public Ecole ecole { get; set; }
-
-        //public List<MDS> mds = new();
-        public DateTime? DateDebutStage { get; set; }
-        public DateTime? DateFinStage { get; set; }
-
     }
 }
