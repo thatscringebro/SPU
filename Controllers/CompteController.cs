@@ -417,14 +417,14 @@ namespace SPU.Controllers
         //CREATION STAGIAIRE/COORDO/ENSEIGNANT
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm, string hash)
+        public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
         {
 
-            ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
-            {
-                Value = e.id.ToString(),
-                Text = e.Nom
-            }).ToList();
+            //ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
+            //{
+            //    Value = e.id.ToString(),
+            //    Text = e.Nom
+            //}).ToList();
 
 
             /*
@@ -637,6 +637,12 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
         {
+            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+
             if (!ModelState.IsValid)
             {
                 return View(vm);
