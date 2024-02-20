@@ -55,7 +55,7 @@ namespace SPU.ViewModels
                  
             RuleFor(vm => vm.confirmationpwd).Equal(vm => vm.pwd).WithMessage("La confirmation du mot de passe ne correspond pas!");
 
-            RuleFor(vm => vm.idEcoleSelectionne).NotEmpty().WithMessage("Veuillez choisir un établissement!");
+            //RuleFor(vm => vm.idEcoleSelectionne).NotEmpty().WithMessage("Veuillez choisir un établissement!");
 
             RuleFor(vm => vm.Email).NotEmpty().WithMessage("L'email est requis!")
                 .EmailAddress().WithMessage("L'email n'est pas valide!");
