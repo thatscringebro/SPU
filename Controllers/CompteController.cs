@@ -417,14 +417,14 @@ namespace SPU.Controllers
         //CREATION STAGIAIRE/COORDO/ENSEIGNANT
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm, string hash)
+        public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
         {
 
-            ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
-            {
-                Value = e.id.ToString(),
-                Text = e.Nom
-            }).ToList();
+            //ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
+            //{
+            //    Value = e.id.ToString(),
+            //    Text = e.Nom
+            //}).ToList();
 
 
             /*
