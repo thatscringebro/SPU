@@ -591,6 +591,12 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
         {
+            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+
             if (!ModelState.IsValid)
             {
                 return View(vm);

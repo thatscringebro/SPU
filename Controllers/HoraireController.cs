@@ -574,7 +574,7 @@ namespace SPU.Controllers
 
             if (user.finStage.HasValue)
             {
-                List<PlageHoraire> listPlagesHoraire = _context.PlageHoraires.Include(x => x.horaire).Where(x => x.horaire.StagiaireId.ToString() == _loggedUserId).ToList();
+                List<PlageHoraire> listPlagesHoraire = _context.PlageHoraires.Include(x => x.horaire).ThenInclude(x => x.stagiaire).Where(x => x.horaire.stagiaire.UtilisateurId.ToString() == _loggedUserId).ToList();
 
                 bool plageTrouve = false;
 
