@@ -102,8 +102,12 @@ namespace SPU.Controllers
 
                 vm.DateCreationHoraire = mdsHoraire.DateCreationHoraire;
                 vm.DateExpiration = mdsHoraire.DateExpiration;
-                //vm.DateDebutStage = stagHoraire!.DateDebutStage;
-                //vm.DateFinStage = stagHoraire!.DateFinStage;
+
+                if (stagHoraire != null)
+                {
+                    vm.DateDebutStage = stagHoraire.debutStage;
+                    vm.DateFinStage = stagHoraire.finStage;
+                }
 
                 //Pour gestion des rôles
                 if (mds != null)
