@@ -78,6 +78,7 @@ namespace SPU.Controllers
 
             horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
             ViewBag.horaireId = horaire.Id;
+            ViewBag.mdsId = null;
 
             // Récupérer le message d'erreur de la session temporaire
             string errorMessage = TempData["ErrorMessage"] as string;
