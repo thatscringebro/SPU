@@ -1,0 +1,19 @@
+﻿@page
+@model SPU.ViewModels.RemplacementPlageHoraireVM
+@{
+    string jourDebut = Model.DateDebut.ToString("dd MMMM", new System.Globalization.CultureInfo("fr-FR"));
+    string jourFin = Model.DateFin.ToString("dd MMMM", new System.Globalization.CultureInfo("fr-FR"));
+    string heureDebut = Model.DateDebut.ToString("H:mm");
+    string heureFin = Model.DateFin.ToString("H:mm");
+}
+
+<div>
+    <h1>Maître(s) de stage absent</h1>
+    <h3>>Un ou plusieurs de vos maîtres de stage ont déclaré leur absence entre le @jourDebut à @heureDebut et le @jourFin à @heureFin.</h3>
+    <form>
+        <label for="remplacent1">Matricule du premier remplacent</label>
+        <input id="remplacent1" asp-for="MatriculeRemplacent1"/>
+        <label for="remplacent2">Matricule du second renplacent</label>
+        <input id="remplacent2" asp-for="MatriculeRemplacent2"/>
+    </form>
+</div>

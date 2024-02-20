@@ -6,3 +6,8 @@
   background-color: transparent;
   border: none;
 }
+.close {
+    text-align: center;
+    border: none;
+    border-radius: 50%;
+}
