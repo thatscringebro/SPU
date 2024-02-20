@@ -485,14 +485,21 @@ namespace SPU.Controllers
                     // Mettre à jour les propriétés de la plage horaire avec les nouvelles valeurs
                     ph.HoraireId = horaireId;
                     ph.Commentaire = vm.Commentaire;
-                    ph.StagiaireAbsent = vm.EstPresent;
+                    //ph.StagiaireAbsent = vm.EstPresent;
                     ph.DateDebut = plageHoraireDebut;
                     ph.DateFin = plageHoraireFin;
 
                     //ICI CLAUDEL POUR LA MODIF DE LA PLAGE HORAIRE
                     if (!vm.EstPresent)
                     {
-
+                        if(ph.MDS1absent == null)
+                        {
+                            ph.MDS1absent = new Guid(_loggedUserId);
+                        }
+                        else if(ph.MDS2absent == null)
+                        {
+                            ph.MDS2absent = new Guid(_loggedUserId);
+                        }
                     }
 
                     // Enregistrer les modifications dans la base de données
