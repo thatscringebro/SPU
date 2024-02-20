@@ -19,16 +19,27 @@ namespace SPU.ViewComponents
             _loggedUserId = claim?.Value;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(Guid horaireId)
+        public async Task<IViewComponentResult> InvokeAsync(Guid horaireId, Guid? mdsId)
         {
-            CalendrierHoraireVM calendrier = new CalendrierHoraireVM();
+            CalendrierHoraireVM calendrier = new CalendrierHoraireVM()
+            {
+                ListJournees = new List<JourneeTravailleVM>()
+            };
 
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
 
             Coordonnateur? coordo = _context.Coordonnateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+            MDS? mds = new MDS();
+
+            if (coordo != null)
+                mds = _context.MDS.FirstOrDefault(x => x.Id == mdsId);
+            else
+                mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+
             Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
             Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
-            MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
             List<JourneeTravailleVM> journeeTravailles = new List<JourneeTravailleVM>();
             List<PlageHoraire> listePlageHoraire = new List<PlageHoraire>();
