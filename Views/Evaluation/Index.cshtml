@@ -65,14 +65,11 @@
       </table>
 
       <!-- Modal Create -->
-      <div class="modal" tabindex="-1" role="dialog" id="addEvaluationModal">
+      <div class="modal modalCreate" tabindex="-1" role="dialog" id="addEvaluationModal">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Nouvelle évaluation</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+              <h5 class="modal-title">Nouvelle évaluation</h5> 
             </div>
             <div class="modal-body">
               <form id="evaluationForm">
@@ -101,18 +98,15 @@
       </div>
 
       <!-- Add a modal for showing evaluations -->
-<div class="modal" tabindex="-1" role="dialog" id="showEvaluationsModal">
+<div class="modal modalEvaluation" tabindex="-2" role="dialog" id="showEvaluationsModal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Activation de l'évaluation pour les étudiants suivants</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h5 class="modal-title">Activation de l'évaluation pour les étudiants suivants</h5> 
       </div>
       <div class="modal-body">
         <form id="evaluationStatusForm">
-          <ul id="evaluationList"></ul>
+          <div id="evaluationList"></div>
           <button type="submit" class="btn btn-primary">Sauvegarder</button>
         </form>
       </div>
@@ -138,7 +132,7 @@
                 evaluationList.empty();
                 data.value.data.forEach(function(evaluation) {
                   // Append list item with checkbox
-                  evaluationList.append('<li><input type="checkbox" name="evaluations" value="' + evaluation.id + '" ' + (evaluation.actif ? 'checked' : '') + '>' + (evaluation.mdsId == null ?evaluation.stagiaire.utilisateur.nomComplet : evaluation.mds.utilisateur.nomComplet) + '</li>');
+                  evaluationList.append('<div class="row"><input class="col-1" type="checkbox" name="evaluations" value="' + evaluation.id + '" ' + (evaluation.actif ? 'checked' : '') + '>' + (evaluation.mdsId == null ?evaluation.stagiaire.utilisateur.nomComplet : evaluation.mds.utilisateur.nomComplet) + '</div>');
                 });
                 // Show the modal
                 $('#showEvaluationsModal').modal('show');
