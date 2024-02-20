@@ -118,7 +118,7 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-        public IActionResult HoraireMds(Guid userId, Guid horaireId, HorairePageVM vm)
+        public IActionResult HoraireMds(Guid userId, HorairePageVM vm)
         {
             //var vm = new HorairePageVM();
 
@@ -127,17 +127,35 @@ namespace SPU.Controllers
 
             var Mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == userId);
             //Guid horaireId = _context.Horaires.Where(x => x.MDSId == Mds.Id).Select(h => h.Id).FirstOrDefault();
-            //horaire = _context.Horaires.Where(x => x.MDSId == Mds.Id).FirstOrDefault();
+            horaire = _context.Horaires.Where(x => x.MDSId == Mds.Id).FirstOrDefault();
 
-            horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
+            //horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
+
+            if (horaire == null || Mds == null)
+            {
+                string errorMessage = horaire == null ? "L'horaire du maître de stage est introuvable ou inexistant!"
+                                                         : "Le maître de stage est introuvable ou inexistant!";
+                TempData["ErrorMessage"] = errorMessage;
+
+                // Determine the appropriate redirection based on the user's role
+                if (User.IsInRole("Coordonnateur"))
+                {
+                    return RedirectToAction("Manage", "Compte");
+                }
+                else if (User.IsInRole("Employeur"))
+                {
+                    return RedirectToAction("ManageMds", "Compte");
+                }
+            }
+
             ViewBag.horaireId = horaire.Id;
-            ViewBag.userId = userId;
+            ViewBag.mdsId = Mds.Id;
 
             // Récupérer le message d'erreur de la session temporaire
-            string errorMessage = TempData["ErrorMessage"] as string;
+            //string errorMessage = TempData["ErrorMessage"] as string;
 
             // Passer le message d'erreur à la vue
-            ViewBag.ErrorMessage = errorMessage;
+            //ViewBag.ErrorMessage = errorMessage;
 
             if (Mds != null)
             {
@@ -162,11 +180,6 @@ namespace SPU.Controllers
             }
 
             return View(vm);
-
-            //TempData["HoraireIntrouvable"] = "L'horaire du maître de stage est introuvable ou inexistant!";
-            //        //return NotFound();
-            //        RedirectToAction("Manage", "Compte");
-
         }
 
 
