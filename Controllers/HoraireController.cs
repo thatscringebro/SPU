@@ -260,9 +260,10 @@ namespace SPU.Controllers
         [HttpPost]
         public IActionResult AjoutPlageHoraireMDS(PlageHoraireMdsVM vm, Guid horaireId)
         {
+            ViewBag.horaireId = horaireId;
+
             if (!ModelState.IsValid)
             {
-                ViewBag.horaireId = horaireId;
                 return View(vm);
             }
 
@@ -389,7 +390,10 @@ namespace SPU.Controllers
                 if (ph.DateDebut.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime() || ph.DateFin.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime()
                     || ph.DateDebut.ToLocalTime() > mds.DateExpiration?.ToLocalTime() || ph.DateFin.ToLocalTime() > mds.DateExpiration?.ToLocalTime())
                 {
-                    string errorMessage = "La date et heure de la plage horaire doit correspondre aux dates de début et fin du stage.";
+                    string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " +
+                                (mds.DateCreationHoraire.HasValue ? mds.DateCreationHoraire.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") +
+                                " et le " +
+                                (mds.DateExpiration.HasValue ? mds.DateExpiration.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") + ")";
                     ModelState.AddModelError("PlageHoraire", errorMessage);
                     TempData["ErrorMessage"] = errorMessage;
                     return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
@@ -429,23 +433,30 @@ namespace SPU.Controllers
         [HttpPost]
         public IActionResult ModifierPlageHoraire(ModifierPlageHoraireVM vm, string actionType, Guid PlageHoraireId)
         {
-            if (!ModelState.IsValid)
+            ViewBag.PlageHoraireId = PlageHoraireId;
+
+            PlageHoraire phBD = _context.PlageHoraires.FirstOrDefault(x => x.Id == PlageHoraireId);
+            PlageHoraire ph = new PlageHoraire();
+            Horaire horaire = _context.Horaires.FirstOrDefault(x => x.Id == phBD.HoraireId);
+            MDS mds = _context.MDS.Where(x => x.Id == horaire.MDSId).FirstOrDefault();
+
+            if(actionType == "annuler")
             {
-                return View(vm);
+                return RedirectToAction("Horaire", "Horaire", new { horaireId = horaire.Id });
             }
 
             if (actionType == "supprimer")
             {
                 // Récupérer la plage horaire existante depuis la base de données
-                PlageHoraire ph = _context.PlageHoraires.FirstOrDefault(x => x.Id == PlageHoraireId);
+                
 
-                if (ph != null)
+                if (phBD != null)
                 {
-                    _context.PlageHoraires.Remove(ph);
+                    _context.PlageHoraires.Remove(phBD);
                     _context.SaveChanges();
 
                     // Rediriger vers l'action "Horaire" du contrôleur "Horaire"
-                    return RedirectToAction("Horaire", "Horaire", new { horaireId = ph.HoraireId });
+                    return RedirectToAction("Horaire", "Horaire", new { horaireId = phBD.HoraireId });
                 }
                 else
                 {
@@ -454,40 +465,79 @@ namespace SPU.Controllers
                     return NotFound();
                 }
             }
-            else if (actionType == "modifier")
-            {
-                DateTime plageHoraireDebut = new DateTime(vm.DateDebutPlageHoraire.Year,
-                              vm.DateDebutPlageHoraire.Month,
-                              vm.DateDebutPlageHoraire.Day,
-                              vm.HeureDebutPlageHoraire,
-                              vm.MinutesDebutPlageHoraire,
-                              0).ToUniversalTime();
 
-                DateTime plageHoraireFin = new DateTime(vm.DateFinPlageHoraire.Year,
-                                  vm.DateFinPlageHoraire.Month,
-                                  vm.DateFinPlageHoraire.Day,
-                                  vm.HeureFinPlageHoraire,
-                                  vm.MinutesFinPlageHoraire,
-                                  0).ToUniversalTime();
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+
+            if (actionType == "modifier")
+            {
+                TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
+                DateTime plageHoraireDebut = TimeZoneInfo.ConvertTime(new DateTime(vm.DateDebutPlageHoraire.Year,
+                                         vm.DateDebutPlageHoraire.Month,
+                                         vm.DateDebutPlageHoraire.Day,
+                                         vm.HeureDebutPlageHoraire,
+                                         vm.MinutesDebutPlageHoraire,
+                                         0), localTimeZone);
+
+                DateTime plageHoraireFin = TimeZoneInfo.ConvertTime(new DateTime(vm.DateFinPlageHoraire.Year,
+                                          vm.DateFinPlageHoraire.Month,
+                                          vm.DateFinPlageHoraire.Day,
+                                          vm.HeureFinPlageHoraire,
+                                          vm.MinutesFinPlageHoraire,
+                                          0), localTimeZone);
+
 
                 Guid horaireId = _context.PlageHoraires.Where(x => x.Id == PlageHoraireId).FirstOrDefault().HoraireId;
 
-                // Récupérer la plage horaire existante depuis la base de données
-                PlageHoraire ph = _context.PlageHoraires.FirstOrDefault(x => x.Id == PlageHoraireId);
+                ph.HoraireId = horaireId;
+                ph.DateDebut = plageHoraireDebut;
+                ph.DateFin = plageHoraireFin;
 
                 // Vérifier si la plage horaire existe
                 if (ph != null)
                 {
-                    var horaire = _context.Horaires.FirstOrDefault(x => x.Id == ph.HoraireId);
 
-                    
+                    PlageHoraire verificationPlageHoraire = _context.PlageHoraires
+                    .FirstOrDefault(x =>
+                        (ph.DateDebut <= x.DateDebut.ToLocalTime() && ph.DateFin > x.DateDebut.ToLocalTime()) ||
+                        (ph.DateDebut >= x.DateDebut.ToLocalTime() && ph.DateFin <= x.DateFin.ToLocalTime()) ||
+                        (ph.DateDebut < x.DateFin.ToLocalTime() && ph.DateFin >= x.DateFin.ToLocalTime()) ||
+                        (ph.DateDebut <= x.DateDebut.ToLocalTime() && ph.DateFin >= x.DateFin.ToLocalTime())
+                    );
+
+                    if(verificationPlageHoraire.DateDebut != phBD.DateDebut && verificationPlageHoraire.DateFin != phBD.DateFin)
+                    {
+                        if (verificationPlageHoraire != null)
+                        {
+                            string errorMessage = "La plage horaire chevauche une autre plage horaire existante.";
+                            ModelState.AddModelError("PlageHoraire", errorMessage);
+                            TempData["ErrorMessage"] = errorMessage;
+                            return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
+                        }
+
+                        if (ph.DateDebut.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime() || ph.DateFin.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime()
+                            || ph.DateDebut.ToLocalTime() > mds.DateExpiration?.ToLocalTime() || ph.DateFin.ToLocalTime() > mds.DateExpiration?.ToLocalTime())
+                        {
+                            string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " +
+                                (mds.DateCreationHoraire.HasValue ? mds.DateCreationHoraire.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") +
+                                " et le " +
+                                (mds.DateExpiration.HasValue ? mds.DateExpiration.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") + ")";
+                            ModelState.AddModelError("PlageHoraire", errorMessage);
+                            TempData["ErrorMessage"] = errorMessage;
+                            return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
+                        }
+                    }
 
                     // Mettre à jour les propriétés de la plage horaire avec les nouvelles valeurs
-                    ph.HoraireId = horaireId;
-                    ph.Commentaire = vm.Commentaire;
-                    //ph.StagiaireAbsent = vm.EstPresent;
-                    ph.DateDebut = plageHoraireDebut;
-                    ph.DateFin = plageHoraireFin;
+                    phBD.HoraireId = horaireId;
+                    phBD.Commentaire = vm.Commentaire;
+                    //phBD.ConfirmationPresence = vm.EstPresent;
+                    phBD.DateDebut = plageHoraireDebut.ToUniversalTime();
+                    phBD.DateFin = plageHoraireFin.ToUniversalTime();
 
                     //ICI CLAUDEL POUR LA MODIF DE LA PLAGE HORAIRE
                     if (!vm.EstPresent)
@@ -527,7 +577,7 @@ namespace SPU.Controllers
         }
 
 
-        //Allo :) 
+        //Allo :)
         [HttpPost]
         public IActionResult SupprimerPlageHoraire(ModifierPlageHoraireVM vm)
         {
@@ -582,7 +632,7 @@ namespace SPU.Controllers
 
             if (user.finStage.HasValue)
             {
-                List<PlageHoraire> listPlagesHoraire = _context.PlageHoraires.Include(x => x.horaire).Where(x => x.horaire.StagiaireId.ToString() == _loggedUserId).ToList();
+                List<PlageHoraire> listPlagesHoraire = _context.PlageHoraires.Include(x => x.horaire).ThenInclude(x => x.stagiaire).Where(x => x.horaire.stagiaire.UtilisateurId.ToString() == _loggedUserId).ToList();
 
                 bool plageTrouve = false;
 

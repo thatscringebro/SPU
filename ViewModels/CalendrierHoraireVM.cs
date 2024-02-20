@@ -3,6 +3,6 @@
     public class CalendrierHoraireVM
     {
         public List<JourneeTravailleVM> ListJournees { get; set; }
-        public bool isMDS { get; set; } = false;
+        public string role  { get; set; }
     }
 }
