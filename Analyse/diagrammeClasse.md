@@ -101,7 +101,7 @@ class "PlageHoraire" AS Plh  {
     - id : Guid 
     - dateDebut : DataeTime
     - dateFin : DataeTime
-    - confirmationPresence : bool
+    - StagiaireAbsent : bool
     - commentaire : string
     - idHoraire : Guid 
 }

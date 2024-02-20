@@ -304,7 +304,7 @@ namespace SPU.Controllers
                         plageHoraireRecurrence.HoraireId = horaireId;
                         plageHoraireRecurrence.DateDebut = plageHoraireDebut;
                         plageHoraireRecurrence.DateFin = plageHoraireFin;
-                        plageHoraireRecurrence.ConfirmationPresence = true;
+                        plageHoraireRecurrence.StagiaireAbsent = true;
 
                         //Aller vérifier si il y a une plage horaire déjà existante
                         PlageHoraire verificationPlageHoraire = _context.PlageHoraires
@@ -366,7 +366,7 @@ namespace SPU.Controllers
                 ph.HoraireId = horaireId;
                 ph.DateDebut = plageHoraireDebut;
                 ph.DateFin = plageHoraireFin;
-                ph.ConfirmationPresence = true;
+                ph.StagiaireAbsent = true;
 
                 //Aller chercher les plages horaires en lien avec le maître de stage
 
@@ -419,7 +419,7 @@ namespace SPU.Controllers
             vm.MinutesDebutPlageHoraire = ph.DateDebut.ToLocalTime().Minute;
             vm.MinutesFinPlageHoraire = ph.DateFin.ToLocalTime().Minute;
             vm.Commentaire = ph.Commentaire;
-            vm.EstPresent = ph.ConfirmationPresence;
+            vm.EstPresent = ph.StagiaireAbsent;
 
             ViewBag.PlageHoraireId = idPlageHoraire;
 
@@ -478,12 +478,22 @@ namespace SPU.Controllers
                 // Vérifier si la plage horaire existe
                 if (ph != null)
                 {
+                    var horaire = _context.Horaires.FirstOrDefault(x => x.Id == ph.HoraireId);
+
+                    
+
                     // Mettre à jour les propriétés de la plage horaire avec les nouvelles valeurs
                     ph.HoraireId = horaireId;
                     ph.Commentaire = vm.Commentaire;
-                    ph.ConfirmationPresence = vm.EstPresent;
+                    ph.StagiaireAbsent = vm.EstPresent;
                     ph.DateDebut = plageHoraireDebut;
                     ph.DateFin = plageHoraireFin;
+
+                    //ICI CLAUDEL POUR LA MODIF DE LA PLAGE HORAIRE
+                    if (!vm.EstPresent)
+                    {
+
+                    }
 
                     // Enregistrer les modifications dans la base de données
                     _context.SaveChanges();
@@ -518,7 +528,7 @@ namespace SPU.Controllers
                 DateDebutQuart = x.DateDebut,
                 DateFinQuart = x.DateFin,
                 Id = x.Id,
-                Present = x.ConfirmationPresence
+                Present = x.StagiaireAbsent
             }).FirstOrDefault();
 
             if (journeeTravailles != null)
@@ -535,7 +545,7 @@ namespace SPU.Controllers
             if (plage == null)
                 return BadRequest("Erreur, la plage horaire n'est pas valide");
 
-            plage.ConfirmationPresence = false;
+            plage.StagiaireAbsent = false;
             try
             {
                 _context.PlageHoraires.Update(plage);

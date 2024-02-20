@@ -657,7 +657,7 @@ namespace SPU.Controllers
             nouvelleHoraire.Id = Guid.NewGuid();
             nouvelleHoraire.mds = MDs;
             nouvelleHoraire.MDSId = MDs.Id;
-
+         
             // Obtenir la date et l'heure actuelles dans le fuseau horaire local
             DateTime debutHoraire = DateTime.Now;
 
@@ -1170,6 +1170,12 @@ namespace SPU.Controllers
                 MdsaEditer1.ChatId = Stagiaire.ChatId;
                 horaireMDS1.StagiaireId = Stagiaire.Id;
                 horaireMDS1.stagiaire = Stagiaire;
+
+                            
+                    
+
+             
+
                 _spuContext.Horaires.Update(horaireMDS1);
                 _spuContext.MDS.Update(MdsaEditer1);
             }
