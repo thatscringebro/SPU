@@ -51,12 +51,12 @@ namespace SPU.Controllers
             }
 
             //Ajout liste pour stagiaire
-            else if(stag != null)
+            else if (stag != null)
             {
                 Horaire horaire = _context.Horaires.Where(x => x.StagiaireId == stag.Id).FirstOrDefault();
                 vm.role = "stagiaire";
-                
-                if(horaire != null)
+
+                if (horaire != null)
                 {
                     return RedirectToAction("Horaire", "Horaire", new { horaireId = horaire.Id });
                 }
@@ -66,8 +66,8 @@ namespace SPU.Controllers
                 }
             }
             //Faire les autres rôles
-            
-            return View(vm); 
+
+            return View(vm);
         }
 
 
@@ -109,7 +109,7 @@ namespace SPU.Controllers
                 {
                     vm.Role = "MDS";
                 }
-                else if(stag != null)
+                else if (stag != null)
                 {
                     vm.Role = "stagiaire";
                 }
@@ -292,7 +292,7 @@ namespace SPU.Controllers
                         .FirstOrDefault(ph =>
                             (plageHoraireRecurrence.DateDebut <= ph.DateDebut.ToLocalTime() && plageHoraireRecurrence.DateFin > ph.DateDebut.ToLocalTime()) ||
                             (plageHoraireRecurrence.DateDebut >= ph.DateDebut.ToLocalTime() && plageHoraireRecurrence.DateFin <= ph.DateFin.ToLocalTime()) ||
-                            (plageHoraireRecurrence.DateDebut <  ph.DateFin.ToLocalTime() && plageHoraireRecurrence.DateFin >= ph.DateFin.ToLocalTime()) ||
+                            (plageHoraireRecurrence.DateDebut < ph.DateFin.ToLocalTime() && plageHoraireRecurrence.DateFin >= ph.DateFin.ToLocalTime()) ||
                             (plageHoraireRecurrence.DateDebut <= ph.DateDebut.ToLocalTime() && plageHoraireRecurrence.DateFin >= ph.DateFin.ToLocalTime())
                         );
 
@@ -359,7 +359,7 @@ namespace SPU.Controllers
                         (ph.DateDebut <= x.DateDebut.ToLocalTime() && ph.DateFin >= x.DateFin.ToLocalTime())
                     );
 
-                if(verificationPlageHoraire != null)
+                if (verificationPlageHoraire != null)
                 {
                     string errorMessage = "La plage horaire chevauche une autre plage horaire existante.";
                     ModelState.AddModelError("PlageHoraire", errorMessage);
@@ -367,7 +367,7 @@ namespace SPU.Controllers
                     return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
                 }
 
-                if(ph.DateDebut.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime() || ph.DateFin.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime()
+                if (ph.DateDebut.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime() || ph.DateFin.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime()
                     || ph.DateDebut.ToLocalTime() > mds.DateExpiration?.ToLocalTime() || ph.DateFin.ToLocalTime() > mds.DateExpiration?.ToLocalTime())
                 {
                     string errorMessage = "La date et heure de la plage horaire doit correspondre aux dates de début et fin du stage.";
@@ -390,11 +390,11 @@ namespace SPU.Controllers
         public IActionResult ModifierPlageHoraire(ModifierPlageHoraireVM vm, Guid idPlageHoraire, Guid idHoraire)
         {
             //Aller chercher les informations avec le id de l'horaire et le id du div
-            PlageHoraire ph = _context.PlageHoraires.Where(x => x.Id== idPlageHoraire).FirstOrDefault();
+            PlageHoraire ph = _context.PlageHoraires.Where(x => x.Id == idPlageHoraire).FirstOrDefault();
 
             vm.id = ph.Id;
             vm.DateDebutPlageHoraire = ph.DateDebut.ToLocalTime();
-            vm.DateFinPlageHoraire= ph.DateFin.ToLocalTime();
+            vm.DateFinPlageHoraire = ph.DateFin.ToLocalTime();
             vm.HeureDebutPlageHoraire = ph.DateDebut.ToLocalTime().Hour;
             vm.HeureFinPlageHoraire = ph.DateFin.ToLocalTime().Hour;
             vm.MinutesDebutPlageHoraire = ph.DateDebut.ToLocalTime().Minute;
@@ -435,7 +435,7 @@ namespace SPU.Controllers
                     return NotFound();
                 }
             }
-            else if(actionType == "modifier")
+            else if (actionType == "modifier")
             {
                 DateTime plageHoraireDebut = new DateTime(vm.DateDebutPlageHoraire.Year,
                               vm.DateDebutPlageHoraire.Month,
@@ -527,6 +527,33 @@ namespace SPU.Controllers
             {
                 return BadRequest("Erreur, la plage horraire n'a pas pu être modifiée");
             }
+        }
+
+        public IActionResult ReprendreJournee()
+        {
+            Stagiaire? user = _context.Stagiaires.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
+            if (user == null)
+                return BadRequest("La plage horaire sélectionnée n'est pas valide. La journée n'à pas pu être reprise");
+
+
+            if (user.finStage.HasValue)
+            {
+                user.finStage = user.finStage.Value.AddDays(1);
+                foreach (PlageHoraire plage in _context.PlageHoraires)
+                {
+                    if (plage.DateDebut.Date == user.finStage.Value.Date)
+                    {
+                        _context.Update(user);
+                        _context.SaveChanges();
+                        break;
+                    }
+                }
+            }
+            else
+                return BadRequest("La fin de votre stage n'est pas encore définie");
+
+            return Ok(user.finStage);
+
         }
     }
 }
