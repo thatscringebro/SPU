@@ -324,6 +324,18 @@ namespace SPU.Controllers
                             return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
                         }
 
+                        if (plageHoraireRecurrence.DateDebut.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime() || plageHoraireRecurrence.DateFin.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime()
+                            || plageHoraireRecurrence.DateDebut.ToLocalTime() > mds.DateExpiration?.ToLocalTime() || plageHoraireRecurrence.DateFin.ToLocalTime() > mds.DateExpiration?.ToLocalTime())
+                        {
+                            string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " +
+                                        (mds.DateCreationHoraire.HasValue ? mds.DateCreationHoraire.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") +
+                                        " et le " +
+                                        (mds.DateExpiration.HasValue ? mds.DateExpiration.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") + ")";
+                            ModelState.AddModelError("PlageHoraire", errorMessage);
+                            TempData["ErrorMessage"] = errorMessage;
+                            return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
+                        }
+
                         listePlageHoraire.Add(plageHoraireRecurrence);
 
                         plageHoraireDebut = plageHoraireDebut.AddDays(14);
