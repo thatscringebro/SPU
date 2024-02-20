@@ -501,6 +501,14 @@ namespace SPU.Controllers
                             ph.MDS2absent = new Guid(_loggedUserId);
                         }
                     }
+                    else if(vm.EstPresent && ph.MDS1absent != null) {
+                        ph.MDS1absent = null;
+                    }
+                    else if(vm.EstPresent && ph.MDS2absent != null)
+                    {
+                        ph.MDS2absent = null;
+                    }
+
 
                     // Enregistrer les modifications dans la base de données
                     _context.SaveChanges();
