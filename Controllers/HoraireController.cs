@@ -535,7 +535,7 @@ namespace SPU.Controllers
                     // Mettre à jour les propriétés de la plage horaire avec les nouvelles valeurs
                     phBD.HoraireId = horaireId;
                     phBD.Commentaire = vm.Commentaire;
-                    phBD.ConfirmationPresence = vm.EstPresent;
+                    //phBD.ConfirmationPresence = vm.EstPresent;
                     phBD.DateDebut = plageHoraireDebut.ToUniversalTime();
                     phBD.DateFin = plageHoraireFin.ToUniversalTime();
 
