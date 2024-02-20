@@ -65,7 +65,7 @@ namespace SPU.ViewModels
 
             RuleFor(vm => vm.MatriculeId)
             .NotEmpty().WithMessage("Le numéro de matricule est requis!")
-            .Matches(new Regex(@"^[A-Z]{1}\d{4}$")).WithMessage("Le format du matricule est invalide! Utilisez le format XXX1234.");
+            .Matches(new Regex(@"^[A-Z]{1}\d{4}$")).WithMessage("Le format du matricule est invalide! Utilisez le format X1234.");
 
             RuleFor(vm => vm.civilite).IsInEnum().WithMessage("La civilité est invalide!");
 
