@@ -9,7 +9,7 @@ namespace SPU.Domain.Entites
         public DateTime DateDebut { get; set; }
         public DateTime DateFin { get; set; }
 
-        public bool ConfirmationPresence { get; set; }
+        public bool StagiaireAbsent { get; set; } // stagiaire
         public string? Commentaire { get; set; }
 
         public Guid HoraireId { get; set; }
@@ -18,5 +18,9 @@ namespace SPU.Domain.Entites
         public Horaire horaire { get; set; }
 
         public string? remplacant { get; set; }
+
+        public bool MDS1absent { get; set; }
+        public bool MDS2absent { get;set; }
+
     }
 }
