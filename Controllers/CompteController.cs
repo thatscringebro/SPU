@@ -436,7 +436,7 @@ namespace SPU.Controllers
             }
 
 
-            var toCreate = new Utilisateur(vm.Nom);
+            var toCreate = new Utilisateur(vm.userName);
 
             toCreate.Prenom = vm.Prenom;
             toCreate.Nom = vm.Nom;
@@ -613,7 +613,7 @@ namespace SPU.Controllers
                 return View(vm);
             }
 
-            var toCreate = new Utilisateur(vm.Nom);
+            var toCreate = new Utilisateur(vm.userName);
             toCreate.Prenom = vm.Prenom;
             toCreate.Nom = vm.Nom;
             toCreate.PhoneNumber = vm.PhoneNumber;
@@ -828,7 +828,7 @@ namespace SPU.Controllers
             }
 
 
-            var toCreate = new Utilisateur(vm.Nom);
+            var toCreate = new Utilisateur(vm.userName);
             toCreate.Prenom = vm.Prenom;
             toCreate.Nom = vm.Nom;
             toCreate.PhoneNumber = vm.PhoneNumber;
