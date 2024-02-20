@@ -54,10 +54,10 @@
     </div>
 }
 
-@if (TempData["HoraireIntrouvable"] != null)
+@if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-success">
-        @TempData["HoraireIntrouvable"]
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
     </div>
 }
 
