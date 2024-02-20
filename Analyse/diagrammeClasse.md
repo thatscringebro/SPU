@@ -1,5 +1,4 @@
-# Analyse détaillée
-
+# Diagramme de classe
 
 ```plantuml
 
@@ -164,67 +163,5 @@ Hor "1"--"1" Sta
 Hor "1"--"1" Mds
 Plh "0..*"--"*" Hor
 Coo -- Ens
-
-
-' User "1" -- "*" Mds
-' User "1" -- "*" Sta
-' User "1" -- "*" Ens
-' User "1" -- "*" Coo
-' User "1" -- "*" Emp
-
-' Coo  --  Ens
-' Coo "*" -- "1" User
-
-' Adr "1" -- "*" Eco 
-' Adr "1" -- "*" Emp 
-
-' Eco "1" -- "*" Coo
-' Eco "1" -- "*" Ens
-
-
-' Chat "*" -- "1" Coo
-' Chat "*" -- "1" User
-
-
-
-' St -- Stage
-' Emp -- Adresse
-' Stage -- Emp 
-' Ec -- Adresse
-' Message "0..*" -- "1" Mds
-' Message "0..*" -- "1" Stagiaire
-' Message "0..*" -- "1" Enseignant
-
-' Mds "1" -- "0..*" Contrat
-' Mds "0..*" -- "1" Stagiaire
-' Mds "1" -- "0..*" Horaire
-' Mds "1..*" -- "1" EmployeurMds
-
-' Evaluation "1..*" -- "1" Mds 
-' Evaluation "1" -- "1" Stagiaire
-
-' St -- Horaire
-
-' Horaire "1" -- "0..*" PlageHoraire
-' Horaire "1" -- "1" Stagiaire
-
-' EmployeurMds "1" -- "0..*"Emp
-
-' Enseignant "1" -- "0..*" Stagiaire
-
-' Contrat "1" -- "1" Stagiaire
-
-' Co "1" -- "1..*" Stagiaire
-
-' Chat "1" -- "1..*" Message
-
-' Chat "1" -- "1..*" Stagiaire
-' Chat "1" -- "1..*" Mds
-' Chat "1" -- "1..*" Coordinateur
-
-
-'agrégation (o--) = disposable, pas dépendant
-'composition (*--) = obligé d'avoir un
-
 
 ```
