@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Modifier Plage horaire";
+    var plageHoraireId = ViewBag.PlageHoraireId;
 
 }
 
@@ -47,6 +48,8 @@
             <h2 style="font-size:20px;">Plage horaire début</h2>
         </div>
         <div>
+@*            Date : <input class="form-control" type="date" asp-for="DateFinPlageHoraire" asp-format="{0:yyyy-MM-dd}" />
+            <span asp-validation-for="DateFinPlageHoraire" class="text-danger"></span>*@
             Date : <input class="form-control" type="date" asp-for="DateDebutPlageHoraire" asp-format="{0:yyyy-MM-dd}" />
             <span asp-validation-for="DateDebutPlageHoraire" class="text-danger"></span>
         </div>
@@ -129,14 +132,16 @@
 
         <div class="row">
             <div class="col-4">
-                <button id="horaire-modifierplagehoraire-buttonsupprimer" class="btn btn-danger">Supprimer</button>
+                <input type="hidden" id="PlageHoraireId" name="PlageHoraireId" value="@ViewBag.PlageHoraireId" />
+                <button id="horaire-modifierplagehoraire-buttonsupprimer" asp-route-PlageHoraireId="@plageHoraireId" class="btn btn-danger" style="margin-bottom: 10px;">Supprimer</button>
             </div>
             <div class="col-4">
-                <button type="submit" style="margin-left:40px" class="btn btn-secondary">Annuler</button>
+                <input type="hidden" id="PlageHoraireId" name="PlageHoraireId" value="@ViewBag.PlageHoraireId" />
+                <button id="horaire-supprimerplagehoraire-buttonannuler" class="btn btn-secondary btn-pageHoraireMds-Annuler" style="margin-bottom: 10px;">Annuler</button>
             </div>
-            <input type="hidden" name="PlageHoraireId" value="@ViewBag.PlageHoraireId" />
+            <input type="hidden" name="PlageHoraireId" value="@ViewBag.horaireId" />
             <div class="col-4">
-                <button id="horaire-modifierplagehoraire-ajoutbutton" style="margin-left:40px" class="btn btn-primary">Confirmer</button>
+                <button id="horaire-modifierplagehoraire-ajoutbutton" style="margin-left:40px; margin-bottom: 10px;" class="btn btn-primary">Confirmer</button>
             </div>
         </div>
     </form>
@@ -193,11 +198,14 @@
             if (result.isConfirmed) {
                 // Mettre à jour le champ caché pour indiquer la modification
                 document.getElementById("actionType").value = "modifier";
+
                 // Soumettre le formulaire principal
                 document.getElementById("horaire-modifierplagehoraire-form").submit();
             }
         });
     });
+
+
 
     deleteButton.addEventListener("click", function () {
         event.preventDefault();
@@ -213,9 +221,20 @@
             if (result.isConfirmed) {
                 // Mettre à jour le champ caché pour indiquer la suppression
                 document.getElementById("actionType").value = "supprimer";
+
                 // Soumettre le formulaire principal
                 document.getElementById("horaire-modifierplagehoraire-form").submit();
             }
         });
     });
+
+    document.getElementById("horaire-supprimerplagehoraire-buttonannuler").addEventListener("click", function(event) {
+            event.preventDefault();
+    
+            // Mettre à jour le champ caché pour indiquer l'annulation
+            document.getElementById("actionType").value = "annuler";
+
+            // Soumettre le formulaire principal
+            document.getElementById("horaire-modifierplagehoraire-form").submit();
+        });
 </script>
