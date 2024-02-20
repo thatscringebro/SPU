@@ -19,8 +19,8 @@ namespace SPU.Domain.Entites
 
         public string? remplacant { get; set; }
 
-        public bool MDS1absent { get; set; }
-        public bool MDS2absent { get;set; }
+        public Guid? MDS1absent { get; set; }
+        public Guid? MDS2absent { get;set; }
 
     }
 }
