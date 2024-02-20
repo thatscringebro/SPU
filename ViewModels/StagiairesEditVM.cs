@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SPU.Domain.Entites;
 using System.ComponentModel.DataAnnotations;
 
 namespace SPU.ViewModels
@@ -29,6 +30,7 @@ namespace SPU.ViewModels
         public Guid? idEnseignantSelectionne { get; set; }
 
         public List<SelectListItem> Enseignants { get; set; } = new List<SelectListItem>();
+        //public Horaire? horaire { get; set; }
     }
 
     public class StagiairesEditVMValidation : AbstractValidator<StagiairesEditVM>
@@ -38,13 +40,13 @@ namespace SPU.ViewModels
             RuleFor(vm => vm.Prenom).NotEmpty().WithMessage("Le prénom est requis!");
             RuleFor(vm => vm.Nom).NotEmpty().WithMessage("Le nom est requis!");
 
-            RuleFor(vm => vm.debutStage)
-                .NotEmpty().WithMessage("La date de début de stage est requise!")
-                .LessThan(vm => vm.finStage.Value).When(vm => vm.finStage.HasValue).WithMessage("La date de début doit être antérieure à la date de fin!");
+            //RuleFor(vm => vm.debutStage)
+            //    .NotEmpty().WithMessage("La date de début de stage est requise!")
+            //    .LessThan(vm => vm.finStage.Value).When(vm => vm.finStage.HasValue).WithMessage("La date de début doit être antérieure à la date de fin!");
 
-            RuleFor(vm => vm.finStage)
-                .NotEmpty().WithMessage("La date de fin de stage est requise!")
-                .GreaterThan(vm => vm.debutStage.Value).When(vm => vm.debutStage.HasValue).WithMessage("La date de fin doit être postérieure à la date de début!");
+            //RuleFor(vm => vm.finStage)
+            //    .NotEmpty().WithMessage("La date de fin de stage est requise!")
+            //    .GreaterThan(vm => vm.debutStage.Value).When(vm => vm.debutStage.HasValue).WithMessage("La date de fin doit être postérieure à la date de début!");
 
             //RuleFor(vm => vm.idMdsSelectionne1)
             //    .NotEmpty().WithMessage("Le choix du maître de stage 1 est requis!");
