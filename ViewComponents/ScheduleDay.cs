@@ -46,7 +46,7 @@ namespace SPU.ViewComponents
 
             if (mds != null)
             {
-                calendrier.isMDS = true;
+                calendrier.role = "mds";
                 Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
 
                 if (horaire != null)
@@ -64,6 +64,7 @@ namespace SPU.ViewComponents
             }
             else if (stag != null)
             {
+                calendrier.role = "stagiaire";
                 //À vérfier ici
                 Horaire horaire = _context.Horaires.Where(x => x.StagiaireId == stag.Id).FirstOrDefault();
 

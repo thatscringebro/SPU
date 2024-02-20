@@ -7,9 +7,12 @@
     int Annee = DateTime.Now.Year;
     DateTime dateDebut = DateTime.Now.AddDays(-DateTime.Now.DayOfWeek.GetHashCode()).Date;
     DateTime dateFin = DateTime.Now.AddDays(-DateTime.Now.DayOfWeek.GetHashCode() + 14).Date;
-    bool isMDS = Model.isMDS;
     var modelJson = JsonSerializer.Serialize(Model.ListJournees);
-    var isMdsJson = JsonSerializer.Serialize(Model.isMDS);
+
+    //bool isMDS = Model.isMDS;
+    //var isMdsJson = JsonSerializer.Serialize(Model.isMDS);
+
+    var roleMdsEnseignantStagiaire = Model.role;
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -251,7 +254,8 @@
     var model = JSON.parse(modelJS);
     console.log(model);
     @* ------------------------------------ *@
-    var isMdsJS = ('@isMdsJson');
+    @*var isMdsJS = ('@isMdsJson');*@
+    var roleMdsEnseignantStagiraire = ('@roleMdsEnseignantStagiaire');
 
     @* ------------------------------------ *@
 
@@ -358,15 +362,15 @@
                         if (match) {
                             var idPlageHoraire = match[1];
                             quartHeureElement.addEventListener("click", function () {
-
-                                if(isMdsJS == "true")
-                                {
-                                    window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
-                                }
-                                else
-                                {
+                                //isMds
+                                if (roleMdsEnseignantStagiraire == "stagiaire") {
                                     afficherAlerte(idPlageHoraire);
                                 }
+                                else if(roleMdsEnseignantStagiraire == "mds"){
+
+                                    window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
+                                }
+
                             });
                             break;
                         }
@@ -541,12 +545,20 @@
                     var idPlageHoraire = match[1];
                     div.addEventListener("click", function () {
 
-                        if (isMdsJS == "true") {
+                        if (roleMdsEnseignantStagiraire == "stagiaire") {
+                             afficherAlerte(idPlageHoraire);
+                        }
+                        else if(roleMdsEnseignantStagiraire == "mds"){
+
+                             window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
+                        }
+
+@*                        if (isMdsJS == "true") {
                             window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
                         }
                         else {
                             afficherAlerte(idPlageHoraire);
-                        }
+                        }*@
                     });
                     break;
                 }
