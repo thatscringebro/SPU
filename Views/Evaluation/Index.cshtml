@@ -132,7 +132,7 @@
                 evaluationList.empty();
                 data.value.data.forEach(function(evaluation) {
                   // Append list item with checkbox
-                  evaluationList.append('<div class="row"><input class="col-1" type="checkbox" name="evaluations" value="' + evaluation.id + '" ' + (evaluation.actif ? 'checked' : '') + '>' + (evaluation.mdsId == null ?evaluation.stagiaire.utilisateur.nomComplet : evaluation.mds.utilisateur.nomComplet) + '</div>');
+                  evaluationList.append('<div class="row"><input class="col-1" type="checkbox" name="evaluations" value="' + evaluation.id + '" ' + (evaluation.actif ? 'checked' : '') + '>' + (evaluation.MDSId1 == null ?evaluation.stagiaire.utilisateur.nomComplet : evaluation.mds.utilisateur.nomComplet) + '</div>');
                 });
                 // Show the modal
                 $('#showEvaluationsModal').modal('show');
@@ -256,7 +256,7 @@
       </script>
     }
     else if(mds != null){
-      List<Evaluation> evals = context.Evaluations.Where(x => x.MDSId == mds.Id && x.actif == true).OrderBy(x => x.lienGoogleForm).ToList();
+      List<Evaluation> evals = context.Evaluations.Where(x => x.MDSId1 == mds.Id && x.actif == true).OrderBy(x => x.lienGoogleForm).ToList();
       <table class="table">
         <thead>
           <tr>

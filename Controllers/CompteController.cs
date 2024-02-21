@@ -113,7 +113,7 @@ namespace SPU.Controllers
 
                 if (roleUser == "Employeur")
                     return RedirectToAction(nameof(ManageMds));
-                    
+
                 //Redirection home ? ou horaire ? mais si les mds/stagiaire n'as pas encore d'horaire ? 
 
                 if (!string.IsNullOrEmpty(returnUrl))
@@ -704,12 +704,12 @@ namespace SPU.Controllers
 
             };
 
-
+            _spuContext.Add(MDs);
 
             nouvelleHoraire.Id = Guid.NewGuid();
-            nouvelleHoraire.mds = MDs;
-            nouvelleHoraire.MDSId = MDs.Id;
-         
+            nouvelleHoraire.mds1 = MDs;
+            nouvelleHoraire.MDSId1 = MDs.Id;
+
             // Obtenir la date et l'heure actuelles dans le fuseau horaire local
             DateTime debutHoraire = DateTime.Now;
 
@@ -733,10 +733,10 @@ namespace SPU.Controllers
             MDs.DateCreationHoraire = debutHoraire.ToUniversalTime();
             MDs.DateExpiration = finHoraire.ToUniversalTime();
 
-      
+
 
             _spuContext.Horaires.Add(nouvelleHoraire);
-            _spuContext.Add(MDs);
+
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
@@ -1110,7 +1110,7 @@ namespace SPU.Controllers
                 foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
                 {
                     List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
-                   
+
 
                     if (user.finStage != null & user.debutStage != null)
                     {
@@ -1124,10 +1124,10 @@ namespace SPU.Controllers
                             idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
                             debutStage = user.debutStage!.Value.Date,
                             finStage = user.finStage!.Value.Date
-                            
 
 
-                        }); 
+
+                        });
                     }
                     else
                     {
@@ -1141,10 +1141,10 @@ namespace SPU.Controllers
                             idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
                             debutStage = null,
                             finStage = null
-                            
+
                         });
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -1154,6 +1154,8 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+
+        //Quand on ajout un nouveau 
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne, DateTime? debutStage, DateTime? finStage)
@@ -1192,26 +1194,116 @@ namespace SPU.Controllers
             var ChatsStagiaire = _spuContext.Chats.FirstOrDefault(x => x.Id == StagiaireAediter.ChatId);
             var anciensMds = _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToList();
 
-            var horaireMDS1 = _spuContext.Horaires.FirstOrDefault(m => m.MDSId == idMdsSelectionne1);
-    
-            
+            var horaireMDS1 = _spuContext.Horaires.FirstOrDefault(m => m.MDSId1 == idMdsSelectionne1);
+            var horaireMDS2 = _spuContext.Horaires.FirstOrDefault(m => m.MDSId1 == idMdsSelectionne2);
+
 
             foreach (var mds in anciensMds)
             {
                 if (mds.Id != idMdsSelectionne1 && mds.Id != idMdsSelectionne2)
                 {
-                    var ancienhoraire = _spuContext.Horaires.FirstOrDefault(m => m.MDSId == mds.Id);
+                    var ancienhoraire = _spuContext.Horaires.FirstOrDefault(m => m.MDSId1 == mds.Id);
+                    var ancienhoraire2 = _spuContext.Horaires.FirstOrDefault(m => m.MDSId2 == mds.Id);
 
-                    if(ancienhoraire.stagiaire != null)
+                    if(ancienhoraire != null && ancienhoraire2 != null)
                     {
-                        ancienhoraire.stagiaire = null;
-                        ancienhoraire.StagiaireId = null;
+                        if(ancienhoraire.stagiaire != null)
+                        {
+                            if (ancienhoraire.mds2 != null)
+                            {
+
+                                ancienhoraire.stagiaire = null;
+                                ancienhoraire.StagiaireId = null;
+                                ancienhoraire.mds1 = ancienhoraire.mds2;
+                                ancienhoraire.MDSId1 = (Guid)ancienhoraire.MDSId2;
+                                ancienhoraire.MDSId2 = null;
+                                ancienhoraire.mds2 = null;
+                            }
+                            mds.stagiaire = null;
+                            mds.StagiaireId = null;
+                            mds.ChatId = null;
+                            mds.chat = null;
+
+                            var newhoraire = new Horaire
+                            {
+                                mds1 = mds,
+                                MDSId1 = mds.Id
+                            };
+                            _spuContext.Horaires.Add(newhoraire);
+
+                        }
+                        else if(ancienhoraire2.stagiaire != null)
+                        {
+                            if (ancienhoraire2.mds2 != null)
+                            {
+                  
+                                ancienhoraire2.mds1 = ancienhoraire2.mds2;
+                                ancienhoraire2.MDSId1 = (Guid)ancienhoraire2.MDSId2;
+                                ancienhoraire2.MDSId2 = null;
+                                ancienhoraire2.mds2 = null;
+                            }
+                            mds.stagiaire = null;
+                            mds.StagiaireId = null;
+                            mds.ChatId = null;
+                            mds.chat = null;
+
+                            var newhoraire = new Horaire
+                            {
+                                mds1 = mds,
+                                MDSId1 = mds.Id
+                            };
+                            _spuContext.Horaires.Add(newhoraire);
+                        }
                     }
-                    mds.stagiaire = null;
-                    mds.StagiaireId = null;
-                    mds.ChatId = null;
-                    mds.chat = null;                
-                                 
+                   else if (ancienhoraire != null && ancienhoraire2 == null)
+                    {
+
+                        if (ancienhoraire.stagiaire != null)
+                        {
+                            if (ancienhoraire.mds2 != null)
+                            {
+                             
+                                //ancienhoraire.mds1 = ancienhoraire.mds2;
+                                //ancienhoraire.MDSId1 = (Guid)ancienhoraire.MDSId2;
+                                //ancienhoraire.MDSId2 = null;
+                                //ancienhoraire.mds2 = null;
+                            }
+
+                        }
+                        mds.stagiaire = null;
+                        mds.StagiaireId = null;
+                        mds.ChatId = null;
+                        mds.chat = null;
+
+                        var newhoraire = new Horaire
+                        {
+                            mds1 = mds,
+                            MDSId1 = mds.Id
+                        };
+                        _spuContext.Horaires.Add(newhoraire);
+                    }
+                    else if (ancienhoraire2 != null && ancienhoraire == null)
+                    {
+
+                        if (ancienhoraire2.stagiaire != null)
+                        {
+
+                            ancienhoraire2.MDSId2 = null;
+                            ancienhoraire2.mds2 = null;
+                        }
+                        mds.stagiaire = null;
+                        mds.StagiaireId = null;
+                        mds.ChatId = null;
+                        mds.chat = null;
+
+                        var newhoraire = new Horaire
+                        {
+                            mds1 = mds,
+                            MDSId1 = mds.Id
+                        };
+                        _spuContext.Horaires.Add(newhoraire);
+                    }
+
                 }
             }
 
@@ -1223,11 +1315,6 @@ namespace SPU.Controllers
                 horaireMDS1.StagiaireId = Stagiaire.Id;
                 horaireMDS1.stagiaire = Stagiaire;
 
-                            
-                    
-
-             
-
                 _spuContext.Horaires.Update(horaireMDS1);
                 _spuContext.MDS.Update(MdsaEditer1);
             }
@@ -1237,6 +1324,15 @@ namespace SPU.Controllers
                 MdsaEditer2.StagiaireId = idStagiaire;
                 MdsaEditer2.chat = Stagiaire.chat;
                 MdsaEditer2.ChatId = Stagiaire.ChatId;
+                horaireMDS1.MDSId2 = idMdsSelectionne2;
+                horaireMDS1.mds2 = MdsaEditer2;
+
+                if(horaireMDS2 != null)
+                {
+                    _spuContext.Horaires.Remove(horaireMDS2);
+
+                }
+                _spuContext.Horaires.Update(horaireMDS1);
                 _spuContext.MDS.Update(MdsaEditer2);
             }
 
@@ -1358,36 +1454,36 @@ namespace SPU.Controllers
 
                 for (int i = 2; i < maitresdestage.Count(); i++)
                 {
-                  if(maitresdestage[i].status == Status.Incomplet)//incomplet
-                  {
-                    worksheet2.Cell($"B{i}").Value = "incomplet";
-                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Yellow;
-                  }
-                  if(maitresdestage[i].status == Status.Accepté)//accepté
-                  {
-                    worksheet2.Cell($"B{i}").Value = "accepté";
-                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Green;
-                  }
-                  if(maitresdestage[i].status == Status.Refusé)//refusé
-                  {
-                    worksheet2.Cell($"B{i}").Value = "refusé";
-                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Red;
-                  }
+                    if (maitresdestage[i].status == Status.Incomplet)//incomplet
+                    {
+                        worksheet2.Cell($"B{i}").Value = "incomplet";
+                        worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Yellow;
+                    }
+                    if (maitresdestage[i].status == Status.Accepté)//accepté
+                    {
+                        worksheet2.Cell($"B{i}").Value = "accepté";
+                        worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Green;
+                    }
+                    if (maitresdestage[i].status == Status.Refusé)//refusé
+                    {
+                        worksheet2.Cell($"B{i}").Value = "refusé";
+                        worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Red;
+                    }
 
-                  worksheet2.Cell($"A{i}").Value = maitresdestage[i].MatriculeId;
-                  worksheet2.Cell($"C{i}").Value = maitresdestage[i].civilite == 0 ? "M" : "Mme";
-                  worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.NomComplet;
-                  worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.Nom;
-                  worksheet2.Cell($"E{i}").Value = maitresdestage[i].utilisateur.Prenom;
-                  worksheet2.Cell($"F{i}").Value = maitresdestage[i].telMaison;
-                  worksheet2.Cell($"G{i}").Value = maitresdestage[i].utilisateur.PhoneNumber;
-                  worksheet2.Cell($"H{i}").Value = maitresdestage[i].utilisateur.Email;
-                  worksheet2.Cell($"I{i}").Value = maitresdestage[i].typeEmployeur == 0 ? "CISSS" : "CIUSSS";
-                  worksheet2.Cell($"J{i}").Value = maitresdestage[i].NomEmployeur;
-                  worksheet2.Cell($"K{i}").Value = "";
-                  worksheet2.Cell($"L{i}").Value = "";
-                  worksheet2.Cell($"M{i}").Value = maitresdestage[i].commentaire;
-                  worksheet2.Cell($"N{i}").Value = maitresdestage[i].commentaireCIUSS;
+                    worksheet2.Cell($"A{i}").Value = maitresdestage[i].MatriculeId;
+                    worksheet2.Cell($"C{i}").Value = maitresdestage[i].civilite == 0 ? "M" : "Mme";
+                    worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.NomComplet;
+                    worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.Nom;
+                    worksheet2.Cell($"E{i}").Value = maitresdestage[i].utilisateur.Prenom;
+                    worksheet2.Cell($"F{i}").Value = maitresdestage[i].telMaison;
+                    worksheet2.Cell($"G{i}").Value = maitresdestage[i].utilisateur.PhoneNumber;
+                    worksheet2.Cell($"H{i}").Value = maitresdestage[i].utilisateur.Email;
+                    worksheet2.Cell($"I{i}").Value = maitresdestage[i].typeEmployeur == 0 ? "CISSS" : "CIUSSS";
+                    worksheet2.Cell($"J{i}").Value = maitresdestage[i].NomEmployeur;
+                    worksheet2.Cell($"K{i}").Value = "";
+                    worksheet2.Cell($"L{i}").Value = "";
+                    worksheet2.Cell($"M{i}").Value = maitresdestage[i].commentaire;
+                    worksheet2.Cell($"N{i}").Value = maitresdestage[i].commentaireCIUSS;
                 }
 
                 using (var stream = new MemoryStream())
