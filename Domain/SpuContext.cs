@@ -53,6 +53,9 @@ namespace SPU.Domain
 
             modelBuilder.Entity<Employeur>().HasOne(c => c.adresse).WithMany().HasForeignKey(c => c.AdresseId).OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Horaire>().HasOne(c => c.stagiaire).WithMany().HasForeignKey(c => c.StagiaireId).OnDelete(DeleteBehavior.SetNull);
+            //modelBuilder.Entity<Horaire>().HasOne(c => c.mds1).WithMany().HasForeignKey(c => c.MDSId1).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Horaire>().HasOne(c => c.mds2).WithMany().HasForeignKey(c => c.MDSId2).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Seed();
         }
