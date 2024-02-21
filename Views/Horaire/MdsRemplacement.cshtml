@@ -1,19 +1,94 @@
-﻿@page
-@model SPU.ViewModels.RemplacementPlageHoraireVM
+﻿@using SPU.ViewModels
+@model RemplacementPlageHoraireVM
+
 @{
     string jourDebut = Model.DateDebut.ToString("dd MMMM", new System.Globalization.CultureInfo("fr-FR"));
     string jourFin = Model.DateFin.ToString("dd MMMM", new System.Globalization.CultureInfo("fr-FR"));
     string heureDebut = Model.DateDebut.ToString("H:mm");
     string heureFin = Model.DateFin.ToString("H:mm");
+    string? Matricule1 = Model.MatriculeRemplacent1;
+    string? Matricule2 = Model.MatriculeRemplacent2;
+    string plageHoraireId = ViewBag.PlageHoraireId.ToString();
 }
-
-<div>
-    <h1>Maître(s) de stage absent</h1>
-    <h3>>Un ou plusieurs de vos maîtres de stage ont déclaré leur absence entre le @jourDebut à @heureDebut et le @jourFin à @heureFin.</h3>
-    <form>
-        <label for="remplacent1">Matricule du premier remplacent</label>
-        <input id="remplacent1" asp-for="MatriculeRemplacent1"/>
-        <label for="remplacent2">Matricule du second renplacent</label>
-        <input id="remplacent2" asp-for="MatriculeRemplacent2"/>
-    </form>
+<div class="fullpage-form">
+    <div class="form-container">
+        <h1>Maître(s) de stage absent</h1>
+        <h6>Un ou plusieurs de vos maîtres de stage ont déclaré leur absence entre le @jourDebut à @heureDebut et le @jourFin à @heureFin.</h6>
+        <form asp-action="MdsRemplacement" asp-controller="Horaire" method="post">
+            <label for="remplacent1">Matricule du premier remplacent</label><br />
+            <input id="remplacent1" asp-for="MatriculeRemplacent1" value="@Matricule1" /><br />
+            <label for="remplacent2">Matricule du second renplacent</label><br />
+            <input id="remplacent2" asp-for="MatriculeRemplacent2" value="@Matricule2" /><br /><br />
+            <div>
+                <label>Serez-vous absent cette journée</label><br />
+                <input type="checkbox" id="presentCheckbox" asp-for="StagiairePresent" value="true">
+                <label for="presentCheckbox">Présent</label>
+                <input type="checkbox" id="absentCheckbox" @(Model.StagiairePresent == false ? "checked='checked'" : "") asp-for="StagiairePresent" value="false">
+                <label for="absentCheckbox">Absent</label><br />
+            </div>
+            <br />
+            <div style="justify-content:space-around">
+                <button type="submit" asp-route-PlageHoraireId="@plageHoraireId" asp-route-actionType="confirmer" class="btn btn-primary">Confirmer</button>
+                <button type="submit" asp-route-PlageHoraireId="@plageHoraireId" asp-route-actionType="annuler" class="btn btn-secondary">Annuler</button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+    const presentCheckbox = document.getElementById("presentCheckbox");
+    const absentCheckbox = document.getElementById("absentCheckbox");
+
+
+    presentCheckbox.addEventListener("change", function () {
+        if (presentCheckbox.checked) {
+            absentCheckbox.checked = false;
+            commentaireInput.disabled = true;
+        } else {
+            absentCheckbox.checked = true;
+            commentaireInput.disabled = false;
+        }
+    });
+
+    absentCheckbox.addEventListener("change", function () {
+        if (absentCheckbox.checked) {
+            presentCheckbox.checked = false;
+            commentaireInput.disabled = false;
+        }
+        else {
+            presentCheckbox.checked = true;
+            commentaireInput.disabled = true;
+        }
+    });
+</script>
+
+<style>
+    .form-container {
+        position: relative;
+        margin: auto;
+        background-color: white !important;
+        border: 3px solid blue;
+        padding: 10px;
+        max-width: 500px;
+        z-index: 1;
+    }
+
+    .fullpage-form {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+        .fullpage-form::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("/images/pexels-denniz-futalan-3452997.jpg");
+            background-size: cover;
+            filter: blur(12px);
+            z-index: -1;
+        }
+</style>
