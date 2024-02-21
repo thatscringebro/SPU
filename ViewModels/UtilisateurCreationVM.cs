@@ -3,6 +3,9 @@ using SPU.Domain.Entites;
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Identity;
+using SPU.Domain;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SPU.ViewModels
 {
@@ -12,6 +15,8 @@ namespace SPU.ViewModels
 
         [Required(ErrorMessage = "Le nom d'utilisateur est requis!")]
         [Display(Name = "Nom d'utilisateur")]
+        [Remote(action: "VerifierUsername", controller: "Compte", HttpMethod = "POST", ErrorMessage = "Cet utilisateur existe déjà.")]
+        //[UniqueUsername(ErrorMessage = "Le nom d'utilisateur est déjà utilisé.")]
         public string userName { get; set; }
 
         [Required(ErrorMessage = "Le prénom est requis!")]
@@ -53,4 +58,27 @@ namespace SPU.ViewModels
 
     }
 
+    //public class UniqueUsernameAttribute : ValidationAttribute
+    //{
+    //    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    //    {
+    //        // Récupération de SpuContext à partir du ValidationContext
+    //        var spuContext = (SpuContext)validationContext.GetService(typeof(SpuContext));
+    //        if (spuContext == null)
+    //        {
+    //            throw new InvalidOperationException("SpuContext not available");
+    //        }
+
+    //        var userName = value as string;
+
+    //        var user = spuContext.Users.FirstOrDefault(u => u.UserName == userName);
+
+    //        if (user != null)
+    //        {
+    //            return new ValidationResult("Le nom d'utilisateur est déjà utilisé.");
+    //        }
+
+    //        return ValidationResult.Success;
+    //    }
+    //}
 }

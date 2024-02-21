@@ -319,7 +319,7 @@ namespace SPU.Controllers
         }
 
         /// <summary>
-        /// Retourne la liste des stagiaires associé à l'enseignant
+        /// Retourne la liste des stagiaires associés à l'enseignant
         /// </summary>
         /// <returns>Les stagiaires</returns>
         [Authorize(Roles = "Enseignant")]
@@ -357,6 +357,14 @@ namespace SPU.Controllers
         }
 
         #endregion
+
+        [HttpPost]
+        public IActionResult VerifierUsername(string userName)
+        {
+            bool userExists = _spuContext.Users.Any(u => u.UserName == userName);
+            return Json(!userExists);
+        }
+
 
         #region CreationNormal et EditNormal
         /// <summary>

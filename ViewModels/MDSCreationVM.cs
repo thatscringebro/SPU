@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SPU.Enum;
 using System.ComponentModel.DataAnnotations;
@@ -10,6 +11,8 @@ namespace SPU.ViewModels
     {
         [Required(ErrorMessage = "Le nom d'utilisateur est requis!")]
         [Display(Name = "Nom d'utilisateur")]
+        [Remote(action: "VerifierUsername", controller: "Compte", HttpMethod = "POST", ErrorMessage = "Cet utilisateur existe déjà.")]
+
         public string userName { get; set; }
 
         [Required(ErrorMessage = "Le prénom est requis!")]
