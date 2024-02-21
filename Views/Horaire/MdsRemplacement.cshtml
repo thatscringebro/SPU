@@ -6,15 +6,56 @@
     string jourFin = Model.DateFin.ToString("dd MMMM", new System.Globalization.CultureInfo("fr-FR"));
     string heureDebut = Model.DateDebut.ToString("H:mm");
     string heureFin = Model.DateFin.ToString("H:mm");
+    string? Matricule1 = Model.MatriculeRemplacent1;
+    string? Matricule2 = Model.MatriculeRemplacent2;
+    string plageHoraireId = ViewBag.PlageHoraireId.ToString();
 }
 
 <div>
     <h1>Maître(s) de stage absent</h1>
-    <h3>Un ou plusieurs de vos maîtres de stage ont déclaré leur absence entre le @jourDebut à @heureDebut et le @jourFin à @heureFin.</h3>
-    <form asp-action="RentrerAbsence" asp-controller="Horaire" method="post">
+    <h6>Un ou plusieurs de vos maîtres de stage ont déclaré leur absence entre le @jourDebut à @heureDebut et le @jourFin à @heureFin.</h6>
+    <form asp-action="MdsRemplacement" asp-controller="Horaire" method="post">
         <label for="remplacent1">Matricule du premier remplacent</label>
-        <input id="remplacent1" asp-for="MatriculeRemplacent1"/>
+        <input id="remplacent1" asp-for="MatriculeRemplacent1" value="@Matricule1"/>
         <label for="remplacent2">Matricule du second renplacent</label>
-        <input id="remplacent2" asp-for="MatriculeRemplacent2"/>
+        <input id="remplacent2" asp-for="MatriculeRemplacent2" value="@Matricule2"/>
+        <div>
+            <label>Serez-vous absent cette journée</label><br/>
+            <input type="checkbox" id="presentCheckbox" asp-for="StagiairePresent" value="true">
+            <label for="presentCheckbox">Présent</label>
+            <input type="checkbox" id="absentCheckbox" @(Model.StagiairePresent == false ? "checked='checked'" : "") asp-for="StagiairePresent" value="false">
+            <label for="absentCheckbox">Absent</label><br />
+        </div>
+        <div class="col-4">
+            <button type="submit" asp-route-PlageHoraireId="@plageHoraireId" asp-route-actionType="confirmer" class="btn btn-primary">Confirmer</button>
+            <button type="submit" asp-route-PlageHoraireId="@plageHoraireId" asp-route-actionType="annuler" class="btn btn-secondary">Annuler</button>
+        </div>
     </form>
 </div>
+
+<script>
+    const presentCheckbox = document.getElementById("presentCheckbox");
+    const absentCheckbox = document.getElementById("absentCheckbox");
+
+
+    presentCheckbox.addEventListener("change", function () {
+        if (presentCheckbox.checked) {
+            absentCheckbox.checked = false;
+            commentaireInput.disabled = true;
+        } else {
+            absentCheckbox.checked = true;
+            commentaireInput.disabled = false;
+        }
+    });
+
+    absentCheckbox.addEventListener("change", function () {
+        if (absentCheckbox.checked) {
+            presentCheckbox.checked = false;
+            commentaireInput.disabled = false;
+        }
+        else {
+            presentCheckbox.checked = true;
+            commentaireInput.disabled = true;
+        }
+    });
+</script>

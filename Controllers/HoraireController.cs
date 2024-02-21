@@ -675,6 +675,7 @@ namespace SPU.Controllers
         }
 
         //Afficher form de remplacent
+        [HttpGet]
         public IActionResult MdsRemplacement(RemplacementPlageHoraireVM vm, Guid idPlageHoraire)
         {
             PlageHoraire? plageHoraire = _context.PlageHoraires.Where(x => x.Id == idPlageHoraire).FirstOrDefault();
@@ -699,14 +700,16 @@ namespace SPU.Controllers
         }
         //Remplacent
         [HttpPost]
-        public IActionResult RentrerAbsence(RemplacementPlageHoraireVM vm,  string idPlageHoraire)
+        public IActionResult MdsRemplacement(RemplacementPlageHoraireVM vm,  string PlageHoraireId, string actionType)
         {
-            PlageHoraire? plageHoraire = _context.PlageHoraires.FirstOrDefault(x => x.Id.ToString() == idPlageHoraire);
+            if(actionType == "annuler")
+                return RedirectToAction("Index", "Horaire");
+
+            PlageHoraire? plageHoraire = _context.PlageHoraires.FirstOrDefault(x => x.Id.ToString() == PlageHoraireId);
             if (plageHoraire == null)
                 return BadRequest("Erreur, plage horaire invalide");
 
-            if (vm.StagiairePresent)
-                plageHoraire.StagiairePresent = vm.StagiairePresent;
+            plageHoraire.StagiairePresent = vm.StagiairePresent;
 
             if (vm.MatriculeRemplacent1 != null && vm.MatriculeRemplacent2 == null)
                 plageHoraire.remplacant = vm.MatriculeRemplacent1;
@@ -714,11 +717,13 @@ namespace SPU.Controllers
                 plageHoraire.remplacant = vm.MatriculeRemplacent2;
             else if (vm.MatriculeRemplacent1 != null && vm.MatriculeRemplacent2 != null)
                 plageHoraire.remplacant = vm.MatriculeRemplacent1 + "," + vm.MatriculeRemplacent2;
+            else
+                plageHoraire.remplacant = null;
 
             _context.Update(plageHoraire);
             _context.SaveChanges();
 
-            return Ok();
+            return RedirectToAction("Index", "Horaire");
         }
     }
 }

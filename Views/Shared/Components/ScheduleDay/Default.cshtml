@@ -560,7 +560,7 @@
                     div.addEventListener("click", function () {
 
                         if (roleMdsEnseignantStagiraire == "stagiaire") {
-                            afficherAlerte(idPlageHoraire);
+                            window.location.href = '/Horaire/MdsRemplacement?idPlageHoraire=' + idPlageHoraire;
                         }
                         else if (roleMdsEnseignantStagiraire == "mds") {
 
