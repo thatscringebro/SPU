@@ -85,18 +85,12 @@
     </div>
 </form>
 
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
- @*    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#user-form').submit(function (e) {
-                if (!$(this).valid()) {
-                    e.preventDefault(); // Empêcher la soumission si le formulaire n'est pas valide
-                }
-            });
-        }); *@
-    @* </script> *@
 }
-

@@ -28,6 +28,7 @@ namespace SPU.Controllers
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly SpuContext _spuContext;
 
+
         public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
             _roleManager = roleManager;
@@ -419,49 +420,11 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
         {
-
-            //ViewBag.Ecoles = _spuContext.Ecole.Select(e => new SelectListItem
-            //{
-            //    Value = e.id.ToString(),
-            //    Text = e.Nom
-            //}).ToList();
-
-
-            /*
-            //var stagiaire = CreateSHA512("Stagiaire");
-            //var enseignant = CreateSHA512("Enseignant");
-            //var Coordo = CreateSHA512("Coordonnateur");
-
-            //if (hash == null)
-            //{
-            //    switch (vm.role)
-            //    {
-            //        case "Coordonnateur": 
-            //            return View("CreationCoordonnateur");
-            //        case "Enseignant": 
-            //            return View("CreationEnseignant");
-            //        default:
-            //            //Retourne STAGIAIRE si aucun choix
-            //            return View(vm);
-            //    }
-            //}
-            //else
-            //{
-
-            //    if (hash == enseignant)
-            //        return View("CreationEnseignant");
-            //    else if (hash == Coordo)
-            //        return View("CreationCoordonnateur");
-            //    else
-            //        return View();
-            //} */
-
             ViewBag.Ecoles = PopulateEcoles();
 
             if (!ModelState.IsValid)
             {
                 return View(vm);
-                //RedirectToAction("CreationNormal", vm);
             }
 
             var roles = await _roleManager.Roles.ToListAsync();
@@ -611,6 +574,14 @@ namespace SPU.Controllers
         #endregion
 
         #region CreationMDS et EditMDS
+        private IEnumerable<SelectListItem> PopulateEmployeurs()
+        {
+            return _spuContext.Employeurs.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.utilisateur.UserName
+            }).ToList();
+        }
 
         [AllowAnonymous]
         [Route("Compte/CreationMDS")]
@@ -618,11 +589,7 @@ namespace SPU.Controllers
         [HttpGet]
         public ActionResult CreationMDS(string hash)
         {
-            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
-            {
-                Value = e.Id.ToString(),
-                Text = e.utilisateur.UserName
-            }).ToList();
+            ViewBag.Employeurs = PopulateEmployeurs();
 
             var MDS = CreateSHA512("MDS");
 
@@ -637,11 +604,7 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
         {
-            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
-            {
-                Value = e.Id.ToString(),
-                Text = e.utilisateur.UserName
-            }).ToList();
+            ViewBag.Employeurs = PopulateEmployeurs();
 
             if (!ModelState.IsValid)
             {
@@ -705,7 +668,6 @@ namespace SPU.Controllers
             };
 
 
-
             nouvelleHoraire.Id = Guid.NewGuid();
             nouvelleHoraire.mds = MDs;
             nouvelleHoraire.MDSId = MDs.Id;
@@ -734,7 +696,6 @@ namespace SPU.Controllers
             MDs.DateExpiration = finHoraire.ToUniversalTime();
 
       
-
             _spuContext.Horaires.Add(nouvelleHoraire);
             _spuContext.Add(MDs);
             await _spuContext.SaveChangesAsync();
@@ -748,11 +709,7 @@ namespace SPU.Controllers
         [HttpGet]
         public async Task<IActionResult> EditMDS(Guid id)
         {
-            ViewBag.Employeurs = _spuContext.Employeurs.Select(e => new SelectListItem
-            {
-                Value = e.Id.ToString(),
-                Text = e.utilisateur.UserName
-            }).ToList();
+            ViewBag.Employeurs = PopulateEmployeurs();
 
             var user = await _userManager.FindByIdAsync(id.ToString());
 
@@ -794,6 +751,8 @@ namespace SPU.Controllers
         [HttpPost]
         public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
         {
+            ViewBag.Employeurs = PopulateEmployeurs();
+
             if (!ModelState.IsValid)
                 return View(vm);
 
@@ -1223,10 +1182,7 @@ namespace SPU.Controllers
                 horaireMDS1.StagiaireId = Stagiaire.Id;
                 horaireMDS1.stagiaire = Stagiaire;
 
-                            
-                    
-
-             
+                          
 
                 _spuContext.Horaires.Update(horaireMDS1);
                 _spuContext.MDS.Update(MdsaEditer1);
