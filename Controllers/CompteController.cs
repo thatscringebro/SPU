@@ -1109,7 +1109,10 @@ namespace SPU.Controllers
             {
                 foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
                 {
-                    List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
+                    //List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
+
+                    var Mds1 = _spuContext.Horaires.Where(h => h.StagiaireId == user.Id).Select(m => m.MDSId1).FirstOrDefault();
+                    var Mds2 = _spuContext.Horaires.Where(h => h.StagiaireId == user.Id).Select(m => m.MDSId2).FirstOrDefault();
 
 
                     if (user.finStage != null & user.debutStage != null)
@@ -1120,8 +1123,8 @@ namespace SPU.Controllers
                             Prenom = user.utilisateur?.Prenom,
                             Nom = user.utilisateur?.Nom,
                             idEnseignantSelectionne = user.EnseignantId,
-                            idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
-                            idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
+                            idMdsSelectionne1 = Mds1,
+                            idMdsSelectionne2 = Mds2,
                             debutStage = user.debutStage!.Value.Date,
                             finStage = user.finStage!.Value.Date
 
@@ -1137,8 +1140,8 @@ namespace SPU.Controllers
                             Prenom = user.utilisateur?.Prenom,
                             Nom = user.utilisateur?.Nom,
                             idEnseignantSelectionne = user.EnseignantId,
-                            idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
-                            idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
+                            idMdsSelectionne1 = Mds1,
+                            idMdsSelectionne2 = Mds2,
                             debutStage = null,
                             finStage = null
 
