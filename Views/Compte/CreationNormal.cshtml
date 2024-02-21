@@ -93,14 +93,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    @* <script type="text/javascript">
-        $(function () {
-            $('#user-form').submit(function (e) {
-                if (!$(this).valid()) {
-                    e.preventDefault(); // Empêcher la soumission si le formulaire n'est pas valide
-                    return false; // Ajoutez cette ligne
-                }
-            });
-        });
-    </script> *@
 }
