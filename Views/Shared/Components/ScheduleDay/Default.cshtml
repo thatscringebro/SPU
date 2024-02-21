@@ -379,7 +379,7 @@
                                 quartHeureElement.addEventListener("click", function () {
                                     //isMds
                                     if (roleMdsEnseignantStagiraire == "stagiaire") {
-                                        afficherAlerte(idPlageHoraire);
+                                        window.location.href = '/Horaire/MdsRemplacement?idPlageHoraire=' + idPlageHoraire;
                                     }
                                     else if (roleMdsEnseignantStagiraire == "mds") {
 

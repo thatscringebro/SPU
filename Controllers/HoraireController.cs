@@ -454,7 +454,7 @@ namespace SPU.Controllers
             Horaire horaire = _context.Horaires.FirstOrDefault(x => x.Id == phBD.HoraireId);
             MDS mds = _context.MDS.Where(x => x.Id == horaire.MDSId).FirstOrDefault();
 
-            if(actionType == "annuler")
+            if (actionType == "annuler")
             {
                 return RedirectToAction("Horaire", "Horaire", new { horaireId = horaire.Id });
             }
@@ -462,7 +462,7 @@ namespace SPU.Controllers
             if (actionType == "supprimer")
             {
                 // Récupérer la plage horaire existante depuis la base de données
-                
+
 
                 if (phBD != null)
                 {
@@ -523,7 +523,7 @@ namespace SPU.Controllers
                         (ph.DateDebut <= x.DateDebut.ToLocalTime() && ph.DateFin >= x.DateFin.ToLocalTime())
                     );
 
-                    if(verificationPlageHoraire.DateDebut != phBD.DateDebut && verificationPlageHoraire.DateFin != phBD.DateFin)
+                    if (verificationPlageHoraire.DateDebut != phBD.DateDebut && verificationPlageHoraire.DateFin != phBD.DateFin)
                     {
                         if (verificationPlageHoraire != null)
                         {
@@ -556,19 +556,20 @@ namespace SPU.Controllers
                     //ICI CLAUDEL POUR LA MODIF DE LA PLAGE HORAIRE
                     if (!vm.EstPresent)
                     {
-                        if(ph.MDS1absent == null)
+                        if (ph.MDS1absent == null)
                         {
                             ph.MDS1absent = new Guid(_loggedUserId);
                         }
-                        else if(ph.MDS2absent == null)
+                        else if (ph.MDS2absent == null)
                         {
                             ph.MDS2absent = new Guid(_loggedUserId);
                         }
                     }
-                    else if(vm.EstPresent && ph.MDS1absent != null) {
+                    else if (vm.EstPresent && ph.MDS1absent != null)
+                    {
                         ph.MDS1absent = null;
                     }
-                    else if(vm.EstPresent && ph.MDS2absent != null)
+                    else if (vm.EstPresent && ph.MDS2absent != null)
                     {
                         ph.MDS2absent = null;
                     }
@@ -673,23 +674,46 @@ namespace SPU.Controllers
 
         }
 
+        //Afficher form de remplacent
+        public IActionResult MdsRemplacement(RemplacementPlageHoraireVM vm, Guid idPlageHoraire)
+        {
+            PlageHoraire? plageHoraire = _context.PlageHoraires.Where(x => x.Id == idPlageHoraire).FirstOrDefault();
+            if (plageHoraire == null)
+                return BadRequest("Erreur, plage horaire invalide");
+
+            if (plageHoraire.remplacant != null)
+            {
+                string[] listMatricule = plageHoraire.remplacant.Split(',');
+                vm.MatriculeRemplacent1 = listMatricule[0];
+                if(listMatricule.Length > 1)
+                    vm.MatriculeRemplacent1 = listMatricule[1];
+            }
+
+            vm.DateDebut = plageHoraire.DateDebut.ToLocalTime();
+            vm.DateFin = plageHoraire.DateFin.ToLocalTime();
+            vm.StagiairePresent = plageHoraire.StagiairePresent;
+
+            ViewBag.PlageHoraireId = idPlageHoraire;
+
+            return View(vm);
+        }
         //Remplacent
         [HttpPost]
-        public IActionResult RentrerAbsence(string idPlageHoraire, bool stagiaireAbsent, string? MatriculeRemplacent1, string? MatriculeRemplacent2) 
+        public IActionResult RentrerAbsence(RemplacementPlageHoraireVM vm,  string idPlageHoraire)
         {
             PlageHoraire? plageHoraire = _context.PlageHoraires.FirstOrDefault(x => x.Id.ToString() == idPlageHoraire);
             if (plageHoraire == null)
                 return BadRequest("Erreur, plage horaire invalide");
 
-            if(stagiaireAbsent)
-                plageHoraire.StagiairePresent = !stagiaireAbsent;
+            if (vm.StagiairePresent)
+                plageHoraire.StagiairePresent = vm.StagiairePresent;
 
-            if (MatriculeRemplacent1 != null && MatriculeRemplacent2 == null)
-                    plageHoraire.remplacant = MatriculeRemplacent1;
-            else if (MatriculeRemplacent1 == null && MatriculeRemplacent2 != null)
-                plageHoraire.remplacant = MatriculeRemplacent2;
-            else if (MatriculeRemplacent1 != null && MatriculeRemplacent2 != null)
-                plageHoraire.remplacant = MatriculeRemplacent1 + "," + MatriculeRemplacent2;
+            if (vm.MatriculeRemplacent1 != null && vm.MatriculeRemplacent2 == null)
+                plageHoraire.remplacant = vm.MatriculeRemplacent1;
+            else if (vm.MatriculeRemplacent1 == null && vm.MatriculeRemplacent2 != null)
+                plageHoraire.remplacant = vm.MatriculeRemplacent2;
+            else if (vm.MatriculeRemplacent1 != null && vm.MatriculeRemplacent2 != null)
+                plageHoraire.remplacant = vm.MatriculeRemplacent1 + "," + vm.MatriculeRemplacent2;
 
             _context.Update(plageHoraire);
             _context.SaveChanges();
