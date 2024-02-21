@@ -154,7 +154,7 @@
                                 }
 
                                 // Appliquer le style en fonction de la condition isWorkingHour
-                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? (!MdsPresent ? "background-color: lightyellow;" : (Present ? "background-color: lightblue;" : "background-color: lightgrey;")) : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
+                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? (!MdsPresent ? "background-color: palegoldenrod;" : (Present ? "background-color: lightblue;" : "background-color: lightgrey;")) : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
                                 </div>
                             }
                         </div>
@@ -366,7 +366,7 @@
 
                         console.log("mds:" + MdsPresent);
                         if (MdsPresent == false)
-                            quartHeureElement.style.backgroundColor = 'lightyellow';
+                            quartHeureElement.style.backgroundColor = 'palegoldenrod';
                         else if (Present == false)
                             quartHeureElement.style.backgroundColor = 'lightgrey';
                         else

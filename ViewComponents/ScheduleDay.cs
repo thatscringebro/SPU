@@ -72,7 +72,7 @@ namespace SPU.ViewComponents
 
                 if (horaire != null)
                 { 
-                    journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaireId).ToList().Select(x => new JourneeTravailleVM
+                    journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaireId && x.DateDebut.Date >= stag.debutStage && x.DateDebut.Date <= stag.finStage).ToList().Select(x => new JourneeTravailleVM
                     {
                         DateDebutQuart = x.DateDebut.ToLocalTime(),
                         DateFinQuart = x.DateFin.ToLocalTime(),
