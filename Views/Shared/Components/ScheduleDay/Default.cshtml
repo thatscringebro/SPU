@@ -101,6 +101,7 @@
                             {
                                 bool isWorkingHour = false;
                                 bool Present = true;
+                                bool MdsPresent = true;
                                 Guid IdPlageHoraire = new Guid();
                                 foreach (var item in Model.ListJournees)
                                 {
@@ -116,9 +117,10 @@
                                         {
                                             isWorkingHour = true;
                                             IdPlageHoraire = item.Id;
-                                            if (item.Present == false)
+                                            if (item.StagiairePresent == false)
                                                 Present = false;
-
+                                            if (item.MdsAbsent1 != null || item.MdsAbsent2 != null)
+                                                MdsPresent = false;
                                             break;
                                         }
                                     }
@@ -129,8 +131,10 @@
                                         {
                                             isWorkingHour = true;
                                             IdPlageHoraire = item.Id;
-                                            if (item.Present == false)
+                                            if (item.StagiairePresent == false)
                                                 Present = false;
+                                            if (item.MdsAbsent1 != null || item.MdsAbsent2 != null)
+                                                MdsPresent = false;
 
                                             break;
                                         }
@@ -139,8 +143,10 @@
                                         {
                                             isWorkingHour = true;
                                             IdPlageHoraire = item.Id;
-                                            if (item.Present == false)
+                                            if (item.StagiairePresent == false)
                                                 Present = false;
+                                            if (item.MdsAbsent1 != null || item.MdsAbsent2 != null)
+                                                MdsPresent = false;
 
                                             break;
                                         }
@@ -148,7 +154,7 @@
                                 }
 
                                 // Appliquer le style en fonction de la condition isWorkingHour
-                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? (Present ? "background-color: lightblue;" : "background-color: lightgrey;") : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
+                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? (!MdsPresent ? "background-color: lightyellow;" : (Present ? "background-color: lightblue;" : "background-color: lightgrey;")) : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
                                 </div>
                             }
                         </div>
@@ -167,9 +173,10 @@
     .fin-de-semaine {
         border: 1px solid #47b9a3 !important;
     }
-    .fin-de-semaine .date {
-        background: linear-gradient(to bottom, #60d5d0, #47b9a3);
-    }
+
+        .fin-de-semaine .date {
+            background: linear-gradient(to bottom, #60d5d0, #47b9a3);
+        }
 
     .btn-precedent {
         border-radius: 20px 0 0 20px;
@@ -244,7 +251,7 @@
     var dateFin = new Date('@dateFin.ToString("yyyy-MM-ddTHH:mm:ss")');
 
     @* ------------------------------------ *@
-    console.log('@modelJson');
+        console.log('@modelJson');
     var modelJS = '@modelJson'
 
     modelJS = modelJS.replaceAll('&quot;', '"')
@@ -255,143 +262,151 @@
     console.log(model);
     @* ------------------------------------ *@
     @*var isMdsJS = ('@isMdsJson');*@
-    var roleMdsEnseignantStagiraire = ('@roleMdsEnseignantStagiaire');
+        var roleMdsEnseignantStagiraire = ('@roleMdsEnseignantStagiaire');
 
     @* ------------------------------------ *@
 
-    function afficherSemaine(dateDebut, dateFin) {
-        // Sélectionne l'élément <ul> dans lequel les jours seront affichés
-        var ulElement = document.querySelector('.horizontal-list ul');
+        function afficherSemaine(dateDebut, dateFin) {
+            // Sélectionne l'élément <ul> dans lequel les jours seront affichés
+            var ulElement = document.querySelector('.horizontal-list ul');
 
-        // Vide le contenu de l'élément <ul> pour afficher les nouveaux jours
-        ulElement.innerHTML = '';
+            // Vide le contenu de l'élément <ul> pour afficher les nouveaux jours
+            ulElement.innerHTML = '';
 
-        // Boucle à travers chaque jour entre dateDebut et dateFin
-        for (var journee = new Date(dateDebut); journee <= dateFin; journee.setDate(journee.getDate() + 1)) {
-            // Crée un nouvel élément <li> pour chaque jour
-            var liElement = document.createElement('li');
+            // Boucle à travers chaque jour entre dateDebut et dateFin
+            for (var journee = new Date(dateDebut); journee <= dateFin; journee.setDate(journee.getDate() + 1)) {
+                // Crée un nouvel élément <li> pour chaque jour
+                var liElement = document.createElement('li');
 
-            // Ajoute une classe "colonne" à l'élément <li>
-            liElement.classList.add('colonne');
+                // Ajoute une classe "colonne" à l'élément <li>
+                liElement.classList.add('colonne');
 
-            if(journee.getDay() == 0 || journee.getDay() == 6)
-                liElement.classList.add('fin-de-semaine');
-
-
-            // Crée un nouvel élément <div> pour afficher la date
-            var dateDiv = document.createElement('div');
-            dateDiv.classList.add('date');
-
-            // Ajoute le nom du jour de la semaine à la dateDiv
-            var dayName = journee.toLocaleDateString('fr-FR', { weekday: 'long' });
-            var dayParagraph = document.createElement('p');
-            dayParagraph.textContent = dayName.charAt(0).toUpperCase() + dayName.slice(1);
-            dateDiv.appendChild(dayParagraph);
-
-            // Ajoute la date du mois à la dateDiv
-            var dateParagraph = document.createElement('p');
-            dateParagraph.textContent = journee.getDate() + ' ' + moisEnFrancais(journee.getMonth() + 1);
-            dateDiv.appendChild(dateParagraph);
-
-            // Ajoute la dateDiv à l'élément <li>
-            liElement.appendChild(dateDiv);
-
-            // Crée un nouvel élément <div> pour afficher les heures
-            var heuresDiv = document.createElement('div');
-            heuresDiv.classList.add('heures');
-
-            // Ajoute les 96 quarts d'heure à l'élément <div> des heures
-            for (var quartHeure = 0; quartHeure < 96; quartHeure++) {
-                let isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
-                let Present = true;
-                let IdPlageHoraire = '';
-
-                for (let i = 0; i < model.length; i++) {
-                    const item = model[i];
-
-                    // Convertir la date de début et de fin du quart en minutes
-                    const debutQuartMinutes = new Date(item.DateDebutQuart).getHours() * 60 + new Date(item.DateDebutQuart).getMinutes();
-                    const finQuartMinutes = new Date(item.DateFinQuart).getHours() * 60 + new Date(item.DateFinQuart).getMinutes();
-
-                    //vérifie présence
-                    if (item.Present)
-                        Present = true;
-                    else
-                        Present = false;
-
-                    // Si le quart de travail commence et se termine le même jour
-                    if (new Date(item.DateDebutQuart).toDateString() === new Date(item.DateFinQuart).toDateString()) {
-                        // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
-                        if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15 && quartHeure * 15 < finQuartMinutes) {
-                            isWorkingHour = true;
-                            IdPlageHoraire = item.Id;
-                            break;
-                        }
-                    } else { // Si le quart de travail commence un jour et se termine le lendemain
-                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
-                        if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15) {
-                            isWorkingHour = true;
-                            IdPlageHoraire = item.Id;
-                            break;
-                        }
-                        // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
-                        if (new Date(item.DateFinQuart).toDateString() === journee.toDateString() && quartHeure * 15 < finQuartMinutes) {
-                            isWorkingHour = true;
-                            IdPlageHoraire = item.Id;
-                            break;
-                        }
-                    }
-                }
-
-                // Appliquer le style en fonction de la condition isWorkingHour
-                const quartHeureElement = document.createElement('div');
-                quartHeureElement.classList.add('quartHeure');
-                quartHeureElement.style.height = '5.266666px';
-                if (isWorkingHour) {
-                    quartHeureElement.classList.add('idPlageHoraire-' + IdPlageHoraire);
-
-                    if(Present == false)
-                        quartHeureElement.style.backgroundColor = 'lightgrey';
-                    else
-                        quartHeureElement.style.backgroundColor = 'lightblue';
+                if (journee.getDay() == 0 || journee.getDay() == 6)
+                    liElement.classList.add('fin-de-semaine');
 
 
-                    var classes = quartHeureElement.classList;
-                    for (var i = 0; i < classes.length; i++) {
-                        var match = classes[i].match(/^idPlageHoraire-(.*)$/);
-                        if (match) {
-                            var idPlageHoraire = match[1];
-                            quartHeureElement.addEventListener("click", function () {
-                                //isMds
-                                if (roleMdsEnseignantStagiraire == "stagiaire") {
-                                    afficherAlerte(idPlageHoraire);
-                                }
-                                else if(roleMdsEnseignantStagiraire == "mds"){
+                // Crée un nouvel élément <div> pour afficher la date
+                var dateDiv = document.createElement('div');
+                dateDiv.classList.add('date');
 
-                                    window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
-                                }
+                // Ajoute le nom du jour de la semaine à la dateDiv
+                var dayName = journee.toLocaleDateString('fr-FR', { weekday: 'long' });
+                var dayParagraph = document.createElement('p');
+                dayParagraph.textContent = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+                dateDiv.appendChild(dayParagraph);
 
-                            });
-                            break;
+                // Ajoute la date du mois à la dateDiv
+                var dateParagraph = document.createElement('p');
+                dateParagraph.textContent = journee.getDate() + ' ' + moisEnFrancais(journee.getMonth() + 1);
+                dateDiv.appendChild(dateParagraph);
+
+                // Ajoute la dateDiv à l'élément <li>
+                liElement.appendChild(dateDiv);
+
+                // Crée un nouvel élément <div> pour afficher les heures
+                var heuresDiv = document.createElement('div');
+                heuresDiv.classList.add('heures');
+
+                // Ajoute les 96 quarts d'heure à l'élément <div> des heures
+                for (var quartHeure = 0; quartHeure < 96; quartHeure++) {
+                    let isWorkingHour = false; // Variable pour vérifier si l'heure est pendant le quart de travail
+                    let Present = true;
+                    let MdsPresent = true;
+                    let IdPlageHoraire = '';
+
+                    for (let i = 0; i < model.length; i++) {
+                        const item = model[i];
+
+                        // Convertir la date de début et de fin du quart en minutes
+                        const debutQuartMinutes = new Date(item.DateDebutQuart).getHours() * 60 + new Date(item.DateDebutQuart).getMinutes();
+                        const finQuartMinutes = new Date(item.DateFinQuart).getHours() * 60 + new Date(item.DateFinQuart).getMinutes();
+
+                        //vérifie présence
+                        if (item.StagiairePresent)
+                            Present = true;
+                        else
+                            Present = false;
+
+                        if (item.MdsAbsent1 == null || item.MdsAbsent2 == null)
+                            MdsPresent = true;
+                        else
+                            MdsPresent = false;
+
+                        // Si le quart de travail commence et se termine le même jour
+                        if (new Date(item.DateDebutQuart).toDateString() === new Date(item.DateFinQuart).toDateString()) {
+                            // Vérifier si l'heure actuelle se trouve entre l'heure de début et de fin du quart de travail
+                            if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15 && quartHeure * 15 < finQuartMinutes) {
+                                isWorkingHour = true;
+                                IdPlageHoraire = item.Id;
+                                break;
+                            }
+                        } else { // Si le quart de travail commence un jour et se termine le lendemain
+                            // Vérifier si l'heure actuelle est pendant le quart de travail sur le premier jour
+                            if (new Date(item.DateDebutQuart).toDateString() === journee.toDateString() && debutQuartMinutes <= quartHeure * 15) {
+                                isWorkingHour = true;
+                                IdPlageHoraire = item.Id;
+                                break;
+                            }
+                            // Vérifier si l'heure actuelle est pendant le quart de travail sur le dernier jour
+                            if (new Date(item.DateFinQuart).toDateString() === journee.toDateString() && quartHeure * 15 < finQuartMinutes) {
+                                isWorkingHour = true;
+                                IdPlageHoraire = item.Id;
+                                break;
+                            }
                         }
                     }
-                }
-                if (quartHeure % 4 === 3) {
-                    quartHeureElement.style.borderBottom = '1px solid lightgrey';
+
+                    // Appliquer le style en fonction de la condition isWorkingHour
+                    const quartHeureElement = document.createElement('div');
+                    quartHeureElement.classList.add('quartHeure');
+                    quartHeureElement.style.height = '5.266666px';
+                    if (isWorkingHour) {
+                        quartHeureElement.classList.add('idPlageHoraire-' + IdPlageHoraire);
+
+                        if (MdsPresent == false)
+                            quartHeureElement.style.backgroundColor = 'lightyellow';
+                        else if (Present == false)
+                            quartHeureElement.style.backgroundColor = 'lightgrey';
+                        else
+                            quartHeureElement.style.backgroundColor = 'lightblue';
+
+
+                        var classes = quartHeureElement.classList;
+                        for (var i = 0; i < classes.length; i++) {
+                            var match = classes[i].match(/^idPlageHoraire-(.*)$/);
+                            if (match) {
+                                var idPlageHoraire = match[1];
+                                quartHeureElement.addEventListener("click", function () {
+                                    //isMds
+                                    if (roleMdsEnseignantStagiraire == "stagiaire") {
+                                        afficherAlerte(idPlageHoraire);
+                                    }
+                                    else if (roleMdsEnseignantStagiraire == "mds") {
+
+                                        window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
+                                    }
+
+                                });
+                                break;
+                            }
+                        }
+                    }
+                    if (quartHeure % 4 === 3) {
+                        quartHeureElement.style.borderBottom = '1px solid lightgrey';
+                    }
+
+                    // Ajouter l'élément quartHeure à la page ou au conteneur approprié
+                    // Remplacez document.body par le conteneur approprié si nécessaire
+                    heuresDiv.appendChild(quartHeureElement);
                 }
 
-                // Ajouter l'élément quartHeure à la page ou au conteneur approprié
-                // Remplacez document.body par le conteneur approprié si nécessaire
-                heuresDiv.appendChild(quartHeureElement);
+                // Ajoute les heuresDiv à l'élément <li>
+                liElement.appendChild(heuresDiv);
+
+                // Ajoute le <li> à l'élément <ul>
+                ulElement.appendChild(liElement);
             }
-
-            // Ajoute les heuresDiv à l'élément <li>
-            liElement.appendChild(heuresDiv);
-
-            // Ajoute le <li> à l'élément <ul>
-            ulElement.appendChild(liElement);
         }
-    }
 
     // Fonction pour convertir un mois en français
     function moisEnFrancais(mois) {
@@ -424,7 +439,7 @@
         afficherSemaine(dateDebut, dateFin);
     }
 
-    async function afficherRemplacement(idPlageHOraire) { 
+    async function afficherRemplacement(idPlageHOraire) {
         try {
             const response = await fetch('/Horaire/ObtenirInfoPlageHoraire?Id=' + idPlageHoraire);
             if (!response.ok) {
@@ -432,9 +447,9 @@
             }
             const data = await response.json();
 
-            @*console.log('Informations de la plage horaire :', data);*@
+    @*console.log('Informations de la plage horaire :', data);*@
 
-            const debutQuart = new Date(data.dateDebutQuart);
+                const debutQuart = new Date(data.dateDebutQuart);
             const finQuart = new Date(data.dateFinQuart);
 
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -474,11 +489,11 @@
             console.error('Erreur:', error);
             Swal.fire('Erreur!', 'Une erreur est survenue lors de la récupération des informations de la plage horaire.', 'error');
         }
-    
-    
-    
-    
-    
+
+
+
+
+
     }
 
     async function afficherAlerte(idPlageHoraire) {
@@ -489,9 +504,9 @@
             }
             const data = await response.json();
 
-            @*console.log('Informations de la plage horaire :', data);*@
+    @*console.log('Informations de la plage horaire :', data);*@
 
-            const debutQuart = new Date(data.dateDebutQuart);
+                const debutQuart = new Date(data.dateDebutQuart);
             const finQuart = new Date(data.dateFinQuart);
 
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -515,8 +530,7 @@
                 cancelButtonText: 'Annuler',
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    if(result.value)
-                    {
+                    if (result.value) {
                         const response = await fetch('/Horaire/ReprendreJournee');
 
                     }
@@ -546,20 +560,20 @@
                     div.addEventListener("click", function () {
 
                         if (roleMdsEnseignantStagiraire == "stagiaire") {
-                             afficherAlerte(idPlageHoraire);
+                            afficherAlerte(idPlageHoraire);
                         }
-                        else if(roleMdsEnseignantStagiraire == "mds"){
+                        else if (roleMdsEnseignantStagiraire == "mds") {
 
-                             window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
-                        }
-
-@*                        if (isMdsJS == "true") {
                             window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
                         }
-                        else {
+
+    @*                        if (isMdsJS == "true") {
+                            window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
+                            }
+                            else {
                             afficherAlerte(idPlageHoraire);
-                        }*@
-                    });
+                            }*@
+                        });
                     break;
                 }
             }

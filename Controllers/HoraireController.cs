@@ -593,7 +593,7 @@ namespace SPU.Controllers
                 DateDebutQuart = x.DateDebut,
                 DateFinQuart = x.DateFin,
                 Id = x.Id,
-                Present = x.StagiaireAbsent
+                StagiairePresent = x.StagiaireAbsent
             }).FirstOrDefault();
 
             if (journeeTravailles != null)
