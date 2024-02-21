@@ -56,7 +56,9 @@ namespace SPU.ViewComponents
                         DateDebutQuart = x.DateDebut.ToLocalTime(),
                         DateFinQuart = x.DateFin.ToLocalTime(),
                         Id = x.Id,
-                        StagiairePresent = x.StagiairePresent
+                        StagiairePresent = x.StagiairePresent,
+                        MdsAbsent1 = x.MDS1absent,
+                        MdsAbsent2 = x.MDS2absent,
                     }).ToList();
 
                     calendrier.ListJournees = journeeTravailles;
@@ -75,7 +77,9 @@ namespace SPU.ViewComponents
                         DateDebutQuart = x.DateDebut.ToLocalTime(),
                         DateFinQuart = x.DateFin.ToLocalTime(),
                         Id = x.Id,
-                        StagiairePresent = x.StagiairePresent
+                        StagiairePresent = x.StagiairePresent,
+                        MdsAbsent1 = x.MDS1absent,
+                        MdsAbsent2 = x.MDS2absent,
                     }).ToList();
 
                     calendrier.ListJournees = journeeTravailles;

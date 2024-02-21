@@ -322,12 +322,13 @@
                         const finQuartMinutes = new Date(item.DateFinQuart).getHours() * 60 + new Date(item.DateFinQuart).getMinutes();
 
                         //vérifie présence
+
                         if (item.StagiairePresent)
                             Present = true;
                         else
                             Present = false;
 
-                        if (item.MdsAbsent1 == null || item.MdsAbsent2 == null)
+                        if (item.MdsAbsent1 == null && item.MdsAbsent2 == null)
                             MdsPresent = true;
                         else
                             MdsPresent = false;
@@ -363,6 +364,7 @@
                     if (isWorkingHour) {
                         quartHeureElement.classList.add('idPlageHoraire-' + IdPlageHoraire);
 
+                        console.log("mds:" + MdsPresent);
                         if (MdsPresent == false)
                             quartHeureElement.style.backgroundColor = 'lightyellow';
                         else if (Present == false)

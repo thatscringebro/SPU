@@ -556,26 +556,26 @@ namespace SPU.Controllers
                     //ICI CLAUDEL POUR LA MODIF DE LA PLAGE HORAIRE
                     if (!vm.EstPresent)
                     {
-                        if (ph.MDS1absent == null)
+                        if (phBD.MDS1absent == null)
                         {
-                            ph.MDS1absent = new Guid(_loggedUserId);
+                            phBD.MDS1absent = new Guid(_loggedUserId);
                         }
-                        else if (ph.MDS2absent == null)
+                        else if (phBD.MDS2absent == null)
                         {
-                            ph.MDS2absent = new Guid(_loggedUserId);
+                            phBD.MDS2absent = new Guid(_loggedUserId);
                         }
                     }
-                    else if (vm.EstPresent && ph.MDS1absent != null)
+                    else if (vm.EstPresent && phBD.MDS1absent != null)
                     {
-                        ph.MDS1absent = null;
+                        phBD.MDS1absent = null;
                     }
-                    else if (vm.EstPresent && ph.MDS2absent != null)
                     {
-                        ph.MDS2absent = null;
+                        phBD.MDS2absent = null;
                     }
 
 
                     // Enregistrer les modifications dans la base de données
+                    _context.Update(phBD);
                     _context.SaveChanges();
 
                     // Rediriger vers l'action "Horaire" du contrôleur "Horaire"
