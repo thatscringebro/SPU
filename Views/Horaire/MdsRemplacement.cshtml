@@ -10,7 +10,7 @@
 <div>
     <h1>Maître(s) de stage absent</h1>
     <h3>>Un ou plusieurs de vos maîtres de stage ont déclaré leur absence entre le @jourDebut à @heureDebut et le @jourFin à @heureFin.</h3>
-    <form>
+    <form asp-action="RentrerAbsence" asp-controller="Horaire" method="post">
         <label for="remplacent1">Matricule du premier remplacent</label>
         <input id="remplacent1" asp-for="MatriculeRemplacent1"/>
         <label for="remplacent2">Matricule du second renplacent</label>
