@@ -220,10 +220,12 @@ namespace SPU.Controllers
 
                 vm.DateCreationHoraire = mdsHoraire.DateCreationHoraire;
                 vm.DateExpiration = mdsHoraire.DateExpiration;
-                vm.DateDebutStage = stagHoraire.debutStage;
-                vm.DateFinStage = stagHoraire.finStage;
 
-
+                if(stagHoraire!= null)
+                {
+                    vm.DateDebutStage = stagHoraire.debutStage;
+                    vm.DateFinStage = stagHoraire.finStage;
+                }
             }
 
             //return View(vm);

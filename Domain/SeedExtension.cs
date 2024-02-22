@@ -155,13 +155,13 @@ namespace SPU.Domain
                 "EmployeurU", null, employeur0, null, new DateTime(2024, 02, 25).ToUniversalTime(), new DateTime(2026, 02, 25).ToUniversalTime());
 
             //Ajout nouvel horaire
-            var horaire0 = AddHoraire(builder, null, mds0, ecole);
-            var horaire1 = AddHoraire(builder, null, mds1, ecole);
-            var horaire2 = AddHoraire(builder, null, mds2, ecole);
-            var horaire3 = AddHoraire(builder, null, mds3, ecole);
-            var horaire4 = AddHoraire(builder, null, mds4, ecole);
-            var horaire5 = AddHoraire(builder, null, mds5, ecole);
-            var horaire6 = AddHoraire(builder, null, mds6, ecole);
+            //var horaire0 = AddHoraire(builder, null, mds0, ecole);
+            //var horaire1 = AddHoraire(builder, null, mds1, ecole);
+            //var horaire2 = AddHoraire(builder, null, mds2, ecole);
+            //var horaire3 = AddHoraire(builder, null, mds3, ecole);
+            //var horaire4 = AddHoraire(builder, null, mds4, ecole);
+            //var horaire5 = AddHoraire(builder, null, mds5, ecole);
+            //var horaire6 = AddHoraire(builder, null, mds6, ecole);
 
         }
 
@@ -179,14 +179,14 @@ namespace SPU.Domain
             return newEcole;
         }
 
-        private static Horaire AddHoraire(ModelBuilder builder, Stagiaire? stagiaire, MDS mds1, /*MDS? mds2,*/ Ecole ecole)
+        private static Horaire AddHoraire(ModelBuilder builder, Stagiaire stagiaire, MDS mds, Ecole ecole)
         {
             var newHoraire = new Horaire()
             {
                 Id = Guid.NewGuid(),
-				StagiaireId = stagiaire?.Id,
-                MDSId1 = mds1.Id,
-                //MDSId2 = mds2.Id
+                StagiaireId = stagiaire.Id,
+                MDSId1 = mds.Id,
+                mds1 = mds
             };
             builder.Entity<Horaire>().HasData(newHoraire);
 
