@@ -565,12 +565,11 @@ namespace SPU.Controllers
             aEditer.Email = vm.Email;
             aEditer.UserName = vm.userName;
 
-            var works = _userManager.UpdateAsync(aEditer);
+            var works = await _userManager.UpdateAsync(aEditer);
             if (works != null)
                 TempData["SuccessMessage"] = "Modifications succeeded";
             else
                 TempData["ErrorMessage"] = "Request failed";
-
 
 
             await _spuContext.SaveChangesAsync();
@@ -1072,8 +1071,6 @@ namespace SPU.Controllers
             {
                 foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
                 {
-                    //List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
-
                     var Mds1 = _spuContext.Horaires.Where(h => h.StagiaireId == user.Id).Select(m => m.MDSId1).FirstOrDefault();
                     var Mds2 = _spuContext.Horaires.Where(h => h.StagiaireId == user.Id).Select(m => m.MDSId2).FirstOrDefault();
 
@@ -1217,6 +1214,8 @@ namespace SPU.Controllers
                     mentor1.StagiaireId = idStagiaire;
                     mentor1.chat = stagiaire.chat;
                     mentor1.ChatId = stagiaire.ChatId;
+                    stagiaire.EmployeurId = mentor1.EmployeurId;
+                    stagiaire.employeur = mentor1.employeur;
 
                     var horaireMDS1 = await _spuContext.Horaires.FirstOrDefaultAsync(h => h.MDSId1 == idMdsSelectionne1);
                     if (horaireMDS1 != null)
@@ -1246,6 +1245,8 @@ namespace SPU.Controllers
                     mentor2.StagiaireId = idStagiaire;
                     mentor2.chat = stagiaire.chat;
                     mentor2.ChatId = stagiaire.ChatId;
+                    stagiaire.EmployeurId = mentor2.EmployeurId;
+                    stagiaire.employeur = mentor2.employeur;
 
                     foreach (Horaire horaire in _spuContext.Horaires)
                     {           
@@ -1328,15 +1329,15 @@ namespace SPU.Controllers
                     MDS mds = _spuContext.MDS.Include(x => x.utilisateur).FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
 
                     worksheet.Cell($"A{i+2}").Value = "";
-                    worksheet.Cell($"B{i+2}").Value = stagiaires[i].employeur.utilisateur.UserName;
+                    worksheet.Cell($"B{i+2}").Value = mds.employeur.utilisateur.UserName;
                     worksheet.Cell($"C{i+2}").Value = "";
                     worksheet.Cell($"E{i+2}").Value = "";
                     worksheet.Cell($"F{i+2}").Value = "";
-                    worksheet.Cell($"G{i+2}").Value = stagiaires[i].employeur.utilisateur.PhoneNumber;
-                    worksheet.Cell($"H{i+2}").Value = stagiaires[i].employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue;
-                    worksheet.Cell($"I{i+2}").Value = stagiaires[i].employeur.adresse.Ville;
-                    worksheet.Cell($"J{i+2}").Value = stagiaires[i].employeur.adresse.Province;
-                    worksheet.Cell($"K{i+2}").Value = stagiaires[i].employeur.adresse.CodePostal;
+                    worksheet.Cell($"G{i+2}").Value = mds.employeur.utilisateur.PhoneNumber;
+                    worksheet.Cell($"H{i+2}").Value = mds.employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue;
+                    worksheet.Cell($"I{i+2}").Value = mds.employeur.adresse.Ville;
+                    worksheet.Cell($"J{i+2}").Value = mds.employeur.adresse.Province;
+                    worksheet.Cell($"K{i+2}").Value = mds.employeur.adresse.CodePostal;
                     worksheet.Cell($"L{i+2}").Value = mds.utilisateur.NomComplet + " / " + mds.MatriculeId;
                     worksheet.Cell($"M{i+2}").Value = stagiaires[i].utilisateur.NomComplet;
                     worksheet.Cell($"N{i+2}").Value = stagiaires[i].utilisateur.Prenom;

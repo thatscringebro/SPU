@@ -15,41 +15,51 @@
         }
         <div class="horaire-horaire-entete">
             <h2>Horaire SPU</h2>
-            <div>
-                <label>
-                    Date début de stage : @(Model.DateDebutStage.HasValue ? Model.DateDebutStage.Value.ToString("d MMMM yyyy") : "N/A") | Date fin de stage : @(Model.DateFinStage.HasValue ? Model.DateFinStage.Value.ToString("d MMMM yyyy") : "N/A")
-                </label>
-            </div>
-            @*      @if (Model.Role == "MDS")
-            {
             <label>
-            Date début horaire maître de stage ...
+                Maître de stage 1 : <strong>@Model.nomMds</strong>
             </label>
-            }*@
+            <label>
+                Maître de stage 2 : <strong>N/A</strong>
+            </label>
             <div>
                 @if (Model.nomStagiaire == null)
                 {
                     <label>
-                        Maître de stage : @Model.nomMds | Stagiaire: À déterminer
+                        Stagiaire: <strong>À déterminer</strong>
                     </label>
                 }
                 else
                 {
                     <label>
-                        Maître de stage : @Model.nomMds | Stagiaire: @Model.nomStagiaire
+                        Stagiaire: <strong>@Model.nomStagiaire</strong>
                     </label>
                 }
             </div>
+
+            @*Maitre de stage 2*@
+            @if (Model.Role == "MDS")
+            {
+                <label>
+                    Accréditation : Du <strong>@Model.DateCreationHoraire.ToString("d MMMM yyyy")</strong> au <strong>@Model.DateExpiration.ToString("d MMMM yyyy")</strong>
+                </label>
+            }
+            <div>
+                <label>
+                    Date de stage : Du <strong>@(Model.DateDebutStage.HasValue ? Model.DateDebutStage.Value.ToString("d MMMM yyyy") : "N/A")</strong> 
+                    au <strong>@(Model.DateFinStage.HasValue ? Model.DateFinStage.Value.ToString("d MMMM yyyy") : "N/A")</strong>
+                </label>
+            </div>
+
         </div>
         @if (Model.Role == "MDS")
         {
             <div style="text-align: center;">
-                <a id="horaire-ajoutPlageHoraire-button" asp-route-horaireId="@ViewBag.horaireId" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout plage horaire</a>
+                <a id="horaire-ajoutPlageHoraire-button" asp-route-horaireId="@ViewBag.horaireId" asp-controller="Horaire" asp-action="AjoutPlageHoraireMDS">Ajout d'une plage horaire</a>
             </div>
         }
     </div>
     <br />
     <div class="horizontal-list">
-        <vc:schedule-day horaire-id="@ViewBag.horaireId" mds-id="ViewBag.MDSId1"></vc:schedule-day>
+        <vc:schedule-day horaire-id="@ViewBag.horaireId" mds-id1="ViewBag.MDSId1"></vc:schedule-day>
     </div>
 </div>
