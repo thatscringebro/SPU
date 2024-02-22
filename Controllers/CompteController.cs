@@ -1334,15 +1334,15 @@ namespace SPU.Controllers
                     MDS mds = _spuContext.MDS.Include(x => x.utilisateur).FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
 
                     worksheet.Cell($"A{i+2}").Value = "";
-                    worksheet.Cell($"B{i+2}").Value = stagiaires[i].employeur.utilisateur.UserName;
+                    worksheet.Cell($"B{i+2}").Value = mds.employeur.utilisateur.UserName;
                     worksheet.Cell($"C{i+2}").Value = "";
                     worksheet.Cell($"E{i+2}").Value = "";
                     worksheet.Cell($"F{i+2}").Value = "";
-                    worksheet.Cell($"G{i+2}").Value = stagiaires[i].employeur.utilisateur.PhoneNumber;
-                    worksheet.Cell($"H{i+2}").Value = stagiaires[i].employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue;
-                    worksheet.Cell($"I{i+2}").Value = stagiaires[i].employeur.adresse.Ville;
-                    worksheet.Cell($"J{i+2}").Value = stagiaires[i].employeur.adresse.Province;
-                    worksheet.Cell($"K{i+2}").Value = stagiaires[i].employeur.adresse.CodePostal;
+                    worksheet.Cell($"G{i+2}").Value = mds.employeur.utilisateur.PhoneNumber;
+                    worksheet.Cell($"H{i+2}").Value = mds.employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue;
+                    worksheet.Cell($"I{i+2}").Value = mds.employeur.adresse.Ville;
+                    worksheet.Cell($"J{i+2}").Value = mds.employeur.adresse.Province;
+                    worksheet.Cell($"K{i+2}").Value = mds.employeur.adresse.CodePostal;
                     worksheet.Cell($"L{i+2}").Value = mds.utilisateur.NomComplet + " / " + mds.MatriculeId;
                     worksheet.Cell($"M{i+2}").Value = stagiaires[i].utilisateur.NomComplet;
                     worksheet.Cell($"N{i+2}").Value = stagiaires[i].utilisateur.Prenom;
