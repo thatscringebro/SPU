@@ -120,8 +120,6 @@ namespace SPU.Controllers
                 if (roleUser == "Employeur")
                     return RedirectToAction(nameof(ManageMds));
 
-                //Redirection home ? ou horaire ? mais si les mds/stagiaire n'as pas encore d'horaire ? 
-
                 if (!string.IsNullOrEmpty(returnUrl))
                     return Redirect(returnUrl);
 
