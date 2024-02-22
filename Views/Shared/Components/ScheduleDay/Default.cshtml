@@ -396,6 +396,16 @@
                     // Ajouter l'élément quartHeure à la page ou au conteneur approprié
                     // Remplacez document.body par le conteneur approprié si nécessaire
                     heuresDiv.appendChild(quartHeureElement);
+
+                    (function (id) {
+                        quartHeureElement.addEventListener("click", function () {
+                            if (roleMdsEnseignantStagiraire == "stagiaire") {
+                                window.location.href = '/Horaire/MdsRemplacement?idPlageHoraire=' + id;
+                            } else if (roleMdsEnseignantStagiraire == "mds") {
+                                window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + id;
+                            }
+                        });
+                    })(IdPlageHoraire);
                 }
 
                 // Ajoute les heuresDiv à l'élément <li>
