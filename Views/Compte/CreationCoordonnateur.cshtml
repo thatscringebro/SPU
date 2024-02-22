@@ -10,6 +10,8 @@
             new { }, new { @class = "btn btn-secondary" })
 </div>
 
+<link rel="stylesheet" href="~/css/user.css" />
+
 <form asp-action="CreationNormal">
     <h1>Coordonnateur</h1>
     <hr />
@@ -65,7 +67,7 @@
             <input asp-for="role" class="form-control" type="hidden" value="Coordonnateur" />
             <div class="form-group">
                 <div class="form-group mt-2 mb-2">
-                    <input type="submit" value="Créer" class="btn btn-primary" />
+                    <input type="submit" value="Créer" class="btn newbtn-btn" />
                 </div>
             </div>
         </div>

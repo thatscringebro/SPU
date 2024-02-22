@@ -4,6 +4,7 @@
     ViewData["Title"] = "S'enregistrer";
 }
 
+<link rel="stylesheet" href="~/css/user.css" />
 
 <div class="mt-2 mb-2">
     @Html.ActionLink("Back", "Index", "Home",
@@ -64,7 +65,7 @@
             <input asp-for="role" class="form-control" type="hidden" value="Enseignant" />
             <div class="form-group">
                 <div class="form-group mt-2 mb-2">
-                    <input type="submit" value="Créer" class="btn btn-primary" />
+                    <input type="submit" value="Créer" class="btn newbtn-btn" />
                 </div>
             </div>
         </div>

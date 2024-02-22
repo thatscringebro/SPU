@@ -33,13 +33,12 @@
 <a class="btn btn-success" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a>
 
 <link rel="stylesheet" href="~/css/site.css" />
-<link rel="stylesheet" href="~/css/user.css" />
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 
-<h1>Gérer les utilisateurs<br></h1>
+<h1 class="mt-3">Gérer les utilisateurs<br></h1>
 
 @* <div class="mt-2 mb-2">
     @Html.ActionLink("Créer un nouvel utilisateur", "ChoixCreation", "Compte",
@@ -198,7 +197,7 @@
                         <i class="fa fa-solid fa-user" style="color: #2386d1;" onclick='userDetails(@Html.Raw(Json.Serialize(item)))'></i>
                     </td>
                     <td>
-                        @Html.ActionLink("Horaire", "HoraireMds", "Horaire", new { userId = item.Id }, new { @class = "btn btn-success" })
+                        @Html.ActionLink("Horaire", "HoraireMds", "Horaire", new { userId = item.Id }, new { @class = "btn horaire-btn" })
                     </td>
                     <td>
                         @Html.ActionLink("Mettre à jour", "EditMDS", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })

@@ -6,12 +6,19 @@
     font-family: Raleway, sans-serif;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
 .containerLogin {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
+    /*min-height: 100vh;*/
+    height:100%;
+    /*padding: 20px;*/
     overflow:hidden;
 }
 
@@ -29,8 +36,8 @@
     padding: 25px 20px;
     z-index: 1;
     position: relative;
-    height: 100%;/*
-    text-align:center;*/
+    height: 100%;
+    text-align:center;
 }
 
 .screen__background {
