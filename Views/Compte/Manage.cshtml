@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="~/css/user.css" />
 
 
-<a class="btn btn-success" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a>
+<a class="btn btn-success mt-3" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a>
 
 <link rel="stylesheet" href="~/css/site.css" />
 
@@ -523,14 +523,29 @@
 
         $(function () {
             $('.delete-button').click(function () {
-                const nomComplet = $(this).data('prenom') + ' ' + $(this).data('nom') || "this item";
+                const prenom = $(this).data('prenom');
+                const nom = $(this).data('nom');
+                const nomComplet = prenom && nom ? `${prenom} ${nom}` : "this item";
 
                 const message = `Voulez-vous vraiment supprimer ${nomComplet}?`;
 
-                if (confirm(message)) {
-                    $(this).parent("form").submit();
-                }
+                Swal.fire({
+                    title: 'Êtes-vous sûr?',
+                    text: message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Oui, supprimez-le!',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $(this).parent("form").submit();
+                    }
+                });
             });
+
 
             $('.copy-link').click(function () {
                 const link = $(this).data('link');
@@ -545,7 +560,7 @@
 
 
        
-   //Stagiaire
+        //Stagiaire
         document.addEventListener("DOMContentLoaded", function () {
             const searchBar = document.getElementById("stagiaireSearchInput");
             const tableRows = document.querySelectorAll("#displaySt tr");
