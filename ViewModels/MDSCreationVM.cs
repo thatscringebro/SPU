@@ -12,12 +12,12 @@ namespace SPU.ViewModels
         [Required(ErrorMessage = "Le nom d'utilisateur est requis!")]
         [Display(Name = "Nom d'utilisateur")]
         [Remote(action: "VerifierUsername", controller: "Compte", HttpMethod = "POST", ErrorMessage = "Cet utilisateur existe déjà.")]
-        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom d'utilisateur doit avoir entre 3 et 25 caractères.")]
         public string userName { get; set; }
 
         [Required(ErrorMessage = "Le prénom est requis!")]
         [Display(Name = "Prénom")]
-        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le prénom doit avoir entre 3 et 25 caractères.")]
         public string Prenom { get; set; }
 
         [Required(ErrorMessage = "Le nom est requis!")]
@@ -47,12 +47,12 @@ namespace SPU.ViewModels
         public string MatriculeId { get; set; }
 
 
-        [Required(ErrorMessage = "La civilité est requise!")]
+        //[Required(ErrorMessage = "La civilité est requise!")]
         [Display(Name = "Civilité")]
         public Civilite civilite { get; set; }
 
 
-        [Required(ErrorMessage = "Le type de l'employeur est requis!")]
+        //[Required(ErrorMessage = "Le type de l'employeur est requis!")]
         [Display(Name = "Type d'employeur")]
         public TypeEmployeur TypeEmployeur { get; set; }
 
@@ -61,7 +61,7 @@ namespace SPU.ViewModels
         [RegularExpression(@"^\s*\d{3}-\d{3}-\d{4}\s*$", ErrorMessage = "Le format du téléphone est invalide! Utilisez le format XXX-XXX-XXXX.")]
         public string telMaison { get; set; }
 
-        [Required(ErrorMessage = "Le nom de l'employeur est requis!")]
+        //[Required(ErrorMessage = "Le nom de l'employeur est requis!")]
         [Display(Name = "Nom de l'employeur")]
         public string? NomEmployeur { get; set; }
         public string role { get; set; }
