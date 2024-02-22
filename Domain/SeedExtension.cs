@@ -157,11 +157,11 @@ namespace SPU.Domain
             //Ajout nouvel horaire
             //AddHoraire(builder, mds0);
             //AddHoraire(builder, mds1);
-            //  AddHoraire(builder, mds2);
+            //AddHoraire(builder, mds2);
             //AddHoraire(builder, mds3);
-            // AddHoraire(builder, mds4);
-            // AddHoraire(builder, mds5);
-            // AddHoraire(builder, mds6);
+            //AddHoraire(builder, mds4);
+            //AddHoraire(builder, mds5);
+            //AddHoraire(builder, mds6);
 
         }
 
@@ -309,7 +309,8 @@ namespace SPU.Domain
 				EmployeurId = employeur.Id,
 				ChatId = chat?.Id,
                 DateCreationHoraire = dateCreation,
-                DateExpiration = dateExpiration
+                DateExpiration = dateExpiration,
+                
 			};
 			builder.Entity<MDS>().HasData(newUser);
 

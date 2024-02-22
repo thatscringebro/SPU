@@ -40,7 +40,10 @@ namespace SPU.Controllers
             //Liste horaire maître de stage
             if (mds != null)
             {
-                Horaire? horaire = _context.Horaires.Where(x => (x.MDSId1 == mds.Id && x.StagiaireId != null) || (x.MDSId2 == mds.Id && x.StagiaireId != null)).FirstOrDefault();
+                Horaire? horaire = _context.Horaires.Where(x => 
+                (x.MDSId1 == mds.Id && x.StagiaireId == null) ||
+                (x.MDSId1 == mds.Id && x.StagiaireId != null) || 
+                (x.MDSId2 == mds.Id && x.StagiaireId != null)).FirstOrDefault();
                 vm.role = "MDS";
 
                 if (horaire != null)
