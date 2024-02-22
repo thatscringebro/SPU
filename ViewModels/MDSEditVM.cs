@@ -13,15 +13,17 @@ namespace SPU.ViewModels
         [Required(ErrorMessage = "Le nom d'utilisateur est requis!")]
         [Display(Name = "Nom d'utilisateur")]
         [Remote(action: "VerifierUsername", controller: "Compte", HttpMethod = "POST", ErrorMessage = "Cet utilisateur existe déjà.")]
-
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
         public string userName { get; set; }
 
         [Required(ErrorMessage = "Le prénom est requis!")]
         [Display(Name = "Prénom")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
         public string Prenom { get; set; }
 
         [Required(ErrorMessage = "Le nom est requis!")]
         [Display(Name = "Nom")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
         public string Nom { get; set; }
 
         [Required(ErrorMessage = "Le numéro de cellulaire est requis!")]
