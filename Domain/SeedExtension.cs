@@ -104,7 +104,7 @@ namespace SPU.Domain
                 "EmployeurZ", stagiaire2, employeur2, chat2);
 
 
-            //var horaire = AddHoraire(builder, stagiaire0, mds0, ecole);
+         //   var horaire = AddHoraire(builder, stagiaire0, mds0, ecole);
 
         }
 
@@ -127,8 +127,9 @@ namespace SPU.Domain
             var newHoraire = new Horaire()
             {
                 Id = Guid.NewGuid(),
-				StagiaireId = stagiaire.Id,
-				MDSId1 = mds.Id,
+                StagiaireId = stagiaire.Id,
+                MDSId1 = mds.Id,
+                mds1 = mds
             };
             builder.Entity<Horaire>().HasData(newHoraire);
 
