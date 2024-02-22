@@ -5,14 +5,15 @@
 
 }
 
+<link rel="stylesheet" href="~/css/user.css" />
 <link rel="stylesheet" href="~/bootstrap.min.css/" />
 <script type="text/javascript" src="~/bootstrap.min.js"></script>
 
-<h1>Gérer les stagiaires<br></h1>
+<h1 class="mt-3 mb-3">Gérer les stagiaires<br></h1>
 
 <div class="mt-2 mb-2">
     @Html.ActionLink("Gérer les utilisateurs", "Manage", "Compte",
-    new { }, new { @class = "btn btn-primary" })
+    new { }, new { @class = "btn btn-secondary" })
 </div>
 
 @if (TempData["ErrorMessage"] != null)
@@ -145,7 +146,7 @@
 
                         <td>
                             <input type="hidden" name="idStagiaire" value="@item.Id" />
-                            <button type="submit" class="btn btn-success">Relier</button>
+                            <button type="submit" class="btn btn-light-blue-green">Relier</button>
                         </td>
                     </tr>
                     </form>
