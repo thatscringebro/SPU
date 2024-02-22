@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="~/css/user.css" />
 
 
-<a class="btn btn-success" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a>
+<a class="btn btn-success mt-3" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a>
 
 <link rel="stylesheet" href="~/css/site.css" />
 
@@ -529,7 +529,6 @@
 
                 const message = `Voulez-vous vraiment supprimer ${nomComplet}?`;
 
-                // Utiliser Swal pour la confirmation
                 Swal.fire({
                     title: 'Êtes-vous sûr?',
                     text: message,
@@ -541,7 +540,7 @@
                     cancelButtonText: 'Annuler'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Si l'utilisateur confirme, soumettre le formulaire
+
                         $(this).parent("form").submit();
                     }
                 });
@@ -561,7 +560,7 @@
 
 
        
-   //Stagiaire
+        //Stagiaire
         document.addEventListener("DOMContentLoaded", function () {
             const searchBar = document.getElementById("stagiaireSearchInput");
             const tableRows = document.querySelectorAll("#displaySt tr");
