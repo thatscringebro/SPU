@@ -155,13 +155,13 @@ namespace SPU.Domain
                 "EmployeurU", null, employeur0, null, new DateTime(2024, 02, 25).ToUniversalTime(), new DateTime(2026, 02, 25).ToUniversalTime());
 
             //Ajout nouvel horaire
-            //var horaire0 = AddHoraire(builder, null, mds0, ecole);
-            //var horaire1 = AddHoraire(builder, null, mds1, ecole);
-            //var horaire2 = AddHoraire(builder, null, mds2, ecole);
-            //var horaire3 = AddHoraire(builder, null, mds3, ecole);
-            //var horaire4 = AddHoraire(builder, null, mds4, ecole);
-            //var horaire5 = AddHoraire(builder, null, mds5, ecole);
-            //var horaire6 = AddHoraire(builder, null, mds6, ecole);
+            //AddHoraire(builder, mds0);
+            //AddHoraire(builder, mds1);
+            //  AddHoraire(builder, mds2);
+            //AddHoraire(builder, mds3);
+            // AddHoraire(builder, mds4);
+            // AddHoraire(builder, mds5);
+            // AddHoraire(builder, mds6);
 
         }
 
@@ -179,18 +179,15 @@ namespace SPU.Domain
             return newEcole;
         }
 
-        private static Horaire AddHoraire(ModelBuilder builder, Stagiaire stagiaire, MDS mds, Ecole ecole)
+        private static void AddHoraire(ModelBuilder builder, MDS mds)
         {
             var newHoraire = new Horaire()
             {
                 Id = Guid.NewGuid(),
-                StagiaireId = stagiaire.Id,
                 MDSId1 = mds.Id,
-                mds1 = mds
+                mds1 = mds,
             };
             builder.Entity<Horaire>().HasData(newHoraire);
-
-            return newHoraire;
         }
 
         private static Utilisateur AddUser(ModelBuilder builder, string userName,

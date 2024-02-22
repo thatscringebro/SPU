@@ -119,8 +119,17 @@ namespace SPU.Controllers
             Horaire horaire = new Horaire();
 
             horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
+            if(horaire == null)
+            {
+                TempData["ErrorMessage"] = "Horaire vide";
+                return View();
+            }
+            else
+            {
+
             ViewBag.horaireId = horaire.Id;
             ViewBag.MDSId1 = null;
+            }
 
             // Récupérer le message d'erreur de la session temporaire
             string errorMessage = TempData["ErrorMessage"] as string;
@@ -311,9 +320,11 @@ namespace SPU.Controllers
                 return View(vm);
             }
 
+
             Horaire horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
             MDS mds = _context.MDS.Where(x => x.UtilisateurId == idMDS).FirstOrDefault();
 
+            
                    //Si il y a de la récurrence
             if (vm.Recurrence)
             {
