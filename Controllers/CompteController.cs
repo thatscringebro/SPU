@@ -417,6 +417,11 @@ namespace SPU.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <returns>Retourne la vue avec les informations </returns>
         //CREATION STAGIAIRE/COORDO/ENSEIGNANT
         [AllowAnonymous]
         [HttpPost]
@@ -445,7 +450,6 @@ namespace SPU.Controllers
                 ModelState.AddModelError(string.Empty, "Nom d'utilisateur déjà utilisé. Veuillez utiliser un autre nom d'utilisateur.");
                 return View(vm);
             }
-
 
             var toCreate = new Utilisateur(vm.userName);
 
@@ -518,6 +522,12 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
 
+
+        /// <summary>
+        /// Permet d'afficher la vue de la mise à jour des informations de l'utilisateur sélectionné
+        /// </summary>
+        /// <param name="id">Id de l'utilisateur à modifier</param>
+        /// <returns>La vue avec les informations actuelles sur l'utilisateur</returns>
         //[AllowAnonymous]
         //EDIT STAGIAIRE/COORDO/ENSEIGNANT
         [Authorize(Roles = "Coordonnateur")]
@@ -548,6 +558,15 @@ namespace SPU.Controllers
             return View(modifUser);
         }
 
+
+        /// <summary>
+        /// Permet d'effectuer la mise à jours des informations des utilisateurs 
+        /// (entre enseignant, stagiaire et coordonnateur) sélectionnées
+        /// </summary>
+        /// <param name="id">Id de l'utilisateur à modifier</param>
+        /// <param name="vm">Le contenu de la vue</param>
+        /// <returns>La vue montrant les informations de l'utilisateur qui ont été modifiés</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         //[AllowAnonymous]
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
@@ -576,10 +595,13 @@ namespace SPU.Controllers
             return RedirectToAction(nameof(Manage));
         }
 
-
         #endregion
 
         #region CreationMDS et EditMDS
+        /// <summary>
+        /// Rempli la drop down liste affichant les employeurs pour que l'utilisateur puisse en sélectionner un
+        /// </summary>
+        /// <returns>la liste des employeurs déjà enregistrés</returns>
         private IEnumerable<SelectListItem> PopulateEmployeurs()
         {
             return _spuContext.Employeurs.Select(e => new SelectListItem
@@ -589,6 +611,14 @@ namespace SPU.Controllers
             }).ToList();
         }
 
+
+        /// <summary>
+        /// Affiche la vue pour la création de l'utilisateur qui auront comme rôle, maitre de stage.
+        /// Si hash -> Renvoie la vue pour que l'utilisateur s'inscrive lui-même, sinon cela signifie que c'est
+        /// le coordonnateur qui crée le maitre de stage
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [Route("Compte/CreationMDS")]
         [Route("Compte/CreationMDS/{hash?}")]
@@ -605,6 +635,12 @@ namespace SPU.Controllers
                 return View(); // a changer avec le role du coordo quand on va être rendu au role !! 
         }
 
+
+        /// <summary>
+        /// Permet la création des utilisateurs qui auront comme rôle, maitres de stages 
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <returns></returns>
         //CREATION MDS
         [AllowAnonymous]
         [HttpPost]
@@ -711,7 +747,11 @@ namespace SPU.Controllers
         }
 
 
-
+        /// <summary>
+        /// Afficher les informations actuelles du maitre de stage sélectionné pour la modification
+        /// </summary>
+        /// <param name="id">Id de l'utilisateur a modifier</param>
+        /// <returns></returns>
         //EDIT MDS
         [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
@@ -753,7 +793,13 @@ namespace SPU.Controllers
         }
 
 
-
+        /// <summary>
+        /// Gérer la modification des informations des maitres de stages
+        /// </summary>
+        /// <param name="id">Id du maître de stage a modifier</param>
+        /// <param name="vm">Vue contenant les informations du maitre de stage modifié</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> EditMDS(Guid id, MDSEditVM vm)
@@ -776,7 +822,6 @@ namespace SPU.Controllers
 
             MdsaEditer.MatriculeId = vm.MatriculeId;
             MdsaEditer.civilite = vm.Civilite;
-            //MdsaEditer.NomEmployeur = vm.NomEmployeur;
             MdsaEditer.EmployeurId = vm.idEmployeurSelectionne;
             MdsaEditer.telMaison = vm.telMaison;
             MdsaEditer.typeEmployeur = vm.TypeEmployeur;
@@ -804,20 +849,30 @@ namespace SPU.Controllers
         #endregion
 
         #region CreationEmployeur et EditEmployeur
+        /// <summary>
+        /// Afficher la vue appropriée. Si c'est le bon hash, il est redirigé vers la vue de création de l'employeur.
+        /// </summary>
+        /// <param name="hash">Le lien de création hashé</param>
+        /// <returns></returns>
         [AllowAnonymous]
         [Route("Compte/CreationEmployeur")]
         [Route("Compte/CreationEmployeur/{hash?}")]
         [HttpGet]
         public ActionResult CreationEmployeur(string hash)
         {
-            var Employeur = CreateSHA512("Employeyr");
+            var Employeur = CreateSHA512("Employer");
 
             if (hash == Employeur)
                 return View("CreationEmployeur");
             else
-                return View(); // a changer avec le role du coordo quand on va être rendu au role !! 
+                return View(); 
         }
 
+        /// <summary>
+        /// Gère la création de l'utilisateur puis l'assignation du rôle d'employeur et valide les informations entrées
+        /// </summary>
+        /// <param name="vm">Les informations entrées dans la vue (formulaire)</param>
+        /// <returns></returns>
         //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
@@ -893,7 +948,11 @@ namespace SPU.Controllers
         }
 
 
-
+        /// <summary>
+        /// Affiche la vue de mise à jour des renseignements avec les informations de l'employeur sélectionné affichées
+        /// </summary>
+        /// <param name="id">Id de l'employeur que l'on désire mettre à jour ses informations</param>
+        /// <returns></returns>
         //EDIT EMPLOYEUR
         [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
@@ -933,7 +992,13 @@ namespace SPU.Controllers
             return View(modifUser);
         }
 
-
+        /// <summary>
+        /// Effectuer la mise à jour des données de l'employeur qui a été sélectionné
+        /// </summary>
+        /// <param name="id"> Id de l'employeur sélectionné</param>
+        /// <param name="vm">Modifie les informations affichées sur la vue/page</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         //[AllowAnonymous]
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
@@ -985,7 +1050,12 @@ namespace SPU.Controllers
         #endregion
 
         #region Remove 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">De l'utilisateur qu'on désire enlever</param>
+        /// <param name="role">Role de l'utilisateur qu'on désire enlever</param>
+        /// <returns></returns>
         //REMOVE POUR TOUS LE MONDE 
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
@@ -1048,6 +1118,13 @@ namespace SPU.Controllers
 
         #region Relier 
 
+        /// <summary>
+        /// Gestion de l'affichage de la vue pour relier les stagiaires, les maîtres de stages et les enseignants.
+        /// Les données qui seront présentes sont peuplées puis poussées vers la vue facilitant les liaisons.
+        /// Ainsi les stagiaires sont déjà affiché, puis les enseignants et les maitres de stages disponibles sont
+        /// dans un drop down list qu'ils n'ont qu'à sélectionner puis cliquer sur relier
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> Relier()
@@ -1117,7 +1194,18 @@ namespace SPU.Controllers
         }
 
 
-       
+        /// <summary>
+        /// Gestion de l'attribution des stagiaires avec les différents intervenants (maître de stage et enseignants), tout comme des erreurs connues 
+        /// qui peuvent être rencontrées. Définition des horaires et des dates de début et de fins de stages des 
+        /// stagiaires. 
+        /// </summary>
+        /// <param name="idStagiaire">Id du stagiaire sélectionné</param>
+        /// <param name="idMdsSelectionne1">Id du maitre de stage 1 sélectionné</param>
+        /// <param name="idMdsSelectionne2">Id du maitre de stage 2 sélectionné</param>
+        /// <param name="idEnseignantSelectionne">Id de l'enseignant sélectionné</param>
+        /// <param name="debutStage">Date de début de stage du stagiaire</param>
+        /// <param name="finStage">Date de fin de stage du stagiaire</param>
+        /// <returns></returns>
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne, DateTime? debutStage, DateTime? finStage)
@@ -1125,7 +1213,6 @@ namespace SPU.Controllers
 
             if (!ModelState.IsValid)
                 return RedirectToAction("Relier");
-
             
             if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null && idEnseignantSelectionne == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
             {
