@@ -1427,7 +1427,6 @@ namespace SPU.Controllers
                     worksheet_horaire.Cell("D4").Value = "Matricule TAP #2";
 
                     Horaire horaire = _spuContext.Horaires.FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
-                    List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id && x.StagiairePresent == false).ToList();
 
                     if(horaire != null)
                     {
@@ -1437,8 +1436,8 @@ namespace SPU.Controllers
                         {
                             worksheet_horaire.Cell($"A{j+5}").Value = plages[i].DateDebut.ToLocalTime().ToString("yyyy-MM-dd");
                             worksheet_horaire.Cell($"B{j+5}").Value = plages[i].DateFin.Subtract(plages[i].DateDebut).TotalMinutes.ToString() + " minutes";
-                            worksheet_horaire.Cell($"C{j+5}").Value = "";
-                            worksheet_horaire.Cell($"D{j+5}").Value = "";
+                            worksheet_horaire.Cell($"C{j+5}").Value = horaire.MDSId1.ToString();
+                            worksheet_horaire.Cell($"D{j+5}").Value = horaire.MDSId2 != null ? horaire.MDSId2.ToString() : "";
                         }
                     }
                 }
