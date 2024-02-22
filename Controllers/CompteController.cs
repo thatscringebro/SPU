@@ -1368,7 +1368,7 @@ namespace SPU.Controllers
                     worksheet_horaire.Cell("D4").Value = "Matricule TAP #2";
 
                     Horaire horaire = _spuContext.Horaires.FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
-                    List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id && x.StagiaireAbsent == false).ToList();
+                    List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id && x.StagiairePresent == false).ToList();
 
                     for (int j = 0; i < plages.Count(); i++)
                     {
