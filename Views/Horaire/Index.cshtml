@@ -1,28 +1,29 @@
-﻿@using SPU.ViewModels
+﻿@using SPU.Domain.Entites;
+@using SPU.ViewModels
 
 @model HoraireIndexVM
 
 <style>
     .horaire-listehoraire-fullclass {
-        margin-top:10px;
+        margin-top: 10px;
         position: relative;
         width: 100%;
         height: 100%;
     }
 
-    .horaire-listehoraire-fullclass::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("/images/pexels-denniz-futalan-3452997.jpg");
-        background-size: cover;
-        background-repeat:no-repeat;
-        filter: blur(12px);
-        z-index: -1;
-    }
+        .horaire-listehoraire-fullclass::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("/images/pexels-denniz-futalan-3452997.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            filter: blur(12px);
+            z-index: -1;
+        }
 
     .horaire-listehoraire-liste {
         position: relative;
@@ -36,8 +37,60 @@
 
 </style>
 
-
 <div class="horaire-listehoraire-fullclass">
+    <div class="horaire-listehoraire-liste">
+        <br />
+
+        <h1>Liste des horaires</h1>
+        <hr />
+
+        @if (Model.role == "stagiaire")
+        {
+            <a>Horaire indisponible : L'assignation doit se faire avec un maître de stage afin de pouvoir avoir accès à l'horaire</a>
+        }
+        else if (Model.role == "MDS")
+        {
+            <div>
+                <label>
+                    Horaire introuvable
+                </label>
+            </div>
+        }
+        else if (Model.role == "enseignant")
+        {
+            if (Model.listeStagiaire == null)
+            {
+
+            }
+            else
+            {
+                @foreach (var item in Model.associationStagEns)
+                {
+                    <div class="row" style="margin:20px;">
+                        <div class="row" style="font-size:26px; font-weight: bold;">
+                            Choix de l'horaire :
+                        </div>
+                        <br />
+                        <div class="row" style="font-size:22px; ">
+                            <label>
+                                Horaire de @item.nomStagiaire;
+
+                                Horaire du : <strong>@(item.dateDebutStage.ToString("d MMMM yyyy"))</strong> au <strong>@(item.dateFinStage.ToString("d MMMM yyyy"))</strong>
+                            </label>
+                        </div>
+                        <div class="row" id="horaire-listehoraire-id-@item.idHoraire">
+                            <img class="submit" onclick="location.href ='@Url.Action("Horaire", "Horaire", new { horaireId = item.idHoraire })'" src="/images/Horaire_miniature.png" style="width:200px" />
+                        </div>
+                    </div>
+                    <hr />
+                }
+            }
+        }
+    </div>
+</div>
+
+
+@*<div class="horaire-listehoraire-fullclass">
     <div class="horaire-listehoraire-liste">
         <br />
 
@@ -54,7 +107,7 @@
         <br />
         <hr />
     </div>
-</div>
+</div>*@
 
 
 

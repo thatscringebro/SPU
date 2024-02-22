@@ -38,7 +38,7 @@ namespace SPU.Domain.Entites
         //[ForeignKey(nameof(idStagiaire))] virtual
         public Stagiaire? stagiaire { get; set; }
 
-        public DateTime? DateCreationHoraire { get; set; }
-        public DateTime? DateExpiration { get; set; }
+        public DateTime DateCreationHoraire { get; set; }
+        public DateTime DateExpiration { get; set; }
     }
 }
