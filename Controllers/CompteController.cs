@@ -1071,8 +1071,6 @@ namespace SPU.Controllers
             {
                 foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
                 {
-                    //List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
-
                     var Mds1 = _spuContext.Horaires.Where(h => h.StagiaireId == user.Id).Select(m => m.MDSId1).FirstOrDefault();
                     var Mds2 = _spuContext.Horaires.Where(h => h.StagiaireId == user.Id).Select(m => m.MDSId2).FirstOrDefault();
 
@@ -1216,6 +1214,8 @@ namespace SPU.Controllers
                     mentor1.StagiaireId = idStagiaire;
                     mentor1.chat = stagiaire.chat;
                     mentor1.ChatId = stagiaire.ChatId;
+                    stagiaire.EmployeurId = mentor1.EmployeurId;
+                    stagiaire.employeur = mentor1.employeur;
 
                     var horaireMDS1 = await _spuContext.Horaires.FirstOrDefaultAsync(h => h.MDSId1 == idMdsSelectionne1);
                     if (horaireMDS1 != null)
@@ -1245,6 +1245,8 @@ namespace SPU.Controllers
                     mentor2.StagiaireId = idStagiaire;
                     mentor2.chat = stagiaire.chat;
                     mentor2.ChatId = stagiaire.ChatId;
+                    stagiaire.EmployeurId = mentor2.EmployeurId;
+                    stagiaire.employeur = mentor2.employeur;
 
                     foreach (Horaire horaire in _spuContext.Horaires)
                     {           
