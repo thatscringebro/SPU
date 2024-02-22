@@ -1129,7 +1129,6 @@ namespace SPU.Controllers
                             finStage = user.finStage!.Value.Date
 
 
-
                         });
                     }
                     else
@@ -1158,7 +1157,7 @@ namespace SPU.Controllers
         }
 
 
-        //Quand on ajout un nouveau 
+       
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne, DateTime? debutStage, DateTime? finStage)
@@ -1166,7 +1165,6 @@ namespace SPU.Controllers
 
             if (!ModelState.IsValid)
                 return RedirectToAction("Relier");
-
 
             
             if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null && idEnseignantSelectionne == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
@@ -1193,7 +1191,14 @@ namespace SPU.Controllers
                 TempData["ErrorMessage"] = "Veuillez entré une date de début et de fin de stage";
                 return RedirectToAction("Relier");
             }
+     
+            Horaire? horaireTest = _spuContext.Horaires.FirstOrDefault(x => x.MDSId1 == idMdsSelectionne1 && x.MDSId2 != null);
 
+            if (horaireTest != null && horaireTest.MDSId1 == idMdsSelectionne1 && horaireTest.StagiaireId != idStagiaire)
+            {
+                TempData["ErrorMessage"] = "Veuillez retirer le mds 2 avant de retirer le 1er";
+                return RedirectToAction("Relier");
+            }
 
 
             var anciensMds = await _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToListAsync();
@@ -1220,8 +1225,7 @@ namespace SPU.Controllers
                         }
 
                 if (mds.Id != idMdsSelectionne1 && mds.Id != idMdsSelectionne2)
-                {
-                    
+                {                
                     var horaires = await _spuContext.Horaires.Where(h => h.MDSId1 == mds.Id || h.MDSId2 == mds.Id).ToListAsync();
                     foreach (var horaire in horaires)
                     {
@@ -1233,17 +1237,8 @@ namespace SPU.Controllers
                     mds.StagiaireId = null;
                     mds.ChatId = null;
                     mds.chat = null;
-                    
-                    //var existinghoraire = _spuContext.Horaires.Where(m => m.MDSId1 == mds.Id).ToList();
-                    //if(existinghoraire == null)
-                    //{
-                    //     var newHoraire = new Horaire { mds1 = mds, MDSId1 = mds.Id };
-                    //    _spuContext.Horaires.Add(newHoraire);
-
-                    //}
                 }
             }
-         
             
             if (idMdsSelectionne1 != null)
             {
@@ -1267,7 +1262,6 @@ namespace SPU.Controllers
                         horaireVerificationMDS2.mds2 = null;
                         horaireVerificationMDS2.MDSId2 = null;
                         _spuContext.Horaires.Update(horaireVerificationMDS2);
-
                     }
 
                     _spuContext.MDS.Update(mentor1);
@@ -1285,8 +1279,7 @@ namespace SPU.Controllers
                     mentor2.ChatId = stagiaire.ChatId;
 
                     foreach (Horaire horaire in _spuContext.Horaires)
-                    {
-                       
+                    {           
                         if(horaire.StagiaireId != idStagiaire && mentor2.Id == horaire.MDSId1)
                         {
                             horaire.stagiaire = null;
@@ -1303,21 +1296,15 @@ namespace SPU.Controllers
                             horaire.mds2 = mentor2;
                             horaire.MDSId2 = mentor2.Id;
                         }
-
                     }
-
                     _spuContext.MDS.Update(mentor2);
                 }
             }
           
-
-
             stagiaire.EnseignantId = idEnseignantSelectionne;
             stagiaire.debutStage = debutStage?.ToUniversalTime() ?? stagiaire.debutStage;
             stagiaire.finStage = finStage?.ToUniversalTime() ?? stagiaire.finStage;
             stagiaire.chat.EnseignantId = idEnseignantSelectionne;
-
-
 
             _spuContext.Stagiaires.Update(stagiaire);
             _spuContext.SaveChanges();
