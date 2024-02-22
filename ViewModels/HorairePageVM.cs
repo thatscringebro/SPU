@@ -9,7 +9,7 @@ namespace SPU.ViewModels
         public string? nomStagiaire { get; set; }
         public DateTime? DateDebutStage { get; set; }
         public DateTime? DateFinStage { get; set; }
-        public DateTime? DateCreationHoraire { get; set; }
-        public DateTime? DateExpiration { get; set; }
+        public DateTime DateCreationHoraire { get; set; }
+        public DateTime DateExpiration { get; set; }
     }
 }
