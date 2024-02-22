@@ -127,7 +127,7 @@ namespace SPU.Controllers
             return View(vm);
         }
 
-
+        [Authorize]
         public IActionResult Horaire(Guid horaireId, HorairePageVM vm)
         {
             Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
@@ -190,7 +190,7 @@ namespace SPU.Controllers
 
             return View(vm);
         }
-
+        [Authorize]
         public IActionResult HoraireMds(Guid userId, HorairePageVM vm)
         {
             //var vm = new HorairePageVM();
@@ -322,14 +322,14 @@ namespace SPU.Controllers
 
         //return RedirectToAction("Horaire", "Horaire", new { horaireId = nouvelleHoraire.Id });
         //}
-
+        [Authorize]
         public IActionResult AjoutPlageHoraireMDS(Guid horaireId)
         {
             ViewBag.horaireId = horaireId;
 
             return View();
         }
-
+        [Authorize]
         [HttpPost]
         public IActionResult AjoutPlageHoraireMDS(PlageHoraireMdsVM vm, Guid horaireId)
         {
@@ -495,6 +495,7 @@ namespace SPU.Controllers
 
 
         // Ajout d'une confirmation
+        [Authorize]
         public IActionResult ModifierPlageHoraire(ModifierPlageHoraireVM vm, Guid idPlageHoraire, Guid idHoraire)
         {
             //Aller chercher les informations avec le id de l'horaire et le id du div
@@ -664,6 +665,7 @@ namespace SPU.Controllers
 
 
         //Allo :)
+        [Authorize]
         [HttpPost]
         public IActionResult SupprimerPlageHoraire(ModifierPlageHoraireVM vm)
         {
@@ -710,6 +712,7 @@ namespace SPU.Controllers
         }
 
         //reprendre une journee si le stagiaire s'absente
+        [Authorize]
         public IActionResult ReprendreJournee()
         {
             Stagiaire? user = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId.ToString() == _loggedUserId);
@@ -746,6 +749,7 @@ namespace SPU.Controllers
         }
 
         //Afficher form de remplacent
+        [Authorize]
         [HttpGet]
         public IActionResult MdsRemplacement(RemplacementPlageHoraireVM vm, Guid idPlageHoraire)
         {
@@ -770,6 +774,7 @@ namespace SPU.Controllers
             return View(vm);
         }
         //Remplacent
+        [Authorize]
         [HttpPost]
         public IActionResult MdsRemplacement(RemplacementPlageHoraireVM vm,  string PlageHoraireId, string actionType)
         {
