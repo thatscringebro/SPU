@@ -26,7 +26,7 @@
 }
 
 
-<a class="btn btn-success" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a></button>
+<a class="btn btn-success" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a>
 
 <link rel="stylesheet" href="~/css/site.css" />
 <link rel="stylesheet" href="~/css/user.css" />
@@ -64,6 +64,74 @@
 
 @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
 
+@* Coordonnateur *@
+<br />
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>
+                Nom
+            </th>
+            <th>
+                Prénom
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Téléphone
+            </th>
+            <th>
+                Détails
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tr>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayCoo')">Coordonnateur<button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Coordonnateur")">Copier lien</button></td>
+        <td>
+            <input type="text" class="form-control" id="CooSearchInput" placeholder="Rechercher un coordonnateur..." />
+        </td>
+    </tr>
+    <tbody id="displayCoo">
+        @foreach (var item in Model)
+        {
+            @if (item.role == "Coordonnateur")
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Prenom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Courriel)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telephone)
+                    </td>
+                    <td>
+                        <i class="fa fa-solid fa-user" style="color: #2386d1;" onclick='userDetails(@Html.Raw(Json.Serialize(item)))'></i>
+                    </td>
+                    <td>
+                        @Html.ActionLink("Mettre à jour", "EditUtilisateur", "Compte", new { id = item.Id }, new { @class = "btn btn-primary" })
+
+                        <form asp-action="Remove" asp-route-id="@item.Id" asp-route-role="@item.role" class="d-inline-block">
+                            <button type="button" class="btn btn-danger delete-button" data-nom="@item.Nom" data-prenom="@item.Prenom">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
 @* Maitre de stage *@
 <br />
 <table class="table mt-3">
@@ -96,10 +164,8 @@
         </tr>
     </thead>
     <tr>
-        <td colspan="10" class="bg-dark text-white containerTabHead"> Maître de stage
-            <button class="btn btn-primary copy-link center" data-link="@GetLinkForRole("MDS")">Copier lien</button>
-            <i class="fa-regular fa-circle-chevron-down fa-beat-fade fa-flip-both fa-xs topright" onclick="userDisplay('displayMds')" style="color: #2386d1;"></i>
-
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayMds')">Maître de stage <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("MDS")">Copier lien</button></td>
+        <td>
             <input type="text" class="form-control" id="MDSSearchInput" placeholder="Rechercher un maître de stage..." />
         </td>
     </tr>
@@ -536,6 +602,34 @@
         document.addEventListener("DOMContentLoaded", function () {
             const searchBar = document.getElementById("EmpSearchInput");
             const tableRows = document.querySelectorAll("#displayEmp tr");
+
+            searchBar.addEventListener("input", function () {
+                const searchTerm = searchBar.value.trim().toLowerCase();
+
+                tableRows.forEach(function (row) {
+                    const cells = row.querySelectorAll("td");
+                    let found = false;
+
+                    cells.forEach(function (cell) {
+                        const cellText = cell.textContent.trim().toLowerCase();
+                        if (cellText.includes(searchTerm)) {
+                            found = true;
+                        }
+                    });
+
+                    if (found) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+
+        //Coordonnateur
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchBar = document.getElementById("CooSearchInput");
+            const tableRows = document.querySelectorAll("#displayCoo tr");
 
             searchBar.addEventListener("input", function () {
                 const searchTerm = searchBar.value.trim().toLowerCase();

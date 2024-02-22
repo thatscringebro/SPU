@@ -9,12 +9,17 @@ namespace SPU.ViewModels
     public class StagiairesEditVM
     {
         public Guid Id { get; set; }
+        [Required(ErrorMessage = "Le prénom est requis.")]
         [Display(Name = "Prénom")]
         public string Prenom { get; set; }
+
+        [Required(ErrorMessage = "Le nom est requis.")]
         [Display(Name = "Nom")]
-        public string Nom {  get; set; }
+        public string Nom { get; set; }
+        [Required(ErrorMessage = "La date de début est requis.")]
         [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true), Display(Name = "Début de stage ")]
         public DateTime? debutStage { get; set; }
+        [Required(ErrorMessage = "La date de fin est requise.")]
         [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true), Display(Name = "Fin de stage")]
         public DateTime? finStage { get; set; }
 
@@ -33,29 +38,4 @@ namespace SPU.ViewModels
         //public Horaire? horaire { get; set; }
     }
 
-    public class StagiairesEditVMValidation : AbstractValidator<StagiairesEditVM>
-    {
-        public StagiairesEditVMValidation()
-        {
-            RuleFor(vm => vm.Prenom).NotEmpty().WithMessage("Le prénom est requis!");
-            RuleFor(vm => vm.Nom).NotEmpty().WithMessage("Le nom est requis!");
-
-            //RuleFor(vm => vm.debutStage)
-            //    .NotEmpty().WithMessage("La date de début de stage est requise!")
-            //    .LessThan(vm => vm.finStage.Value).When(vm => vm.finStage.HasValue).WithMessage("La date de début doit être antérieure à la date de fin!");
-
-            //RuleFor(vm => vm.finStage)
-            //    .NotEmpty().WithMessage("La date de fin de stage est requise!")
-            //    .GreaterThan(vm => vm.debutStage.Value).When(vm => vm.debutStage.HasValue).WithMessage("La date de fin doit être postérieure à la date de début!");
-
-            //RuleFor(vm => vm.idMdsSelectionne1)
-            //    .NotEmpty().WithMessage("Le choix du maître de stage 1 est requis!");
-
-            //RuleFor(vm => vm.idMdsSelectionne2)
-            //    .NotEmpty().WithMessage("Le choix du maître de stage 2 est requis!");
-
-            RuleFor(vm => vm.idEnseignantSelectionne)
-                .NotEmpty().WithMessage("Le choix de l'enseignant est requis!");
-        }
-    }
 }
