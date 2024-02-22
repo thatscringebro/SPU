@@ -1,24 +1,24 @@
 # Projet pour la gestion stages en SPU
 
-Ce projet est un site web permettant à gérer les stages en SPU.
+Ce projet est un site web permettant de gérer les stages dans le programme de SPU.
 
 ## Fonctionnement de l'application
 
 ### Section horaire
 
-La section horaire permet aux maîtres de stages(mds) et aux stagiaires de gérer leur horaire. Le mds rentre son horaire dans le système lors de la création de son compte, et le stagiaire assigné à celui-ci peut le consulter à toute occasion. Le système prend en compte la récurrence par 2 semaines de l'horaire du mds et la gestion des abscences pour les mds et les stagiaires. Une plage horaire peut être mise à jour en tout moment par le mds en appuyant dessus. C'est là comme ça que le mds peut ajuster les heures de la plage horaire et que le mds et le stagiaire peut se mettre comme abscent. 
+La section Horaire permet aux maîtres de stages(mds) et aux stagiaires de gérer leur horaire. Le mds ajoute son horaire dans le système lors de la création de son compte, et le stagiaire assigné à celui-ci peut le consulter à toute occasion. Le système prend en compte la récurrence par 2 semaines de l'horaire du mds et la gestion des absences pour les mds et les stagiaires. Une plage horaire peut être mise à jour à tout moment par le mds en appuyant dessus. C'est ainsi que le mds peut ajuster les heures de la plage horaire et que le mds et le stagiaire peuvent se mettre comme étant absents. 
 
 ### Section Chat
 
-La section Chat permet aux utilisateurs de l'application de communiquer entre eux sous forme de messagerie instantannée. Les stagiaires et les mds ont uniquement accès à un seul chat: celui entre eux et avec l'enseignant du stagiaire. Les enseignants ont accès à tout les chats de leurs étudiants et le coordonateur a accès aux chats de tout les stagiaires. Le chat ne supporte pas les images ou les vidéos mais supporte tous les types de textes, incluant les émoticônes. Pour les enseignants et le coordonateur, la barre de recherche en haut de la liste des chat permet de filtrer les chats rapidement.
+La section Chat permet aux utilisateurs de l'application de communiquer entre eux sous forme de messagerie instantanée. Les stagiaires et les mds ont uniquement accès à un seul chat: celui entre eux et avec l'enseignant du stagiaire. Les enseignants ont accès à tout les chats de leurs étudiants et le coordonnateur a accès aux chats de tout les stagiaires. Le chat ne supporte pas les images ou les vidéos, mais supporte tous les types de textes, incluant les émoticônes. Pour les enseignants et le coordonnateur, la barre de recherche en haut de la liste des chats permet de filtrer les chats rapidement.
 
 ### Section Évaluations
 
-La section des évaluations permet aux enseignants de diffuser des liens forms à ses étudiants et aux mds de ses étudiants. Il peut rapidement actver ou désactiver les évaluations individuellement pour chaque utilisateur et voir si ceux-ci les ont consultés. Les étudiants et les mds peuvent voir les évaluations qui ont été activés et accéder rapidement au form, en appuyant sur le lien. Cette action marque automatiquement l'évaluation comme consultée dans le système. Il est important que l'enseignant mette le lien complet du form comme ceci: "https://exemple.com/".
+La section Évaluations permet aux enseignants de mettre à disposition de leurs étudiants des liens forms et aux mds de ses étudiants. Il peut rapidement activer ou désactiver les évaluations individuellement pour chaque utilisateur et voir si ceux-ci les ont consultées. Les étudiants et les mds peuvent voir les évaluations qui ont été activés et accéder rapidement au form, en appuyant sur le lien. Cette action marque automatiquement l'évaluation comme consultée dans le système. Il est important que l'enseignant mette le lien complet du form comme ceci: "https://exemple.com/".
 
 ### Gestion des données
 
-Le coordonateur est celui qui s'occupe des informations dans le système. À partir de sa page d'administration, le coordo peut assigner un mds à un stagiaire, créer des utilisateurs, mettre à jours des informations des utilisateurs et bien d'autres. Le informations du système peuvent être exportées sous forme de excel par le coordonateur à tout moment.
+Le coordonnateur est celui qui s'occupe des informations dans le système. À partir de sa page d'administration, le coordo peut assigner un mds à un stagiaire, créer des utilisateurs, mettre à jours des informations des utilisateurs et bien d'autres. Les informations du système peuvent être exportées sous forme de excel par le coordonnateur à tout moment.
 
 ## Limitations du programme
 
