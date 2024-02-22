@@ -82,16 +82,28 @@ namespace SPU.Controllers
                 foreach (var item in listeStagiaire)
                 {
                     Horaire? horaireStagiaire = _context.Horaires.Where(x => x.StagiaireId == item.Id).FirstOrDefault();
+                    AssociationStagiaireEnseignantVM association = new AssociationStagiaireEnseignantVM();
 
-                    if(horaireStagiaire != null)
+                    MDS trouveMdsAssocierHoraire = new MDS();
+                    trouveMdsAssocierHoraire = _context.MDS.Where(x => x.StagiaireId == item.Id).FirstOrDefault();
+
+                    if(trouveMdsAssocierHoraire != null)
                     {
-                        vm.associationStagEns.Add(new AssociationStagiaireEnseignantVM
+                        Horaire? horaireMds = _context.Horaires.Where(x => x.MDSId1 == trouveMdsAssocierHoraire.Id).FirstOrDefault();
+
+                        if(horaireMds != null)
                         {
-                            idHoraire = horaireStagiaire != null ? horaireStagiaire.Id : Guid.Empty,
-                            nomStagiaire = item.utilisateur.NomComplet,
-                            dateDebutStage = item.debutStage ?? DateTime.MinValue,
-                            dateFinStage = item.finStage ?? DateTime.MinValue
-                        });
+                            if(horaireStagiaire != null)
+                            {
+                                association.dateDebutStage = item.debutStage ?? DateTime.MinValue;
+                                association.dateFinStage = item.finStage ?? DateTime.MinValue;
+                                association.idHoraire = horaireStagiaire.Id;
+                                association.nomStagiaire = item.utilisateur.NomComplet;
+                                association.idHoraireMDS = horaireMds.Id;
+
+                                vm.associationStagEns.Add(association);
+                            }
+                        }
                     }
 
                 }
@@ -150,9 +162,11 @@ namespace SPU.Controllers
                 MDS mdsHoraire = _context.MDS.Where(x => x.Id == horaire.MDSId1).Include(c => c.utilisateur).FirstOrDefault();
                 Stagiaire? stagHoraire = _context.Stagiaires.Where(x => x.Id == horaire.StagiaireId).Include(c => c.utilisateur).FirstOrDefault();
 
+                MDS? mdsHoraire2 = _context.MDS.Where(x => x.Id == horaire.MDSId2).Include(c => c.utilisateur).FirstOrDefault();
+
                 vm.nomMds = string.Concat(mdsHoraire.utilisateur.Prenom + " " + mdsHoraire.utilisateur.Nom);
                 vm.nomStagiaire = string.Concat(stagHoraire?.utilisateur.Prenom + " " + stagHoraire?.utilisateur.Nom);
-
+                vm.nomMds2 = string.Concat(mdsHoraire2.utilisateur.Prenom + " " + mdsHoraire2.utilisateur.Nom);
 
                 vm.DateCreationHoraire = mdsHoraire.DateCreationHoraire;
                 vm.DateExpiration = mdsHoraire.DateExpiration;
@@ -225,9 +239,12 @@ namespace SPU.Controllers
 
                 MDS mdsHoraire = _context.MDS.Where(x => x.Id == horaire.MDSId1).Include(c => c.utilisateur).FirstOrDefault();
                 Stagiaire? stagHoraire = _context.Stagiaires.Where(x => x.Id == horaire.StagiaireId).Include(c => c.utilisateur).FirstOrDefault();
+                MDS? mdsHoraire2 = _context.MDS.Where(x => x.Id == horaire.MDSId2).Include(c => c.utilisateur).FirstOrDefault();
+
 
                 vm.nomMds = string.Concat(mdsHoraire.utilisateur.Prenom + " " + mdsHoraire.utilisateur.Nom);
                 vm.nomStagiaire = string.Concat(stagHoraire?.utilisateur.Prenom + " " + stagHoraire?.utilisateur.Nom);
+                vm.nomMds2 = string.Concat(mdsHoraire2.utilisateur.Prenom + " " + mdsHoraire2.utilisateur.Nom);
 
 
                 vm.DateCreationHoraire = mdsHoraire.DateCreationHoraire;

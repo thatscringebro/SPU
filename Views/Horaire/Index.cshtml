@@ -58,9 +58,9 @@
         }
         else if (Model.role == "enseignant")
         {
-            if (Model.listeStagiaire == null)
+            if (Model.associationStagEns == null)
             {
-
+                <a>Horaire indisponible : Aucun horaire disponible pour les stagiaires attitrés. </a>
             }
             else
             {
@@ -78,8 +78,8 @@
                                 Horaire du : <strong>@(item.dateDebutStage.ToString("d MMMM yyyy"))</strong> au <strong>@(item.dateFinStage.ToString("d MMMM yyyy"))</strong>
                             </label>
                         </div>
-                        <div class="row" id="horaire-listehoraire-id-@item.idHoraire">
-                            <img class="submit" onclick="location.href ='@Url.Action("Horaire", "Horaire", new { horaireId = item.idHoraire })'" src="/images/Horaire_miniature.png" style="width:200px" />
+                        <div class="row" id="horaire-listehoraire-id-@item.idHoraireMDS">
+                            <img class="submit" onclick="location.href ='@Url.Action("Horaire", "Horaire", new { horaireId = item.idHoraireMDS })'" src="/images/Horaire_miniature.png" style="width:200px" />
                         </div>
                     </div>
                     <hr />

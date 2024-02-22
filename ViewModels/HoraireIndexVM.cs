@@ -6,7 +6,7 @@ namespace SPU.ViewModels
     {
         public List<Horaire?> listeMds { get; set; }
         public List<Stagiaire?> listeStagiaire { get; set; }
-        public List<AssociationStagiaireEnseignantVM> associationStagEns { get; set; }
+        public List<AssociationStagiaireEnseignantVM> associationStagEns { get; set; } = new();
         public string role { get; set; }
     }
 }
