@@ -27,6 +27,8 @@
     }
 }
 
+<link rel="stylesheet" href="~/css/user.css" />
+
 
 <a class="btn btn-success" asp-action="ExportContrat" asp-controller="Compte">Exporter les données</a>
 
@@ -92,7 +94,7 @@
         </tr>
     </thead>
     <tr>
-        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayCoo')">Coordonnateur<button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Coordonnateur")">Copier lien</button></td>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayCoo')">Coordonnateur<button class="btn newbtn-btn copy-link" data-link="@GetLinkForRole("Coordonnateur")">Copier lien</button></td>
         <td>
             <input type="text" class="form-control" id="CooSearchInput" placeholder="Rechercher un coordonnateur..." />
         </td>
@@ -166,7 +168,7 @@
         </tr>
     </thead>
     <tr>
-        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayMds')">Maître de stage <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("MDS")">Copier lien</button></td>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayMds')">Maître de stage <button class="btn newbtn-btn copy-link" data-link="@GetLinkForRole("MDS")">Copier lien</button></td>
         <td>
             <input type="text" class="form-control" id="MDSSearchInput" placeholder="Rechercher un maître de stage..." />
         </td>
@@ -240,7 +242,7 @@
         </tr>
     </thead>
     <tr>
-        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayEmp')">Employeur <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Employeur")">Copier lien</button></td>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayEmp')">Employeur <button class="btn newbtn-btn copy-link" data-link="@GetLinkForRole("Employeur")">Copier lien</button></td>
         <td>
             <input type="text" class="form-control" id="EmpSearchInput" placeholder="Rechercher un employeur..." />
         </td>
@@ -308,7 +310,7 @@
         </tr>
     </thead>
     <tr>
-        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displaySt')">Stagiaire <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Stagiaire")">Copier lien</button></td>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displaySt')">Stagiaire <button class="btn newbtn-btn copy-link" data-link="@GetLinkForRole("Stagiaire")">Copier lien</button></td>
         <td>
             <input type="text" class="form-control" id="stagiaireSearchInput" placeholder="Rechercher un stagiaire..."/>
         </td>
@@ -384,7 +386,7 @@
         </tr>
     </thead>
     <tr>
-        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayEns')">Enseignant <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("Enseignant")">Copier lien</button></td>
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayEns')">Enseignant <button class="btn newbtn-btn copy-link" data-link="@GetLinkForRole("Enseignant")">Copier lien</button></td>
         <td>
             <input type="text" class="form-control" id="EnsSearchInput" placeholder="Rechercher un employeur..." />
         </td>
