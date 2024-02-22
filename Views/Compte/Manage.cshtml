@@ -164,10 +164,8 @@
         </tr>
     </thead>
     <tr>
-        <td colspan="10" class="bg-dark text-white containerTabHead"> Maître de stage
-            <button class="btn btn-primary copy-link center" data-link="@GetLinkForRole("MDS")">Copier lien</button>
-            <i class="fa-regular fa-circle-chevron-down fa-beat-fade fa-flip-both fa-xs topright" onclick="userDisplay('displayMds')" style="color: #2386d1;"></i>
-
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayMds')">Maître de stage <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("MDS")">Copier lien</button></td>
+        <td>
             <input type="text" class="form-control" id="MDSSearchInput" placeholder="Rechercher un maître de stage..." />
         </td>
     </tr>

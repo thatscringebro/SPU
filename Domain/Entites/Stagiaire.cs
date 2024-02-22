@@ -19,9 +19,9 @@ namespace SPU.Domain.Entites
 
         //[ForeignKey(nameof(MDS))] virtual
         //public MDS MDS2 { get; set; }
-        //public Guid? MDSId2 { get; set; }
+        //public Guid? MDSId12 { get; set; }
         //public MDS MDS1 { get; set; }
-        //public Guid? MDSId1 { get; set; }
+        //public Guid? MDSId11 { get; set; }
 
         //[ForeignKey(nameof(UtilisateurId))] virtual
         public Utilisateur utilisateur { get; set; }

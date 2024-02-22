@@ -10,7 +10,7 @@ namespace SPU.Domain.Entites
         //Est-ce qu'il y a plusieurs évaluation ? ou un seul lien forme.
 
         public Guid? StagiaireId { get; set; }
-        public Guid? MDSId { get; set; }
+        public Guid? MDSId1 { get; set; }
         public Guid EnseignantId { get; set; }
 
         public bool consulter { get; set; }

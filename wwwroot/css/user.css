@@ -15,3 +15,14 @@
     transform: translateX(-50%); 
     font-size: 18px;
 }
+
+.btn-light-blue-green {
+    background-color: #80e0a1; 
+    border-color: #80e0a1;
+    color: white; 
+}
+
+    .btn-light-blue-green:hover {
+        background-color: #72c796; 
+        border-color: #72c796;
+    }
