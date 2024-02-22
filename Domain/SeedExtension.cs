@@ -185,7 +185,7 @@ namespace SPU.Domain
             {
                 Id = Guid.NewGuid(),
 				StagiaireId = stagiaire?.Id,
-				MDSId = mds1.Id,
+                MDSId1 = mds1.Id,
                 //MDSId2 = mds2.Id
             };
             builder.Entity<Horaire>().HasData(newHoraire);
