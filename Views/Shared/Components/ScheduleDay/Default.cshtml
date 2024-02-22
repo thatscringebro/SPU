@@ -360,7 +360,6 @@
                     if (isWorkingHour) {
                         quartHeureElement.classList.add('idPlageHoraire-' + IdPlageHoraire);
 
-                        console.log("mds:" + MdsPresent);
                         if (MdsPresent == false)
                             quartHeureElement.style.backgroundColor = 'palegoldenrod';
                         else if (Present == false)
@@ -455,8 +454,6 @@
             }
             const data = await response.json();
 
-    @*console.log('Informations de la plage horaire :', data);*@
-
                 const debutQuart = new Date(data.dateDebutQuart);
             const finQuart = new Date(data.dateFinQuart);
 
@@ -512,7 +509,6 @@
             }
             const data = await response.json();
 
-    @*console.log('Informations de la plage horaire :', data);*@
 
                 const debutQuart = new Date(data.dateDebutQuart);
             const finQuart = new Date(data.dateFinQuart);
