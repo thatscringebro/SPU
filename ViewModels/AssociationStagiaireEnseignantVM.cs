@@ -6,5 +6,7 @@
         public string nomStagiaire { get; set; }
         public DateTime dateDebutStage { get; set; }
         public DateTime dateFinStage { get; set; }
+
+        public Guid idHoraireMDS { get; set; }
     }
 }

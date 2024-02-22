@@ -19,7 +19,8 @@
                 Maître de stage 1 : <strong>@Model.nomMds</strong>
             </label>
             <label>
-                Maître de stage 2 : <strong>N/A</strong>
+                
+                Maître de stage 2 : <strong>@(Model.nomMds2 != null ? Model.nomMds2 : "N/A")</strong>
             </label>
             <div>
                 @if (Model.nomStagiaire == null)
