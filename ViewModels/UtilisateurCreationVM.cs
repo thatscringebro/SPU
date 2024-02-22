@@ -42,6 +42,7 @@ namespace SPU.ViewModels
         [Compare("pwd", ErrorMessage = "La confirmation du mot de passe ne correspond pas!")]
         public string confirmationpwd { get; set; }
 
+        [Required(ErrorMessage = "L'école est requis!")]
         [Display(Name = "Veuillez choisir un établissement")]
         public Guid idEcoleSelectionne { get; set; }
 
@@ -54,6 +55,7 @@ namespace SPU.ViewModels
         [Display(Name = "Voulez-vous partager vos informations de contact")]
         public bool PartagerInfoContact { get; set; }
 
+        
         public List<SelectListItem> Ecoles { get; set; } = new List<SelectListItem>();
 
     }
