@@ -45,7 +45,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 	options.LoginPath = "/Compte/LogIn";
 });
 
-//builder.WebHost.UseUrls("http://localhost:5500");
 
 var app = builder.Build();
 
