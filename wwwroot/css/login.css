@@ -11,14 +11,18 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    padding: 20px;
+    overflow:hidden;
 }
 
 .screen {
     background: linear-gradient(90deg, #000000, #0000FF);
     position: relative;
-    height: 600px;
+    /*height: 600px;*/
+    height: auto;
     width: 360px;
     box-shadow: 0px 0px 24px #5C5696;
+    margin: auto;
 }
 
 .screen__content {
@@ -165,3 +169,17 @@
         background-color: #FFFFFF;
         color: #000000;
     }
+
+
+@media (max-width: 768px) {
+    .screen {
+        width: 90%; 
+    }
+}
+
+@media (max-width: 480px) {
+    .screen {
+        width: 100%; 
+        box-shadow: none;
+    }
+}

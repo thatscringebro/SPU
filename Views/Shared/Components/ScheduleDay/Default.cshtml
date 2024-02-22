@@ -154,7 +154,7 @@
                                 }
 
                                 // Appliquer le style en fonction de la condition isWorkingHour
-                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? (!MdsPresent ? "background-color: lightyellow;" : (Present ? "background-color: lightblue;" : "background-color: lightgrey;")) : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
+                                <div class="quartHeure @(isWorkingHour ? "idPlageHoraire-" + IdPlageHoraire.ToString() : "")" style="height: 5.266666px; @(isWorkingHour ? (!MdsPresent ? "background-color: palegoldenrod;" : (Present ? "background-color: lightblue;" : "background-color: lightgrey;")) : "") @(i % 4 == 3 ? "border-bottom: 1px solid lightgrey;" : "")">
                                 </div>
                             }
                         </div>
@@ -322,12 +322,13 @@
                         const finQuartMinutes = new Date(item.DateFinQuart).getHours() * 60 + new Date(item.DateFinQuart).getMinutes();
 
                         //vérifie présence
+
                         if (item.StagiairePresent)
                             Present = true;
                         else
                             Present = false;
 
-                        if (item.MdsAbsent1 == null || item.MdsAbsent2 == null)
+                        if (item.MdsAbsent1 == null && item.MdsAbsent2 == null)
                             MdsPresent = true;
                         else
                             MdsPresent = false;
@@ -363,8 +364,9 @@
                     if (isWorkingHour) {
                         quartHeureElement.classList.add('idPlageHoraire-' + IdPlageHoraire);
 
+                        console.log("mds:" + MdsPresent);
                         if (MdsPresent == false)
-                            quartHeureElement.style.backgroundColor = 'lightyellow';
+                            quartHeureElement.style.backgroundColor = 'palegoldenrod';
                         else if (Present == false)
                             quartHeureElement.style.backgroundColor = 'lightgrey';
                         else

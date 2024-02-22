@@ -19,7 +19,7 @@ namespace SPU.ViewComponents
             _loggedUserId = claim?.Value;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(Guid horaireId, Guid? mdsId)
+        public async Task<IViewComponentResult> InvokeAsync(Guid horaireId, Guid? MDSId1)
         {
             CalendrierHoraireVM calendrier = new CalendrierHoraireVM()
             {
@@ -33,7 +33,7 @@ namespace SPU.ViewComponents
             MDS? mds = new MDS();
 
             if (coordo != null)
-                mds = _context.MDS.FirstOrDefault(x => x.Id == mdsId);
+                mds = _context.MDS.FirstOrDefault(x => x.Id == MDSId1);
             else
                 mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
@@ -47,7 +47,7 @@ namespace SPU.ViewComponents
             if (mds != null)
             {
                 calendrier.role = "mds";
-                Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
+                Horaire horaire = _context.Horaires.Where(x => x.MDSId1 == mds.Id).FirstOrDefault();
 
                 if (horaire != null)
                 { 
@@ -56,7 +56,9 @@ namespace SPU.ViewComponents
                         DateDebutQuart = x.DateDebut.ToLocalTime(),
                         DateFinQuart = x.DateFin.ToLocalTime(),
                         Id = x.Id,
-                        StagiairePresent = x.StagiairePresent
+                        StagiairePresent = x.StagiairePresent,
+                        MdsAbsent1 = x.MDS1absent,
+                        MdsAbsent2 = x.MDS2absent,
                     }).ToList();
 
                     calendrier.ListJournees = journeeTravailles;
@@ -70,12 +72,14 @@ namespace SPU.ViewComponents
 
                 if (horaire != null)
                 { 
-                    journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaireId).ToList().Select(x => new JourneeTravailleVM
+                    journeeTravailles = _context.PlageHoraires.Where(x => x.HoraireId == horaireId && x.DateDebut.Date >= stag.debutStage && x.DateDebut.Date <= stag.finStage).ToList().Select(x => new JourneeTravailleVM
                     {
                         DateDebutQuart = x.DateDebut.ToLocalTime(),
                         DateFinQuart = x.DateFin.ToLocalTime(),
                         Id = x.Id,
-                        StagiairePresent = x.StagiairePresent
+                        StagiairePresent = x.StagiairePresent,
+                        MdsAbsent1 = x.MDS1absent,
+                        MdsAbsent2 = x.MDS2absent,
                     }).ToList();
 
                     calendrier.ListJournees = journeeTravailles;

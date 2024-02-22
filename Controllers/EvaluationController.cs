@@ -46,7 +46,7 @@ public class EvaluationController : Controller
               {
                 lienGoogleForm = lienGoogleForm,
                 StagiaireId = stag.Id,
-                MDSId = null,
+                MDSId1 = null,
                 EnseignantId = idEnseignant,
                 consulter = false,
                 actif = actif,
@@ -70,7 +70,7 @@ public class EvaluationController : Controller
               Evaluation eval = new Evaluation()
               {
                 lienGoogleForm = lienGoogleForm,
-                MDSId = ms.Id,
+                MDSId1 = ms.Id,
                 StagiaireId = null,
                 EnseignantId = idEnseignant,
                 consulter = false,

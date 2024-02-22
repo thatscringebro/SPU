@@ -7,18 +7,20 @@
 @functions {
     string GetLinkForRole(string role)
     {
+        string userUrl = ViewData["UserURL"].ToString();
+
         switch (role)
         {
             case "Stagiaire":
-                return "https://localhost:44301/Compte/CreationNormal/b835f4a697ef4d5691e3962fbbdc41b995e1eb09281456eaefdc4173afb6274d67357f1d52b2bd38d85c9c0244eb0dcb6be37a356136c38854bcaca6a9fcbce7";
+                return $"{userUrl}/Compte/CreationNormal/b835f4a697ef4d5691e3962fbbdc41b995e1eb09281456eaefdc4173afb6274d67357f1d52b2bd38d85c9c0244eb0dcb6be37a356136c38854bcaca6a9fcbce7";
             case "MDS":
-                return "https://localhost:44301/Compte/CreationMDS/7920186fc61d7c42261827c7ebcbffc737fbedb8a10dea1b239dc9f091a60c8995954eefffbc1e763d5094fa562109658ad444390b3172cfcc1fbca79a9a5635";
+                return $"{userUrl}/Compte/CreationMDS/7920186fc61d7c42261827c7ebcbffc737fbedb8a10dea1b239dc9f091a60c8995954eefffbc1e763d5094fa562109658ad444390b3172cfcc1fbca79a9a5635";
             case "Enseignant":
-                return "https://localhost:44301/Compte/CreationNormal/dc71899a377cfc8c33599f3769b33bd81c9a5cd451c74f98439c925bd19f6c7b79a66cd595c81dda3de14e90f128f77d70e99dd9a89013d103f5b1869c56f3ce";
+                return $"{userUrl}/Compte/CreationNormal/dc71899a377cfc8c33599f3769b33bd81c9a5cd451c74f98439c925bd19f6c7b79a66cd595c81dda3de14e90f128f77d70e99dd9a89013d103f5b1869c56f3ce";
             case "Employeur":
-                return "https://localhost:44301/Compte/CreationEmployeur/5b12e01ef175f3a61ecad6552b9aad3bff089620725cc83fb762c643a148ac2eac538fa1ddbff121ee3391bdcf252783579cfa00fee595ff207aec950b70067b";
+                return $"{userUrl}/Compte/CreationEmployeur/5b12e01ef175f3a61ecad6552b9aad3bff089620725cc83fb762c643a148ac2eac538fa1ddbff121ee3391bdcf252783579cfa00fee595ff207aec950b70067b";
             case "Coordonnateur":
-                return "https://localhost:44301/Compte/CreationNormal/c56b210e44db6bbe01808f315a5d30077189e184158196fc25349239116c9ef67b0fedf1e721b6bb74b16e738fe47e4f008d05242e81de1d57243280464cd1e5";
+                return $"{userUrl}/Compte/CreationNormal/c56b210e44db6bbe01808f315a5d30077189e184158196fc25349239116c9ef67b0fedf1e721b6bb74b16e738fe47e4f008d05242e81de1d57243280464cd1e5";
             default:
                 return "";
         }
@@ -164,10 +166,8 @@
         </tr>
     </thead>
     <tr>
-        <td colspan="10" class="bg-dark text-white containerTabHead"> Maître de stage
-            <button class="btn btn-primary copy-link center" data-link="@GetLinkForRole("MDS")">Copier lien</button>
-            <i class="fa-regular fa-circle-chevron-down fa-beat-fade fa-flip-both fa-xs topright" onclick="userDisplay('displayMds')" style="color: #2386d1;"></i>
-
+        <td colspan="10" class="bg-dark text-white" onclick="userDisplay('displayMds')">Maître de stage <button class="btn btn-primary copy-link" data-link="@GetLinkForRole("MDS")">Copier lien</button></td>
+        <td>
             <input type="text" class="form-control" id="MDSSearchInput" placeholder="Rechercher un maître de stage..." />
         </td>
     </tr>

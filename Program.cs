@@ -1,12 +1,12 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using SignalRChat.Hubs;
 using SPU.Domain;
 using SPU.Domain.Entites;
-using FluentValidation.AspNetCore;
-using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,10 +45,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 	options.LoginPath = "/Compte/LogIn";
 });
 
+
 var app = builder.Build();
-
-
-
 
 if (!app.Environment.IsDevelopment())
 {

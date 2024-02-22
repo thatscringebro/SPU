@@ -28,14 +28,19 @@ namespace SPU.Controllers
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly SpuContext _spuContext;
 
+        private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _config;
 
-        public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager)
+
+        public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager, IWebHostEnvironment env, IConfiguration config)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _spuContext = spuContext;
 
+            _env = env;
+            _config = config;
         }
 
         /// <summary>
@@ -114,8 +119,6 @@ namespace SPU.Controllers
 
                 if (roleUser == "Employeur")
                     return RedirectToAction(nameof(ManageMds));
-                    
-                //Redirection home ? ou horaire ? mais si les mds/stagiaire n'as pas encore d'horaire ? 
 
                 if (!string.IsNullOrEmpty(returnUrl))
                     return Redirect(returnUrl);
@@ -266,17 +269,8 @@ namespace SPU.Controllers
                 ViewBag.UserListErrorMessage = "Erreur d'affichage des utilisateurs. Veuillez réessayer." + ex.Message;
             }
 
-            //if (success)
-            //{
-            //    if (actionType == "Remove")
-            //    {
-            //        ViewBag.RemoveSuccessMessage = "L'utilisateur est retiré.";
-            //    }
-            //    else if (actionType == "Create")
-            //    {
-            //        ViewBag.CreateSuccessMessage = "L'utilisateur est créer";
-            //    }
-            //}
+            ViewData["UserURL"] = $"{Request.Scheme}://{Request.Host}";
+
             return View(vm);
         }
 
@@ -319,7 +313,7 @@ namespace SPU.Controllers
         }
 
         /// <summary>
-        /// Retourne la liste des stagiaires associé à l'enseignant
+        /// Retourne la liste des stagiaires associés à l'enseignant
         /// </summary>
         /// <returns>Les stagiaires</returns>
         [Authorize(Roles = "Enseignant")]
@@ -357,6 +351,14 @@ namespace SPU.Controllers
         }
 
         #endregion
+
+        [HttpPost]
+        public IActionResult VerifierUsername(string userName)
+        {
+            bool userExists = _spuContext.Users.Any(u => u.UserName == userName);
+            return Json(!userExists);
+        }
+
 
         #region CreationNormal et EditNormal
         /// <summary>
@@ -667,11 +669,12 @@ namespace SPU.Controllers
 
             };
 
+            _spuContext.Add(MDs);
 
             nouvelleHoraire.Id = Guid.NewGuid();
-            nouvelleHoraire.mds = MDs;
-            nouvelleHoraire.MDSId = MDs.Id;
-         
+            nouvelleHoraire.mds1 = MDs;
+            nouvelleHoraire.MDSId1 = MDs.Id;
+
             // Obtenir la date et l'heure actuelles dans le fuseau horaire local
             DateTime debutHoraire = DateTime.Now;
 
@@ -695,9 +698,10 @@ namespace SPU.Controllers
             MDs.DateCreationHoraire = debutHoraire.ToUniversalTime();
             MDs.DateExpiration = finHoraire.ToUniversalTime();
 
-      
+
+
             _spuContext.Horaires.Add(nouvelleHoraire);
-            _spuContext.Add(MDs);
+
             await _spuContext.SaveChangesAsync();
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
@@ -1068,8 +1072,11 @@ namespace SPU.Controllers
             {
                 foreach (var user in _spuContext.Stagiaires.Include(c => c.utilisateur).ToList())
                 {
-                    List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
-                   
+                    //List<MDS> lstMds = _spuContext.MDS.Where(MDS => MDS.StagiaireId == user.Id).Include(u => u.utilisateur).ToList();
+
+                    var Mds1 = _spuContext.Horaires.Where(h => h.StagiaireId == user.Id).Select(m => m.MDSId1).FirstOrDefault();
+                    var Mds2 = _spuContext.Horaires.Where(h => h.StagiaireId == user.Id).Select(m => m.MDSId2).FirstOrDefault();
+
 
                     if (user.finStage != null & user.debutStage != null)
                     {
@@ -1079,14 +1086,13 @@ namespace SPU.Controllers
                             Prenom = user.utilisateur?.Prenom,
                             Nom = user.utilisateur?.Nom,
                             idEnseignantSelectionne = user.EnseignantId,
-                            idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
-                            idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
+                            idMdsSelectionne1 = Mds1,
+                            idMdsSelectionne2 = Mds2,
                             debutStage = user.debutStage!.Value.Date,
                             finStage = user.finStage!.Value.Date
-                            
 
 
-                        }); 
+                        });
                     }
                     else
                     {
@@ -1096,14 +1102,14 @@ namespace SPU.Controllers
                             Prenom = user.utilisateur?.Prenom,
                             Nom = user.utilisateur?.Nom,
                             idEnseignantSelectionne = user.EnseignantId,
-                            idMdsSelectionne1 = lstMds.ElementAtOrDefault(0)?.Id,
-                            idMdsSelectionne2 = lstMds.ElementAtOrDefault(1)?.Id,
+                            idMdsSelectionne1 = Mds1,
+                            idMdsSelectionne2 = Mds2,
                             debutStage = null,
                             finStage = null
-                            
+
                         });
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -1113,113 +1119,168 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+
+       
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> Relier(Guid idStagiaire, Guid? idMdsSelectionne1, Guid? idMdsSelectionne2, Guid? idEnseignantSelectionne, DateTime? debutStage, DateTime? finStage)
         {
+
             if (!ModelState.IsValid)
-            {
                 return RedirectToAction("Relier");
-            }
 
-
+            
             if ((idMdsSelectionne1 == null && idMdsSelectionne2 == null && idEnseignantSelectionne == null) || (idMdsSelectionne1 != null && idMdsSelectionne1 == idMdsSelectionne2))
             {
                 TempData["ErrorMessage"] = "Le même maître de stage a été sélectionné deux fois ou aucun maître de stage n'a été sélectionné. Veuillez sélectionner des maîtres de stage différents.";
-
                 return RedirectToAction("Relier");
             }
 
             if (idEnseignantSelectionne == null)
             {
                 TempData["ErrorMessage"] = "Veuillez sélectionner un enseignant.";
-
                 return RedirectToAction("Relier");
             }
 
-            var Stagiaire = _spuContext.Stagiaires.Find(idStagiaire);
-            if (Stagiaire == null)
+           
+            var stagiaire = await _spuContext.Stagiaires.Include(s => s.chat).FirstOrDefaultAsync(s => s.Id == idStagiaire);
+            if (stagiaire == null)
             {
                 TempData["ErrorMessage"] = "Stagiaire introuvable.";
                 return RedirectToAction("Relier");
             }
 
+            if(finStage == null && debutStage == null) {
+                TempData["ErrorMessage"] = "Veuillez entrer une date de début et de fin de stage";
+                return RedirectToAction("Relier");
+            }
+     
+            Horaire? horaireTest = _spuContext.Horaires.FirstOrDefault(x => x.MDSId1 == idMdsSelectionne1 && x.MDSId2 != null);
 
-            var MdsaEditer1 = _spuContext.MDS.FirstOrDefault(x => x.Id == idMdsSelectionne1);
-            var MdsaEditer2 = _spuContext.MDS.FirstOrDefault(x => x.Id == idMdsSelectionne2);
-            var StagiaireAediter = _spuContext.Stagiaires.FirstOrDefault(x => x.Id == idStagiaire);
-            var ChatsStagiaire = _spuContext.Chats.FirstOrDefault(x => x.Id == StagiaireAediter.ChatId);
-            var anciensMds = _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToList();
+            if (horaireTest != null && horaireTest.MDSId1 == idMdsSelectionne1 && horaireTest.StagiaireId != idStagiaire)
+            {
+                TempData["ErrorMessage"] = "Veuillez déselectionner le premier maître de stage avant de l'assigner à nouveau!";
+                return RedirectToAction("Relier");
+            }
 
-            var horaireMDS1 = _spuContext.Horaires.FirstOrDefault(m => m.MDSId == idMdsSelectionne1);
-    
-            
+            if(idMdsSelectionne1 == null && idMdsSelectionne2 != null)
+            {
+                TempData["ErrorMessage"] = "Veuillez assigner le premier maître de stage avant le deuxième.";
+                return RedirectToAction("Relier");
+            }
 
+
+            var anciensMds = await _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToListAsync();
             foreach (var mds in anciensMds)
             {
-                if (mds.Id != idMdsSelectionne1 && mds.Id != idMdsSelectionne2)
-                {
-                    var ancienhoraire = _spuContext.Horaires.FirstOrDefault(m => m.MDSId == mds.Id);
+                if(anciensMds.Count > 1)
+                    if(idMdsSelectionne2 == null)
+                        if(mds.Id != idMdsSelectionne1)
+                        {
+                            mds.stagiaire = null;
+                            mds.StagiaireId = null;
+                            mds.ChatId = null;
+                            mds.chat = null;
+                            var horaires = await _spuContext.Horaires.Where(h => h.MDSId1 == mds.Id || h.MDSId2 == mds.Id).ToListAsync();
 
-                    if(ancienhoraire.stagiaire != null)
+                            foreach (Horaire horaire in horaires)
+                            {
+                                if(mds.Id == horaire.MDSId2)
+                                {
+                                    horaire.MDSId2 = null;
+                                    horaire.mds2 = null;
+                                }
+                            }
+                        }
+
+                if (mds.Id != idMdsSelectionne1 && mds.Id != idMdsSelectionne2)
+                {                
+                    var horaires = await _spuContext.Horaires.Where(h => h.MDSId1 == mds.Id || h.MDSId2 == mds.Id).ToListAsync();
+                    foreach (var horaire in horaires)
                     {
-                        ancienhoraire.stagiaire = null;
-                        ancienhoraire.StagiaireId = null;
+                        horaire.stagiaire = null;
+                        horaire.StagiaireId = null;
+                      
                     }
                     mds.stagiaire = null;
                     mds.StagiaireId = null;
                     mds.ChatId = null;
-                    mds.chat = null;                
-                                 
+                    mds.chat = null;
                 }
             }
-
-            if (MdsaEditer1 != null)
+            
+            if (idMdsSelectionne1 != null)
             {
-                MdsaEditer1.StagiaireId = idStagiaire;
-                MdsaEditer1.chat = Stagiaire.chat;
-                MdsaEditer1.ChatId = Stagiaire.ChatId;
-                horaireMDS1.StagiaireId = Stagiaire.Id;
-                horaireMDS1.stagiaire = Stagiaire;
-
-                          
-
-                _spuContext.Horaires.Update(horaireMDS1);
-                _spuContext.MDS.Update(MdsaEditer1);
-            }
-
-            if (MdsaEditer2 != null && idMdsSelectionne2 != idMdsSelectionne1)
-            {
-                MdsaEditer2.StagiaireId = idStagiaire;
-                MdsaEditer2.chat = Stagiaire.chat;
-                MdsaEditer2.ChatId = Stagiaire.ChatId;
-                _spuContext.MDS.Update(MdsaEditer2);
-            }
-
-            if (StagiaireAediter != null)
-            {
-                StagiaireAediter.EnseignantId = idEnseignantSelectionne;
-                ChatsStagiaire.EnseignantId = idEnseignantSelectionne;
-
-                if (debutStage != null && finStage != null)
+                var mentor1 = await _spuContext.MDS.FirstOrDefaultAsync(m => m.Id == idMdsSelectionne1);
+                if (mentor1 != null)
                 {
-                    StagiaireAediter.debutStage = debutStage.Value.ToUniversalTime();
-                    StagiaireAediter.finStage = finStage.Value.ToUniversalTime();
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Veuillez entré une date de début et de fin de stage";
-                    return RedirectToAction("Relier");
-                }
+                    mentor1.StagiaireId = idStagiaire;
+                    mentor1.chat = stagiaire.chat;
+                    mentor1.ChatId = stagiaire.ChatId;
 
-                _spuContext.Stagiaires.Update(StagiaireAediter);
+                    var horaireMDS1 = await _spuContext.Horaires.FirstOrDefaultAsync(h => h.MDSId1 == idMdsSelectionne1);
+                    if (horaireMDS1 != null)
+                    {
+                        horaireMDS1.StagiaireId = stagiaire.Id;
+                        horaireMDS1.stagiaire = stagiaire;
+                    }
+
+                    var horaireVerificationMDS2 =  _spuContext.Horaires.Where(h => h.MDSId2 == mentor1.Id).FirstOrDefault();
+                    if(horaireVerificationMDS2 != null)
+                    {
+                        horaireVerificationMDS2.mds2 = null;
+                        horaireVerificationMDS2.MDSId2 = null;
+                        _spuContext.Horaires.Update(horaireVerificationMDS2);
+                    }
+
+                    _spuContext.MDS.Update(mentor1);
+                    _spuContext.Horaires.Update(horaireMDS1);
+                }
             }
 
-            await _spuContext.SaveChangesAsync();
+            if (idMdsSelectionne2 != null && idMdsSelectionne2 != idMdsSelectionne1)
+            {
+                var mentor2 = await _spuContext.MDS.FirstOrDefaultAsync(m => m.Id == idMdsSelectionne2);
+                if (mentor2 != null)
+                {
+                    mentor2.StagiaireId = idStagiaire;
+                    mentor2.chat = stagiaire.chat;
+                    mentor2.ChatId = stagiaire.ChatId;
+
+                    foreach (Horaire horaire in _spuContext.Horaires)
+                    {           
+                        if(horaire.StagiaireId != idStagiaire && mentor2.Id == horaire.MDSId1)
+                        {
+                            horaire.stagiaire = null;
+                            horaire.StagiaireId = null;
+                        }
+
+                        if(horaire.stagiaire == null)
+                        {
+                            horaire.mds2 = null;
+                            horaire.MDSId2 = null;
+                        }
+                        else if (horaire.stagiaire != null)
+                        {
+                            horaire.mds2 = mentor2;
+                            horaire.MDSId2 = mentor2.Id;
+                        }
+                    }
+                    _spuContext.MDS.Update(mentor2);
+                }
+            }
+          
+            stagiaire.EnseignantId = idEnseignantSelectionne;
+            stagiaire.debutStage = debutStage?.ToUniversalTime() ?? stagiaire.debutStage;
+            stagiaire.finStage = finStage?.ToUniversalTime() ?? stagiaire.finStage;
+            stagiaire.chat.EnseignantId = idEnseignantSelectionne;
+
+            _spuContext.Stagiaires.Update(stagiaire);
+            _spuContext.SaveChanges();
 
             TempData["SuccessMessage"] = "Modifications réussies";
-
             return RedirectToAction("Relier");
+
         }
         #endregion
 
@@ -1262,29 +1323,29 @@ namespace SPU.Controllers
                   .Include(x => x.enseignant).ThenInclude(x => x.utilisateur)
                   .ToList();
 
-                for (int i = 2; i < stagiaires.Count(); i++)
+                for (int i = 0; i < stagiaires.Count(); i++)
                 {
                     MDS mds = _spuContext.MDS.Include(x => x.utilisateur).FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
 
-                    worksheet.Cell($"A{i}").Value = "";
-                    worksheet.Cell($"B{i}").Value = stagiaires[i].employeur.utilisateur.UserName;
-                    worksheet.Cell($"C{i}").Value = "";
-                    worksheet.Cell($"E{i}").Value = "";
-                    worksheet.Cell($"F{i}").Value = "";
-                    worksheet.Cell($"G{i}").Value = stagiaires[i].employeur.utilisateur.PhoneNumber;
-                    worksheet.Cell($"H{i}").Value = stagiaires[i].employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue;
-                    worksheet.Cell($"I{i}").Value = stagiaires[i].employeur.adresse.Ville;
-                    worksheet.Cell($"J{i}").Value = stagiaires[i].employeur.adresse.Province;
-                    worksheet.Cell($"K{i}").Value = stagiaires[i].employeur.adresse.CodePostal;
-                    worksheet.Cell($"L{i}").Value = mds.utilisateur.NomComplet + " / " + mds.MatriculeId;
-                    worksheet.Cell($"M{i}").Value = stagiaires[i].utilisateur.NomComplet;
-                    worksheet.Cell($"N{i}").Value = stagiaires[i].utilisateur.Prenom;
-                    worksheet.Cell($"O{i}").Value = mds.typeEmployeur == 0 ? "CISSS" : "CIUSSS";
-                    worksheet.Cell($"P{i}").Value = "";
-                    worksheet.Cell($"Q{i}").Value = "";
-                    worksheet.Cell($"R{i}").Value = stagiaires[i].debutStage != null ? stagiaires[i].debutStage.Value.ToLocalTime().ToString() + " - " + stagiaires[i].finStage.Value.ToLocalTime().ToString() : "";
-                    worksheet.Cell($"S{i}").Value = stagiaires[i].enseignant.utilisateur.NomComplet;
-                    worksheet.Cell($"T{i}").Value = "";
+                    worksheet.Cell($"A{i+2}").Value = "";
+                    worksheet.Cell($"B{i+2}").Value = stagiaires[i].employeur.utilisateur.UserName;
+                    worksheet.Cell($"C{i+2}").Value = "";
+                    worksheet.Cell($"E{i+2}").Value = "";
+                    worksheet.Cell($"F{i+2}").Value = "";
+                    worksheet.Cell($"G{i+2}").Value = stagiaires[i].employeur.utilisateur.PhoneNumber;
+                    worksheet.Cell($"H{i+2}").Value = stagiaires[i].employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue;
+                    worksheet.Cell($"I{i+2}").Value = stagiaires[i].employeur.adresse.Ville;
+                    worksheet.Cell($"J{i+2}").Value = stagiaires[i].employeur.adresse.Province;
+                    worksheet.Cell($"K{i+2}").Value = stagiaires[i].employeur.adresse.CodePostal;
+                    worksheet.Cell($"L{i+2}").Value = mds.utilisateur.NomComplet + " / " + mds.MatriculeId;
+                    worksheet.Cell($"M{i+2}").Value = stagiaires[i].utilisateur.NomComplet;
+                    worksheet.Cell($"N{i+2}").Value = stagiaires[i].utilisateur.Prenom;
+                    worksheet.Cell($"O{i+2}").Value = mds.typeEmployeur == 0 ? "CISSS" : "CIUSSS";
+                    worksheet.Cell($"P{i+2}").Value = "";
+                    worksheet.Cell($"Q{i+2}").Value = "";
+                    worksheet.Cell($"R{i+2}").Value = stagiaires[i].debutStage != null ? stagiaires[i].debutStage.Value.ToLocalTime().ToString() + " - " + stagiaires[i].finStage.Value.ToLocalTime().ToString() : "";
+                    worksheet.Cell($"S{i+2}").Value = stagiaires[i].enseignant.utilisateur.NomComplet;
+                    worksheet.Cell($"T{i+2}").Value = "";
                 }
 
                 var worksheet2 = workbook.Worksheets.Add("mds_source");
@@ -1312,38 +1373,67 @@ namespace SPU.Controllers
                   .Include(x => x.utilisateur)
                   .ToList();
 
-                for (int i = 2; i < maitresdestage.Count(); i++)
+                for (int i = 0; i < maitresdestage.Count(); i++)
                 {
                   if(maitresdestage[i].status == Status.Incomplet)//incomplet
                   {
-                    worksheet2.Cell($"B{i}").Value = "incomplet";
-                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Yellow;
+                    worksheet2.Cell($"B{i+2}").Value = "incomplet";
+                    worksheet2.Row(i+2).Style.Fill.BackgroundColor = XLColor.Yellow;
                   }
                   if(maitresdestage[i].status == Status.Accepté)//accepté
                   {
-                    worksheet2.Cell($"B{i}").Value = "accepté";
-                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Green;
+                    worksheet2.Cell($"B{i+2}").Value = "accepté";
+                    worksheet2.Row(i+2).Style.Fill.BackgroundColor = XLColor.Green;
                   }
                   if(maitresdestage[i].status == Status.Refusé)//refusé
                   {
-                    worksheet2.Cell($"B{i}").Value = "refusé";
-                    worksheet2.Row(i).Style.Fill.BackgroundColor = XLColor.Red;
+                    worksheet2.Cell($"B{i+2}").Value = "refusé";
+                    worksheet2.Row(i+2).Style.Fill.BackgroundColor = XLColor.Red;
                   }
 
-                  worksheet2.Cell($"A{i}").Value = maitresdestage[i].MatriculeId;
-                  worksheet2.Cell($"C{i}").Value = maitresdestage[i].civilite == 0 ? "M" : "Mme";
-                  worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.NomComplet;
-                  worksheet2.Cell($"D{i}").Value = maitresdestage[i].utilisateur.Nom;
-                  worksheet2.Cell($"E{i}").Value = maitresdestage[i].utilisateur.Prenom;
-                  worksheet2.Cell($"F{i}").Value = maitresdestage[i].telMaison;
-                  worksheet2.Cell($"G{i}").Value = maitresdestage[i].utilisateur.PhoneNumber;
-                  worksheet2.Cell($"H{i}").Value = maitresdestage[i].utilisateur.Email;
-                  worksheet2.Cell($"I{i}").Value = maitresdestage[i].typeEmployeur == 0 ? "CISSS" : "CIUSSS";
-                  worksheet2.Cell($"J{i}").Value = maitresdestage[i].NomEmployeur;
-                  worksheet2.Cell($"K{i}").Value = "";
-                  worksheet2.Cell($"L{i}").Value = "";
-                  worksheet2.Cell($"M{i}").Value = maitresdestage[i].commentaire;
-                  worksheet2.Cell($"N{i}").Value = maitresdestage[i].commentaireCIUSS;
+                  worksheet2.Cell($"A{i+2}").Value = maitresdestage[i].MatriculeId;
+                  worksheet2.Cell($"C{i+2}").Value = maitresdestage[i].civilite == 0 ? "M" : "Mme";
+                  worksheet2.Cell($"D{i+2}").Value = maitresdestage[i].utilisateur.NomComplet;
+                  worksheet2.Cell($"D{i+2}").Value = maitresdestage[i].utilisateur.Nom;
+                  worksheet2.Cell($"E{i+2}").Value = maitresdestage[i].utilisateur.Prenom;
+                  worksheet2.Cell($"F{i+2}").Value = maitresdestage[i].telMaison;
+                  worksheet2.Cell($"G{i+2}").Value = maitresdestage[i].utilisateur.PhoneNumber;
+                  worksheet2.Cell($"H{i+2}").Value = maitresdestage[i].utilisateur.Email;
+                  worksheet2.Cell($"I{i+2}").Value = maitresdestage[i].typeEmployeur == 0 ? "CISSS" : "CIUSSS";
+                  worksheet2.Cell($"J{i+2}").Value = maitresdestage[i].NomEmployeur;
+                  worksheet2.Cell($"K{i+2}").Value = "";
+                  worksheet2.Cell($"L{i+2}").Value = "";
+                  worksheet2.Cell($"M{i+2}").Value = maitresdestage[i].commentaire;
+                  worksheet2.Cell($"N{i+2}").Value = maitresdestage[i].commentaireCIUSS;
+                }
+
+                for (int i = 0; i < stagiaires.Count(); i++)
+                {
+                    var worksheet_horaire = workbook.Worksheets.Add(stagiaires[i].utilisateur.NomComplet);
+                    worksheet_horaire.Cell("A1").Value = "Stagiaire: ";
+                    worksheet_horaire.Cell("B1").Value = stagiaires[i].utilisateur.NomComplet;
+                    worksheet_horaire.Cell("A2").Value = "Employeur: ";
+                    worksheet_horaire.Cell("B2").Value = stagiaires[i].employeur.utilisateur.UserName;
+
+                    worksheet_horaire.Cell("A4").Value = "Date";
+                    worksheet_horaire.Cell("B4").Value = "Durée du quart";
+                    worksheet_horaire.Cell("C4").Value = "Matricule TAP #1";
+                    worksheet_horaire.Cell("D4").Value = "Matricule TAP #2";
+
+                    Horaire horaire = _spuContext.Horaires.FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
+
+                    if(horaire != null)
+                    {
+                        List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id).ToList();
+
+                        for (int j = 0; i < plages.Count(); i++)
+                        {
+                            worksheet_horaire.Cell($"A{j+5}").Value = plages[i].DateDebut.ToLocalTime().ToString("yyyy-MM-dd");
+                            worksheet_horaire.Cell($"B{j+5}").Value = plages[i].DateFin.Subtract(plages[i].DateDebut).TotalMinutes.ToString() + " minutes";
+                            worksheet_horaire.Cell($"C{j+5}").Value = horaire.MDSId1.ToString();
+                            worksheet_horaire.Cell($"D{j+5}").Value = horaire.MDSId2 != null ? horaire.MDSId2.ToString() : "";
+                        }
+                    }
                 }
 
                 using (var stream = new MemoryStream())
@@ -1361,15 +1451,7 @@ namespace SPU.Controllers
         #endregion
 
 
-        #region Filtre
-        [HttpGet]
-        public IActionResult GetFilteredData(string filter)
-        {
-            var filteredData = _spuContext.MDS.Where(item => item.MatriculeId.StartsWith(filter)).Select(item => item.MatriculeId).ToList();
-            return Json(filteredData);
-        }
-
-        #endregion
+    
     }
 
 

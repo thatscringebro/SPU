@@ -71,7 +71,7 @@
                         </td>
                         <td>
                                 @* <select class="selectpicker" disabled> *@
-                            <select id="selecteur" class="form-control selectpicker" name="idMdsSelectionne1" data-live-search="true">
+                            <select id="selecteur1" class="form-control selectpicker" name="idMdsSelectionne1" data-live-search="true">
                                 <option value="">Sélectionnez le maitre de stage 1</option>
                                     @foreach (var mds in ViewBag.Mds)
                                     {
@@ -87,7 +87,7 @@
                             </select>
                         </td>
                         <td>
-                            <select id="selecteur" class="form-control" name="idMdsSelectionne2">
+                            <select id="selecteur2" class="form-control" name="idMdsSelectionne2">
                                 <option value="">Sélectionnez le maitre de stage 2</option>
                                     @foreach (var mds in ViewBag.Mds)
                                     {
@@ -158,6 +158,5 @@
 
 
 @section Scripts {
-
-
+  
 }
