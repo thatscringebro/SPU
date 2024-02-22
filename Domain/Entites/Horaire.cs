@@ -8,7 +8,6 @@ namespace SPU.Domain.Entites
         public Guid? StagiaireId { get; set; }
        
         public Guid MDSId { get; set; }
-
     
 
         public Stagiaire? stagiaire { get; set; }
