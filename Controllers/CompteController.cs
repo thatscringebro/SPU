@@ -28,14 +28,19 @@ namespace SPU.Controllers
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly SpuContext _spuContext;
 
+        private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _config;
 
-        public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager)
+
+        public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager, IWebHostEnvironment env, IConfiguration config)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _spuContext = spuContext;
 
+            _env = env;
+            _config = config;
         }
 
         /// <summary>
@@ -266,17 +271,8 @@ namespace SPU.Controllers
                 ViewBag.UserListErrorMessage = "Erreur d'affichage des utilisateurs. Veuillez réessayer." + ex.Message;
             }
 
-            //if (success)
-            //{
-            //    if (actionType == "Remove")
-            //    {
-            //        ViewBag.RemoveSuccessMessage = "L'utilisateur est retiré.";
-            //    }
-            //    else if (actionType == "Create")
-            //    {
-            //        ViewBag.CreateSuccessMessage = "L'utilisateur est créer";
-            //    }
-            //}
+            ViewData["UserURL"] = $"{Request.Scheme}://{Request.Host}";
+
             return View(vm);
         }
 
