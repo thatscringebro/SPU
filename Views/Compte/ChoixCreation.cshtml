@@ -1,28 +1,32 @@
-﻿<div class="text-center">
-<h1>Qui souhaitez vous ajouter ? </h1>
+﻿
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="~/css/user.css" />
+
+<div class="text-center">
+<h1 class="mt-3">Qui souhaitez vous ajouter ? </h1>
 </div>
-<div class="mt-2 mb-2">
+<div class="mt-5 mb-2">
     @Html.ActionLink("Back", "Manage", "Compte",
-    new { }, new { @class = "btn btn-secondary" })
+            new { }, new { @class = "btn btn-secondary" })
 </div>
 <div class="text-center">
-    <div class="mt-2 mb-2">
-        @Html.ActionLink("Stagiaire", "CreationNormal", "Compte", new { vue = "CreationNormal" }, new { @class = "btn btn-primary btn-lg" })
+    <div class="mt-5 mb-2">
+        @Html.ActionLink("Stagiaire", "CreationNormal", "Compte", new { vue = "CreationNormal" }, new { @class = "btn custom-btn btn-lg" })
     </div>
 
-    <div class="mt-2 mb-2">
-        @Html.ActionLink("Coordonnateur", "CreationNormal", "Compte", new { vue = "CreationCoordonnateur" }, new { @class = "btn btn-primary btn-lg" })
+    <div class="mt-5 mb-2">
+        @Html.ActionLink("Coordonnateur", "CreationNormal", "Compte", new { vue = "CreationCoordonnateur" }, new { @class = "btn custom-btn btn-lg" })
     </div>
 
-    <div class="mt-2 mb-2">
-        @Html.ActionLink("Enseignant", "CreationNormal", "Compte", new { vue = "CreationEnseignant" }, new { @class = "btn btn-primary btn-lg" })
+    <div class="mt-5 mb-2">
+        @Html.ActionLink("Enseignant", "CreationNormal", "Compte", new { vue = "CreationEnseignant" }, new { @class = "btn custom-btn btn-lg" })
     </div>
 
-    <div class="mt-2 mb-2">
-        @Html.ActionLink("Maître de stage", "CreationMDS", "Compte", null, new { @class = "btn btn-primary btn-lg" })
+    <div class="mt-5 mb-2">
+        @Html.ActionLink("Maître de stage", "CreationMDS", "Compte", null, new { @class = "btn custom-btn btn-lg" })
     </div>
 
-    <div class="mt-2 mb-2">
-        @Html.ActionLink("Employeur", "CreationEmployeur", "Compte", new { }, new { @class = "btn btn-primary btn-lg" })
+    <div class="mt-5 mb-2">
+        @Html.ActionLink("Employeur", "CreationEmployeur", "Compte", new { }, new { @class = "btn custom-btn btn-lg" })
     </div>
 </div>

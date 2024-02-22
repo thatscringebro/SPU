@@ -46,9 +46,13 @@ namespace SPU.ViewModels
         [RegularExpression(@"^[A-Z]{1}\d{4}$", ErrorMessage = "Le format du matricule est invalide! Utilisez le format X1234.")]
         public string MatriculeId { get; set; }
 
+
+        [Required(ErrorMessage = "La civilité est requise!")]
         [Display(Name = "Civilité")]
         public Civilite civilite { get; set; }
 
+
+        [Required(ErrorMessage = "Le type de l'employeur est requis!")]
         [Display(Name = "Type d'employeur")]
         public TypeEmployeur TypeEmployeur { get; set; }
 
@@ -56,6 +60,8 @@ namespace SPU.ViewModels
         [Display(Name = "Téléphone de maison")]
         [RegularExpression(@"^\s*\d{3}-\d{3}-\d{4}\s*$", ErrorMessage = "Le format du téléphone est invalide! Utilisez le format XXX-XXX-XXXX.")]
         public string telMaison { get; set; }
+
+        [Required(ErrorMessage = "Le nom de l'employeur est requis!")]
         [Display(Name = "Nom de l'employeur")]
         public string? NomEmployeur { get; set; }
         public string role { get; set; }

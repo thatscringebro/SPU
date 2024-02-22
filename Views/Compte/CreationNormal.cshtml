@@ -18,6 +18,8 @@
 
 @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
 
+<link rel="stylesheet" href="~/css/user.css" />
+
 <form id="user-form" asp-action="CreationNormal" asp-controller="Compte" method="post">
     <h1>Stagiaire</h1>
     <hr />
@@ -79,7 +81,7 @@
             <input id="role-reginput" asp-for="role" class="form-control" type="hidden" value="Stagiaire" />
             <div class="form-group">
                 <div class="form-group mt-2 mb-2">
-                    <input type="submit" value="Créer" class="btn btn-primary" />
+                    <input type="submit" value="Créer" class="btn newbtn-btn" />
                 </div>
             </div>
         </div>

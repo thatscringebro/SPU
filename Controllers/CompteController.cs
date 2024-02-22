@@ -529,13 +529,18 @@ namespace SPU.Controllers
                 return NotFound();
 
             var roleCh = await _userManager.GetRolesAsync(user);
+            var stagiaire = _spuContext.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+
+            ViewBag.cacher = roleCh.Contains("Stagiaire") && !stagiaire.PartagerInfoContact;
 
             var modifUser = new UtilisateurEditVM
             {
                 Nom = user.Nom,
                 Prenom = user.Prenom,
-                PhoneNumber = user.PhoneNumber,
                 userName = user.UserName,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email,
                 role = roleCh.FirstOrDefault()
             };
 
@@ -741,7 +746,6 @@ namespace SPU.Controllers
                 TypeEmployeur = userMDS.typeEmployeur,
                 idEmployeurSelectionne = userMDS.EmployeurId,
                 Email = userMDS.utilisateur.Email,
-
             };
 
 
@@ -887,10 +891,6 @@ namespace SPU.Controllers
 
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
-
-
-
-
 
 
 
@@ -1329,22 +1329,22 @@ namespace SPU.Controllers
                     MDS mds = _spuContext.MDS.Include(x => x.utilisateur).FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
 
                     worksheet.Cell($"A{i+2}").Value = "";
-                    worksheet.Cell($"B{i+2}").Value = mds.employeur.utilisateur.UserName;
+                    worksheet.Cell($"B{i+2}").Value = mds != null ? mds.employeur.utilisateur.UserName : "";
                     worksheet.Cell($"C{i+2}").Value = "";
                     worksheet.Cell($"E{i+2}").Value = "";
                     worksheet.Cell($"F{i+2}").Value = "";
-                    worksheet.Cell($"G{i+2}").Value = mds.employeur.utilisateur.PhoneNumber;
-                    worksheet.Cell($"H{i+2}").Value = mds.employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue;
-                    worksheet.Cell($"I{i+2}").Value = mds.employeur.adresse.Ville;
-                    worksheet.Cell($"J{i+2}").Value = mds.employeur.adresse.Province;
-                    worksheet.Cell($"K{i+2}").Value = mds.employeur.adresse.CodePostal;
-                    worksheet.Cell($"L{i+2}").Value = mds.utilisateur.NomComplet + " / " + mds.MatriculeId;
+                    worksheet.Cell($"G{i+2}").Value = mds != null ? mds.employeur.utilisateur.PhoneNumber : "";
+                    worksheet.Cell($"H{i+2}").Value = mds != null ? mds.employeur.adresse.NoCivique + " " + stagiaires[i].employeur.adresse.Rue : "";
+                    worksheet.Cell($"I{i+2}").Value = mds != null ? mds.employeur.adresse.Ville : "";
+                    worksheet.Cell($"J{i+2}").Value = mds != null ? mds.employeur.adresse.Province : "";
+                    worksheet.Cell($"K{i+2}").Value = mds != null ? mds.employeur.adresse.CodePostal : "";
+                    worksheet.Cell($"L{i+2}").Value = mds != null ? mds.utilisateur.NomComplet + " / " + mds.MatriculeId : "";
                     worksheet.Cell($"M{i+2}").Value = stagiaires[i].utilisateur.NomComplet;
                     worksheet.Cell($"N{i+2}").Value = stagiaires[i].utilisateur.Prenom;
-                    worksheet.Cell($"O{i+2}").Value = mds.typeEmployeur == 0 ? "CISSS" : "CIUSSS";
+                    worksheet.Cell($"O{i+2}").Value = mds != null ? (mds.typeEmployeur == 0 ? "CISSS" : "CIUSSS") : "";
                     worksheet.Cell($"P{i+2}").Value = "";
                     worksheet.Cell($"Q{i+2}").Value = "";
-                    worksheet.Cell($"R{i+2}").Value = stagiaires[i].debutStage != null ? stagiaires[i].debutStage.Value.ToLocalTime().ToString() + " - " + stagiaires[i].finStage.Value.ToLocalTime().ToString() : "";
+                    worksheet.Cell($"R{i+2}").Value = stagiaires[i].debutStage != null ? stagiaires[i].debutStage.Value.ToLocalTime().ToString("yyyy-MM-dd") + " - " + stagiaires[i].finStage.Value.ToLocalTime().ToString("yyyy-MM-dd") : "";
                     worksheet.Cell($"S{i+2}").Value = stagiaires[i].enseignant.utilisateur.NomComplet;
                     worksheet.Cell($"T{i+2}").Value = "";
                 }
@@ -1411,6 +1411,7 @@ namespace SPU.Controllers
                 for (int i = 0; i < stagiaires.Count(); i++)
                 {
                     var worksheet_horaire = workbook.Worksheets.Add(stagiaires[i].utilisateur.NomComplet);
+                    worksheet_horaire.Columns().Width = 20;
                     worksheet_horaire.Cell("A1").Value = "Stagiaire: ";
                     worksheet_horaire.Cell("B1").Value = stagiaires[i].utilisateur.NomComplet;
                     worksheet_horaire.Cell("A2").Value = "Employeur: ";
@@ -1420,19 +1421,21 @@ namespace SPU.Controllers
                     worksheet_horaire.Cell("B4").Value = "Durée du quart";
                     worksheet_horaire.Cell("C4").Value = "Matricule TAP #1";
                     worksheet_horaire.Cell("D4").Value = "Matricule TAP #2";
+                    worksheet_horaire.Cell("E4").Value = "Commentaires";
 
-                    Horaire horaire = _spuContext.Horaires.FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
+                    Horaire horaire = _spuContext.Horaires.Include(x => x.mds1).Include(x => x.mds2).FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
 
                     if(horaire != null)
                     {
-                        List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id).ToList();
+                        List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id).OrderBy(x => x.DateDebut).ToList();
 
-                        for (int j = 0; i < plages.Count(); i++)
+                        for (int j = 0; j < plages.Count(); j++)
                         {
-                            worksheet_horaire.Cell($"A{j+5}").Value = plages[i].DateDebut.ToLocalTime().ToString("yyyy-MM-dd");
-                            worksheet_horaire.Cell($"B{j+5}").Value = plages[i].DateFin.Subtract(plages[i].DateDebut).TotalMinutes.ToString() + " minutes";
-                            worksheet_horaire.Cell($"C{j+5}").Value = horaire.MDSId1.ToString();
-                            worksheet_horaire.Cell($"D{j+5}").Value = horaire.MDSId2 != null ? horaire.MDSId2.ToString() : "";
+                            worksheet_horaire.Cell($"A{j+5}").Value = plages[j].DateDebut.ToLocalTime().ToString("yyyy-MM-dd");
+                            worksheet_horaire.Cell($"B{j+5}").Value = plages[j].DateFin.Subtract(plages[j].DateDebut).TotalMinutes.ToString() + " minutes";
+                            worksheet_horaire.Cell($"C{j+5}").Value = horaire.mds1.MatriculeId + (plages[j].MDS1absent != null ? " (absent)" : "");
+                            worksheet_horaire.Cell($"D{j+5}").Value = (horaire.mds2 != null ? horaire.mds2.MatriculeId : "") + (plages[j].MDS2absent != null ? " (absent)" : "");
+                            worksheet_horaire.Cell($"E{j+5}").Value = plages[j].Commentaire != null ? plages[j].Commentaire : "";
                         }
                     }
                 }
