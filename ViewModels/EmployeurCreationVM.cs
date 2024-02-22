@@ -30,6 +30,7 @@ namespace SPU.ViewModels
         [MinLength(8, ErrorMessage = "Le mot de passe doit contenir au moins 8 caractères!")]
         public string pwd { get; set; }
 
+        [Required(ErrorMessage = "La confirmation du mot de passe est requise!")]
         [Compare("pwd", ErrorMessage = "La confirmation du mot de passe ne correspond pas!")]
         [Display(Name = "Confirmation mot de passe")]
         public string confirmationpwd { get; set; }
