@@ -28,14 +28,19 @@ namespace SPU.Controllers
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly SpuContext _spuContext;
 
+        private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _config;
 
-        public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager)
+
+        public CompteController(SpuContext spuContext, UserManager<Utilisateur> userManager, SignInManager<Utilisateur> signInManager, RoleManager<IdentityRole<Guid>> roleManager, IWebHostEnvironment env, IConfiguration config)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _spuContext = spuContext;
 
+            _env = env;
+            _config = config;
         }
 
         /// <summary>
@@ -264,17 +269,8 @@ namespace SPU.Controllers
                 ViewBag.UserListErrorMessage = "Erreur d'affichage des utilisateurs. Veuillez réessayer." + ex.Message;
             }
 
-            //if (success)
-            //{
-            //    if (actionType == "Remove")
-            //    {
-            //        ViewBag.RemoveSuccessMessage = "L'utilisateur est retiré.";
-            //    }
-            //    else if (actionType == "Create")
-            //    {
-            //        ViewBag.CreateSuccessMessage = "L'utilisateur est créer";
-            //    }
-            //}
+            ViewData["UserURL"] = $"{Request.Scheme}://{Request.Host}";
+
             return View(vm);
         }
 
@@ -1425,14 +1421,18 @@ namespace SPU.Controllers
                     worksheet_horaire.Cell("D4").Value = "Matricule TAP #2";
 
                     Horaire horaire = _spuContext.Horaires.FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
-                    List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id && x.StagiairePresent == false).ToList();
 
-                    for (int j = 0; i < plages.Count(); i++)
+                    if(horaire != null)
                     {
-                        worksheet_horaire.Cell($"A{j+5}").Value = "";
-                        worksheet_horaire.Cell($"B{j+5}").Value = "";
-                        worksheet_horaire.Cell($"C{j+5}").Value = "";
-                        worksheet_horaire.Cell($"D{j+5}").Value = "";
+                        List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id).ToList();
+
+                        for (int j = 0; i < plages.Count(); i++)
+                        {
+                            worksheet_horaire.Cell($"A{j+5}").Value = plages[i].DateDebut.ToLocalTime().ToString("yyyy-MM-dd");
+                            worksheet_horaire.Cell($"B{j+5}").Value = plages[i].DateFin.Subtract(plages[i].DateDebut).TotalMinutes.ToString() + " minutes";
+                            worksheet_horaire.Cell($"C{j+5}").Value = horaire.MDSId1.ToString();
+                            worksheet_horaire.Cell($"D{j+5}").Value = horaire.MDSId2 != null ? horaire.MDSId2.ToString() : "";
+                        }
                     }
                 }
 
