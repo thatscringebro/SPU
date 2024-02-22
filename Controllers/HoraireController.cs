@@ -33,6 +33,7 @@ namespace SPU.Controllers
             Enseignant? ens = _context.Enseignants.FirstOrDefault(x => x.UtilisateurId == user.Id);
             Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
             MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
+            Employeur? employeur = _context.Employeurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
             HoraireIndexVM vm = new HoraireIndexVM();
 
@@ -67,7 +68,46 @@ namespace SPU.Controllers
                     return View(vm);
                 }
             }
+
             //Faire les autres rôles
+            else if (ens != null)
+            {
+                vm.role = "enseignant";
+
+                List<Stagiaire?> listeStagiaire = _context.Stagiaires.Where(x => x.EnseignantId == ens.Id).Include(c => c.utilisateur).ToList();
+
+                foreach (var item in listeStagiaire)
+                {
+                    Horaire? horaireStagiaire = _context.Horaires.Where(x => x.StagiaireId == item.Id).FirstOrDefault();
+
+                    if(horaireStagiaire != null)
+                    {
+                        vm.associationStagEns.Add(new AssociationStagiaireEnseignantVM
+                        {
+                            idHoraire = horaireStagiaire != null ? horaireStagiaire.Id : Guid.Empty,
+                            nomStagiaire = item.utilisateur.NomComplet,
+                            dateDebutStage = item.debutStage ?? DateTime.MinValue,
+                            dateFinStage = item.finStage ?? DateTime.MinValue
+                        });
+                    }
+
+                }
+
+                return View(vm);
+            }
+
+            //Employeur
+            else if(employeur != null)
+            {
+                vm.role = "employeur";
+
+                //Horaire? horaireMds = _context.Horaires.Where(x => x.MDSId == item.Id).FirstOrDefault();
+
+                //List<MDS?> listeMds = _context.MDS.Where(x => x.EmployeurId == employeur.Id).Include(c => c.utilisateur).ToList();
+
+                return View(vm);
+            }
+
 
             return View(vm);
         }
@@ -180,10 +220,12 @@ namespace SPU.Controllers
 
                 vm.DateCreationHoraire = mdsHoraire.DateCreationHoraire;
                 vm.DateExpiration = mdsHoraire.DateExpiration;
-                vm.DateDebutStage = stagHoraire.debutStage;
-                vm.DateFinStage = stagHoraire.finStage;
 
-
+                if(stagHoraire!= null)
+                {
+                    vm.DateDebutStage = stagHoraire.debutStage;
+                    vm.DateFinStage = stagHoraire.finStage;
+                }
             }
 
             //return View(vm);
@@ -300,7 +342,7 @@ namespace SPU.Controllers
 
                     List<PlageHoraire> listePlageHoraire = new List<PlageHoraire>();
 
-                    while (plageHoraireDebut >= mds.DateCreationHoraire?.ToLocalTime() && plageHoraireFin <= mds.DateExpiration?.ToLocalTime())
+                    while (plageHoraireDebut >= mds.DateCreationHoraire.ToLocalTime() && plageHoraireFin <= mds.DateExpiration.ToLocalTime())
                     {
                         PlageHoraire plageHoraireRecurrence = new PlageHoraire();
                         plageHoraireRecurrence.Id = Guid.NewGuid();
@@ -326,13 +368,13 @@ namespace SPU.Controllers
                             return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
                         }
 
-                        if (plageHoraireRecurrence.DateDebut.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime() || plageHoraireRecurrence.DateFin.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime()
-                            || plageHoraireRecurrence.DateDebut.ToLocalTime() > mds.DateExpiration?.ToLocalTime() || plageHoraireRecurrence.DateFin.ToLocalTime() > mds.DateExpiration?.ToLocalTime())
+                        if (plageHoraireRecurrence.DateDebut.ToLocalTime() < mds.DateCreationHoraire.ToLocalTime() || plageHoraireRecurrence.DateFin.ToLocalTime() < mds.DateCreationHoraire.ToLocalTime()
+                            || plageHoraireRecurrence.DateDebut.ToLocalTime() > mds.DateExpiration.ToLocalTime() || plageHoraireRecurrence.DateFin.ToLocalTime() > mds.DateExpiration.ToLocalTime())
                         {
                             string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " +
-                                        (mds.DateCreationHoraire.HasValue ? mds.DateCreationHoraire.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") +
+                                        (mds.DateCreationHoraire.ToString("yyyy-MM-dd HH:mm:ss")) +
                                         " et le " +
-                                        (mds.DateExpiration.HasValue ? mds.DateExpiration.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") + ")";
+                                        (mds.DateExpiration.ToString("yyyy-MM-dd HH:mm:ss"));
                             ModelState.AddModelError("PlageHoraire", errorMessage);
                             TempData["ErrorMessage"] = errorMessage;
                             return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
@@ -401,13 +443,11 @@ namespace SPU.Controllers
                     return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
                 }
 
-                if (ph.DateDebut.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime() || ph.DateFin.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime()
-                    || ph.DateDebut.ToLocalTime() > mds.DateExpiration?.ToLocalTime() || ph.DateFin.ToLocalTime() > mds.DateExpiration?.ToLocalTime())
+                if (ph.DateDebut.ToLocalTime() < mds.DateCreationHoraire.ToLocalTime() || ph.DateFin.ToLocalTime() < mds.DateCreationHoraire.ToLocalTime()
+                    || ph.DateDebut.ToLocalTime() > mds.DateExpiration.ToLocalTime() || ph.DateFin.ToLocalTime() > mds.DateExpiration.ToLocalTime())
                 {
-                    string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " +
-                                (mds.DateCreationHoraire.HasValue ? mds.DateCreationHoraire.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") +
-                                " et le " +
-                                (mds.DateExpiration.HasValue ? mds.DateExpiration.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") + ")";
+                    string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " + 
+                        (mds.DateCreationHoraire.ToString("yyyy-MM-dd HH:mm:ss")) + " et le " + (mds.DateExpiration.ToString("yyyy-MM-dd HH:mm:ss"));
                     ModelState.AddModelError("PlageHoraire", errorMessage);
                     TempData["ErrorMessage"] = errorMessage;
                     return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
@@ -533,13 +573,13 @@ namespace SPU.Controllers
                             return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
                         }
 
-                        if (ph.DateDebut.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime() || ph.DateFin.ToLocalTime() < mds.DateCreationHoraire?.ToLocalTime()
-                            || ph.DateDebut.ToLocalTime() > mds.DateExpiration?.ToLocalTime() || ph.DateFin.ToLocalTime() > mds.DateExpiration?.ToLocalTime())
+                        if (ph.DateDebut.ToLocalTime() < mds.DateCreationHoraire.ToLocalTime() || ph.DateFin.ToLocalTime() < mds.DateCreationHoraire.ToLocalTime()
+                            || ph.DateDebut.ToLocalTime() > mds.DateExpiration.ToLocalTime() || ph.DateFin.ToLocalTime() > mds.DateExpiration.ToLocalTime())
                         {
                             string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " +
-                                (mds.DateCreationHoraire.HasValue ? mds.DateCreationHoraire.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") +
+                                (mds.DateCreationHoraire.ToString("yyyy-MM-dd HH:mm:ss")) +
                                 " et le " +
-                                (mds.DateExpiration.HasValue ? mds.DateExpiration.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A") + ")";
+                                (mds.DateExpiration.ToString("yyyy-MM-dd HH:mm:ss"));  
                             ModelState.AddModelError("PlageHoraire", errorMessage);
                             TempData["ErrorMessage"] = errorMessage;
                             return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
