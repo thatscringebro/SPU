@@ -251,15 +251,11 @@
     var dateFin = new Date('@dateFin.ToString("yyyy-MM-ddTHH:mm:ss")');
 
     @* ------------------------------------ *@
-        console.log('@modelJson');
     var modelJS = '@modelJson'
 
     modelJS = modelJS.replaceAll('&quot;', '"')
 
-    console.log(modelJS);
-
     var model = JSON.parse(modelJS);
-    console.log(model);
     @* ------------------------------------ *@
     @*var isMdsJS = ('@isMdsJson');*@
         var roleMdsEnseignantStagiraire = ('@roleMdsEnseignantStagiaire');
@@ -372,20 +368,20 @@
                         else
                             quartHeureElement.style.backgroundColor = 'lightblue';
 
-
+                            @* ---------------------------------------------------------------------------- *@
                         var classes = quartHeureElement.classList;
                         for (var i = 0; i < classes.length; i++) {
                             var match = classes[i].match(/^idPlageHoraire-(.*)$/);
                             if (match) {
-                                var idPlageHoraire = match[1];
+                                var idPh = match[1];
                                 quartHeureElement.addEventListener("click", function () {
                                     //isMds
                                     if (roleMdsEnseignantStagiraire == "stagiaire") {
-                                        window.location.href = '/Horaire/MdsRemplacement?idPlageHoraire=' + idPlageHoraire;
+                                        window.location.href = '/Horaire/MdsRemplacement?idPlageHoraire=' + idPh;
                                     }
                                     else if (roleMdsEnseignantStagiraire == "mds") {
 
-                                        window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPlageHoraire;
+                                        window.location.href = '/Horaire/ModifierPlageHoraire?idPlageHoraire=' + idPh;
                                     }
 
                                 });

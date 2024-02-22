@@ -39,7 +39,7 @@ namespace SPU.Controllers
             //Liste horaire maître de stage
             if (mds != null)
             {
-                Horaire horaire = _context.Horaires.Where(x => x.MDSId1 == mds.Id).FirstOrDefault();
+                Horaire? horaire = _context.Horaires.Where(x => (x.MDSId1 == mds.Id && x.StagiaireId != null) || (x.MDSId2 == mds.Id && x.StagiaireId != null)).FirstOrDefault();
                 vm.role = "MDS";
 
                 if (horaire != null)
@@ -270,7 +270,7 @@ namespace SPU.Controllers
             }
 
             Horaire horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
-            MDS mds = _context.MDS.Where(x => x.Id == idMDS).FirstOrDefault();
+            MDS mds = _context.MDS.Where(x => x.UtilisateurId == idMDS).FirstOrDefault();
 
                    //Si il y a de la récurrence
             if (vm.Recurrence)
