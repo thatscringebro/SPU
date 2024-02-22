@@ -39,7 +39,7 @@ namespace SPU.Controllers
             //Liste horaire maître de stage
             if (mds != null)
             {
-                Horaire horaire = _context.Horaires.Where(x => x.MDSId == mds.Id).FirstOrDefault();
+                Horaire horaire = _context.Horaires.Where(x => x.MDSId1 == mds.Id).FirstOrDefault();
                 vm.role = "MDS";
 
                 if (horaire != null)
@@ -80,7 +80,7 @@ namespace SPU.Controllers
 
             horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
             ViewBag.horaireId = horaire.Id;
-            ViewBag.mdsId = null;
+            ViewBag.MDSId1 = null;
 
             // Récupérer le message d'erreur de la session temporaire
             string errorMessage = TempData["ErrorMessage"] as string;
@@ -95,7 +95,7 @@ namespace SPU.Controllers
                 Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
-                MDS mdsHoraire = _context.MDS.Where(x => x.Id == horaire.MDSId).Include(c => c.utilisateur).FirstOrDefault();
+                MDS mdsHoraire = _context.MDS.Where(x => x.Id == horaire.MDSId1).Include(c => c.utilisateur).FirstOrDefault();
                 Stagiaire? stagHoraire = _context.Stagiaires.Where(x => x.Id == horaire.StagiaireId).Include(c => c.utilisateur).FirstOrDefault();
 
                 vm.nomMds = string.Concat(mdsHoraire.utilisateur.Prenom + " " + mdsHoraire.utilisateur.Nom);
@@ -133,8 +133,8 @@ namespace SPU.Controllers
             Horaire horaire = new Horaire();
 
             var Mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == userId);
-            //Guid horaireId = _context.Horaires.Where(x => x.MDSId == Mds.Id).Select(h => h.Id).FirstOrDefault();
-            horaire = _context.Horaires.Where(x => x.MDSId == Mds.Id).FirstOrDefault();
+            //Guid horaireId = _context.Horaires.Where(x => x.MDSId1 == Mds.Id).Select(h => h.Id).FirstOrDefault();
+            horaire = _context.Horaires.Where(x => x.MDSId1 == Mds.Id).FirstOrDefault();
 
             //horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
 
@@ -156,7 +156,7 @@ namespace SPU.Controllers
             }
 
             ViewBag.horaireId = horaire.Id;
-            ViewBag.mdsId = Mds.Id;
+            ViewBag.MDSId1 = Mds.Id;
 
             // Récupérer le message d'erreur de la session temporaire
             //string errorMessage = TempData["ErrorMessage"] as string;
@@ -171,7 +171,7 @@ namespace SPU.Controllers
                 Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
                 MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
 
-                MDS mdsHoraire = _context.MDS.Where(x => x.Id == horaire.MDSId).Include(c => c.utilisateur).FirstOrDefault();
+                MDS mdsHoraire = _context.MDS.Where(x => x.Id == horaire.MDSId1).Include(c => c.utilisateur).FirstOrDefault();
                 Stagiaire? stagHoraire = _context.Stagiaires.Where(x => x.Id == horaire.StagiaireId).Include(c => c.utilisateur).FirstOrDefault();
 
                 vm.nomMds = string.Concat(mdsHoraire.utilisateur.Prenom + " " + mdsHoraire.utilisateur.Nom);
@@ -205,7 +205,7 @@ namespace SPU.Controllers
         //{
         //    nouvelleHoraire.Id = Guid.NewGuid();
         //    nouvelleHoraire.mds = mds;
-        //    nouvelleHoraire.MDSId = mds.Id;
+        //    nouvelleHoraire.MDSId1 = mds.Id;
 
         //    // Obtenir la date et l'heure actuelles dans le fuseau horaire local
         //    DateTime debutHoraire = DateTime.Now;
@@ -263,16 +263,16 @@ namespace SPU.Controllers
         public IActionResult AjoutPlageHoraireMDS(PlageHoraireMdsVM vm, Guid horaireId)
         {
             ViewBag.horaireId = horaireId;
-
+            var idMDS = new Guid(_loggedUserId);
             if (!ModelState.IsValid)
             {
                 return View(vm);
             }
 
             Horaire horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
-            MDS mds = _context.MDS.Where(x => x.Id == horaire.MDSId).FirstOrDefault();
+            MDS mds = _context.MDS.Where(x => x.Id == idMDS).FirstOrDefault();
 
-            //Si il y a de la récurrence
+                   //Si il y a de la récurrence
             if (vm.Recurrence)
             {
 
@@ -448,11 +448,11 @@ namespace SPU.Controllers
         public IActionResult ModifierPlageHoraire(ModifierPlageHoraireVM vm, string actionType, Guid PlageHoraireId)
         {
             ViewBag.PlageHoraireId = PlageHoraireId;
-
+            var idMDS = new Guid(_loggedUserId);
             PlageHoraire phBD = _context.PlageHoraires.FirstOrDefault(x => x.Id == PlageHoraireId);
             PlageHoraire ph = new PlageHoraire();
             Horaire horaire = _context.Horaires.FirstOrDefault(x => x.Id == phBD.HoraireId);
-            MDS mds = _context.MDS.Where(x => x.Id == horaire.MDSId).FirstOrDefault();
+            MDS mds = _context.MDS.Where(x => x.Id == idMDS).FirstOrDefault();
 
             if (actionType == "annuler")
             {
@@ -554,7 +554,7 @@ namespace SPU.Controllers
                     phBD.DateFin = plageHoraireFin.ToUniversalTime();
 
                     //ICI CLAUDEL POUR LA MODIF DE LA PLAGE HORAIRE
-                    if (!vm.EstPresent)
+                    if (!vm.EstPresent) //Verifier si il est deja dans la BD
                     {
                         if (phBD.MDS1absent == null)
                         {
@@ -579,7 +579,7 @@ namespace SPU.Controllers
                     _context.SaveChanges();
 
                     // Rediriger vers l'action "Horaire" du contrôleur "Horaire"
-                    return RedirectToAction("Horaire", "Horaire", new { horaireId = ph.HoraireId });
+                    return RedirectToAction("Horaire", "Horaire", new { horaireId = phBD.HoraireId });
                 }
                 else
                 {
