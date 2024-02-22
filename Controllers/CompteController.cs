@@ -352,17 +352,24 @@ namespace SPU.Controllers
 
         #endregion
 
+        #region ValidationForm
+        /// <summary>
+        /// Permet d'effectuer la validation de l'existence du username que le nouvel utilisateur qui s'inscrit souhaite
+        /// utiliser
+        /// </summary>
+        /// <param name="userName">Nom d'utilisateur dans le formulaire d'inscription</param>
+        /// <returns>bool</returns>
         [HttpPost]
         public IActionResult VerifierUsername(string userName)
         {
             bool userExists = _spuContext.Users.Any(u => u.UserName == userName);
             return Json(!userExists);
         }
-
+        #endregion
 
         #region CreationNormal et EditNormal
         /// <summary>
-        /// Affiche la vue pour le formulaire de création des stagiaires/enseignants
+        /// Affiche la vue pour le formulaire de création des stagiaires/enseignants/coordonnateur
         /// </summary>
         /// <param name="vue"></param>
         /// <param name="hash"></param>
@@ -407,6 +414,10 @@ namespace SPU.Controllers
             }
         }
 
+        /// <summary>
+        /// Permet de remplir la liste d'écoles qui seront affichées dans le drop down
+        /// </summary>
+        /// <returns>liste d'école</returns>
         private IEnumerable<SelectListItem> PopulateEcoles()
         {
             return _spuContext.Ecole.Select(e => new SelectListItem
@@ -418,10 +429,10 @@ namespace SPU.Controllers
 
 
         /// <summary>
-        /// 
+        /// Permet de créer un utilisateur ayant le rôle de stagiaire, de maitre de stage ou d'enseignant
         /// </summary>
-        /// <param name="vm"></param>
-        /// <returns>Retourne la vue avec les informations </returns>
+        /// <param name="vm">Model vu contenant les informations pour l'inscription de l'utilisateur</param>
+        /// <returns>Retourne à l'index </returns>
         //CREATION STAGIAIRE/COORDO/ENSEIGNANT
         [AllowAnonymous]
         [HttpPost]
