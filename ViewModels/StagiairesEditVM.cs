@@ -11,10 +11,12 @@ namespace SPU.ViewModels
         public Guid Id { get; set; }
         [Required(ErrorMessage = "Le prénom est requis.")]
         [Display(Name = "Prénom")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
         public string Prenom { get; set; }
 
         [Required(ErrorMessage = "Le nom est requis.")]
         [Display(Name = "Nom")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
         public string Nom { get; set; }
         [Required(ErrorMessage = "La date de début est requis.")]
         [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true), Display(Name = "Début de stage ")]

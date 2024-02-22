@@ -560,12 +560,11 @@ namespace SPU.Controllers
             aEditer.Email = vm.Email;
             aEditer.UserName = vm.userName;
 
-            var works = _userManager.UpdateAsync(aEditer);
+            var works = await _userManager.UpdateAsync(aEditer);
             if (works != null)
                 TempData["SuccessMessage"] = "Modifications succeeded";
             else
                 TempData["ErrorMessage"] = "Request failed";
-
 
 
             await _spuContext.SaveChangesAsync();

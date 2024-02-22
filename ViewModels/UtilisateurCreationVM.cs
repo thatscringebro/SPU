@@ -16,15 +16,17 @@ namespace SPU.ViewModels
         [Required(ErrorMessage = "Le nom d'utilisateur est requis!")]
         [Display(Name = "Nom d'utilisateur")]
         [Remote(action: "VerifierUsername", controller: "Compte", HttpMethod = "POST", ErrorMessage = "Cet utilisateur existe déjà.")]
-        //[UniqueUsername(ErrorMessage = "Le nom d'utilisateur est déjà utilisé.")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
         public string userName { get; set; }
 
         [Required(ErrorMessage = "Le prénom est requis!")]
         [Display(Name = "Prénom")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
         public string Prenom { get; set; }
 
         [Required(ErrorMessage = "Le nom est requis!")]
         [Display(Name = "Nom")]
+        [StringLength(25, MinimumLength = 3, ErrorMessage = "Le nom doit avoir entre 3 et 25 caractères.")]
         public string Nom { get; set; }
 
         [Required(ErrorMessage = "Le numéro de cellulaire est requis!")]
@@ -38,6 +40,7 @@ namespace SPU.ViewModels
         [MinLength(8, ErrorMessage = "Le mot de passe doit contenir au moins 8 caractères!")]
         public string pwd { get; set; }
 
+        [Required(ErrorMessage = "La confirmation du mot de passe est requise!")]
         [Display(Name = "Confirmation mot de passe")]
         [Compare("pwd", ErrorMessage = "La confirmation du mot de passe ne correspond pas!")]
         public string confirmationpwd { get; set; }
