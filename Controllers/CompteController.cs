@@ -529,13 +529,18 @@ namespace SPU.Controllers
                 return NotFound();
 
             var roleCh = await _userManager.GetRolesAsync(user);
+            var stagiaire = _spuContext.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
+
+
+            ViewBag.cacher = roleCh.Contains("Stagiaire") && !stagiaire.PartagerInfoContact;
 
             var modifUser = new UtilisateurEditVM
             {
                 Nom = user.Nom,
                 Prenom = user.Prenom,
-                PhoneNumber = user.PhoneNumber,
                 userName = user.UserName,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email,
                 role = roleCh.FirstOrDefault()
             };
 
@@ -742,7 +747,6 @@ namespace SPU.Controllers
                 TypeEmployeur = userMDS.typeEmployeur,
                 idEmployeurSelectionne = userMDS.EmployeurId,
                 Email = userMDS.utilisateur.Email,
-
             };
 
 
@@ -888,10 +892,6 @@ namespace SPU.Controllers
 
             return RedirectToAction(nameof(Manage), new { success = true, actionType = "Create" });
         }
-
-
-
-
 
 
 
