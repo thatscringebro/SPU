@@ -1194,6 +1194,8 @@ namespace SPU.Controllers
                 return RedirectToAction("Relier");
             }
 
+
+
             var anciensMds = await _spuContext.MDS.Where(mds => mds.StagiaireId == idStagiaire).ToListAsync();
             foreach (var mds in anciensMds)
             {
@@ -1232,13 +1234,13 @@ namespace SPU.Controllers
                     mds.ChatId = null;
                     mds.chat = null;
                     
-                    var existinghoraire = _spuContext.Horaires.Where(m => m.MDSId1 == mds.Id).ToList();
-                    if(existinghoraire == null)
-                    {
-                         var newHoraire = new Horaire { mds1 = mds, MDSId1 = mds.Id };
-                        _spuContext.Horaires.Add(newHoraire);
+                    //var existinghoraire = _spuContext.Horaires.Where(m => m.MDSId1 == mds.Id).ToList();
+                    //if(existinghoraire == null)
+                    //{
+                    //     var newHoraire = new Horaire { mds1 = mds, MDSId1 = mds.Id };
+                    //    _spuContext.Horaires.Add(newHoraire);
 
-                    }
+                    //}
                 }
             }
          
@@ -1264,7 +1266,10 @@ namespace SPU.Controllers
                     {
                         horaireVerificationMDS2.mds2 = null;
                         horaireVerificationMDS2.MDSId2 = null;
+                        _spuContext.Horaires.Update(horaireVerificationMDS2);
+
                     }
+
                     _spuContext.MDS.Update(mentor1);
                     _spuContext.Horaires.Update(horaireMDS1);
                 }
