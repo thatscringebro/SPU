@@ -39,6 +39,9 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Nom)
                 </td>
+                <td>
+                    @Html.ActionLink("Horaire", "Horaire", "Horaire", new { userId = item.Id }, new { @class = "btn btn-success" })
+                </td>
             </tr>
         }
     </tbody>

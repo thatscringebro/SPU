@@ -35,9 +35,7 @@ namespace SPU.Domain
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<Stagiaire>().HasOne(s => s.MDS1).WithMany().HasForeignKey(s => s.MDSId11).OnDelete(DeleteBehavior.SetNull);
-            //modelBuilder.Entity<Stagiaire>().HasOne(s => s.MDS2).WithMany().HasForeignKey(s => s.MDSId12).OnDelete(DeleteBehavior.SetNull);
-            //modelBuilder.Entity<MDS>().HasOne(m => m.stagiaire).WithMany().HasForeignKey(m => m.StagiaireId).OnDelete(DeleteBehavior.SetNull);
+         
             modelBuilder.Entity<MDS>().HasOne(m => m.stagiaire).WithMany().HasForeignKey(m => m.StagiaireId).OnDelete(DeleteBehavior.SetNull); 
             modelBuilder.Entity<MDS>().HasOne(m => m.employeur).WithMany().HasForeignKey(m => m.EmployeurId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<MDS>().HasOne(m => m.chat).WithMany().HasForeignKey(m => m.ChatId).OnDelete(DeleteBehavior.SetNull);
@@ -54,7 +52,7 @@ namespace SPU.Domain
             modelBuilder.Entity<Employeur>().HasOne(c => c.adresse).WithMany().HasForeignKey(c => c.AdresseId).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Horaire>().HasOne(c => c.stagiaire).WithMany().HasForeignKey(c => c.StagiaireId).OnDelete(DeleteBehavior.SetNull);
-            //modelBuilder.Entity<Horaire>().HasOne(c => c.mds1).WithMany().HasForeignKey(c => c.MDSId1).OnDelete(DeleteBehavior.SetNull);
+            
             modelBuilder.Entity<Horaire>().HasOne(c => c.mds2).WithMany().HasForeignKey(c => c.MDSId2).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Seed();
