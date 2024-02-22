@@ -40,9 +40,9 @@ namespace SPU.Controllers
             //Liste horaire maître de stage
             if (mds != null)
             {
-                Horaire? horaire = _context.Horaires.Where(x => 
+                Horaire? horaire = _context.Horaires.Where(x =>
                 (x.MDSId1 == mds.Id && x.StagiaireId == null) ||
-                (x.MDSId1 == mds.Id && x.StagiaireId != null) || 
+                (x.MDSId1 == mds.Id && x.StagiaireId != null) ||
                 (x.MDSId2 == mds.Id && x.StagiaireId != null)).FirstOrDefault();
                 vm.role = "MDS";
 
@@ -87,13 +87,13 @@ namespace SPU.Controllers
                     MDS trouveMdsAssocierHoraire = new MDS();
                     trouveMdsAssocierHoraire = _context.MDS.Where(x => x.StagiaireId == item.Id).FirstOrDefault();
 
-                    if(trouveMdsAssocierHoraire != null)
+                    if (trouveMdsAssocierHoraire != null)
                     {
                         Horaire? horaireMds = _context.Horaires.Where(x => x.MDSId1 == trouveMdsAssocierHoraire.Id).FirstOrDefault();
 
-                        if(horaireMds != null)
+                        if (horaireMds != null)
                         {
-                            if(horaireStagiaire != null)
+                            if (horaireStagiaire != null)
                             {
                                 association.dateDebutStage = item.debutStage ?? DateTime.MinValue;
                                 association.dateFinStage = item.finStage ?? DateTime.MinValue;
@@ -112,7 +112,7 @@ namespace SPU.Controllers
             }
 
             //Employeur
-            else if(employeur != null)
+            else if (employeur != null)
             {
                 vm.role = "employeur";
 
@@ -134,7 +134,7 @@ namespace SPU.Controllers
             Horaire horaire = new Horaire();
 
             horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
-            if(horaire == null)
+            if (horaire == null)
             {
                 TempData["ErrorMessage"] = "Horaire vide";
                 return View();
@@ -142,8 +142,8 @@ namespace SPU.Controllers
             else
             {
 
-            ViewBag.horaireId = horaire.Id;
-            ViewBag.MDSId1 = null;
+                ViewBag.horaireId = horaire.Id;
+                ViewBag.MDSId1 = null;
             }
 
             // Récupérer le message d'erreur de la session temporaire
@@ -166,7 +166,9 @@ namespace SPU.Controllers
 
                 vm.nomMds = string.Concat(mdsHoraire.utilisateur.Prenom + " " + mdsHoraire.utilisateur.Nom);
                 vm.nomStagiaire = string.Concat(stagHoraire?.utilisateur.Prenom + " " + stagHoraire?.utilisateur.Nom);
-                vm.nomMds2 = string.Concat(mdsHoraire2.utilisateur.Prenom + " " + mdsHoraire2.utilisateur.Nom);
+                if (vm.nomMds2 != null)
+                    vm.nomMds2 = string.Concat(mdsHoraire2?.utilisateur.Prenom + " " + mdsHoraire2?.utilisateur.Nom);
+
 
                 vm.DateCreationHoraire = mdsHoraire.DateCreationHoraire;
                 vm.DateExpiration = mdsHoraire.DateExpiration;
@@ -195,10 +197,22 @@ namespace SPU.Controllers
         {
             //var vm = new HorairePageVM();
 
-            Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id == userId);
-            Horaire horaire = new Horaire();
 
-            var Mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == userId);
+            Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id == userId);
+            Employeur? emp = _context.Employeurs.FirstOrDefault(x => x.utilisateur.Id.ToString() == _loggedUserId);
+
+            Horaire horaire = new Horaire();
+            MDS? Mds = new MDS();
+
+            if (emp != null)
+            {
+                Mds = _context.MDS.Where(x => x.Id == userId).Include(m => m.utilisateur).FirstOrDefault();
+                user = Mds.utilisateur;
+
+            }
+            else if (user != null)
+                Mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == userId);
+
             //Guid horaireId = _context.Horaires.Where(x => x.MDSId1 == Mds.Id).Select(h => h.Id).FirstOrDefault();
             horaire = _context.Horaires.Where(x => x.MDSId1 == Mds.Id).FirstOrDefault();
 
@@ -244,13 +258,14 @@ namespace SPU.Controllers
 
                 vm.nomMds = string.Concat(mdsHoraire.utilisateur.Prenom + " " + mdsHoraire.utilisateur.Nom);
                 vm.nomStagiaire = string.Concat(stagHoraire?.utilisateur.Prenom + " " + stagHoraire?.utilisateur.Nom);
-                vm.nomMds2 = string.Concat(mdsHoraire2.utilisateur.Prenom + " " + mdsHoraire2.utilisateur.Nom);
+                if (vm.nomMds2 != null)
+                    vm.nomMds2 = string.Concat(mdsHoraire2.utilisateur.Prenom + " " + mdsHoraire2.utilisateur.Nom);
 
 
                 vm.DateCreationHoraire = mdsHoraire.DateCreationHoraire;
                 vm.DateExpiration = mdsHoraire.DateExpiration;
 
-                if(stagHoraire!= null)
+                if (stagHoraire != null)
                 {
                     vm.DateDebutStage = stagHoraire.debutStage;
                     vm.DateFinStage = stagHoraire.finStage;
@@ -344,8 +359,8 @@ namespace SPU.Controllers
             Horaire horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
             MDS mds = _context.MDS.Where(x => x.UtilisateurId == idMDS).FirstOrDefault();
 
-            
-                   //Si il y a de la récurrence
+
+            //Si il y a de la récurrence
             if (vm.Recurrence)
             {
 
@@ -477,7 +492,7 @@ namespace SPU.Controllers
                 if (ph.DateDebut.ToLocalTime() < mds.DateCreationHoraire.ToLocalTime() || ph.DateFin.ToLocalTime() < mds.DateCreationHoraire.ToLocalTime()
                     || ph.DateDebut.ToLocalTime() > mds.DateExpiration.ToLocalTime() || ph.DateFin.ToLocalTime() > mds.DateExpiration.ToLocalTime())
                 {
-                    string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " + 
+                    string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " +
                         (mds.DateCreationHoraire.ToString("yyyy-MM-dd HH:mm:ss")) + " et le " + (mds.DateExpiration.ToString("yyyy-MM-dd HH:mm:ss"));
                     ModelState.AddModelError("PlageHoraire", errorMessage);
                     TempData["ErrorMessage"] = errorMessage;
@@ -611,7 +626,7 @@ namespace SPU.Controllers
                             string errorMessage = "La date et l'heure de la plage horaire doivent correspondre aux dates de début et de fin d'assignation du maître de stage. (entre le " +
                                 (mds.DateCreationHoraire.ToString("yyyy-MM-dd HH:mm:ss")) +
                                 " et le " +
-                                (mds.DateExpiration.ToString("yyyy-MM-dd HH:mm:ss"));  
+                                (mds.DateExpiration.ToString("yyyy-MM-dd HH:mm:ss"));
                             ModelState.AddModelError("PlageHoraire", errorMessage);
                             TempData["ErrorMessage"] = errorMessage;
                             return RedirectToAction("Horaire", "Horaire", new { horaireId = horaireId });
@@ -761,7 +776,7 @@ namespace SPU.Controllers
             {
                 string[] listMatricule = plageHoraire.remplacant.Split(',');
                 vm.MatriculeRemplacent1 = listMatricule[0];
-                if(listMatricule.Length > 1)
+                if (listMatricule.Length > 1)
                     vm.MatriculeRemplacent1 = listMatricule[1];
             }
 
@@ -776,9 +791,9 @@ namespace SPU.Controllers
         //Remplacent
         [Authorize]
         [HttpPost]
-        public IActionResult MdsRemplacement(RemplacementPlageHoraireVM vm,  string PlageHoraireId, string actionType)
+        public IActionResult MdsRemplacement(RemplacementPlageHoraireVM vm, string PlageHoraireId, string actionType)
         {
-            if(actionType == "annuler")
+            if (actionType == "annuler")
                 return RedirectToAction("Index", "Horaire");
 
             PlageHoraire? plageHoraire = _context.PlageHoraires.FirstOrDefault(x => x.Id.ToString() == PlageHoraireId);

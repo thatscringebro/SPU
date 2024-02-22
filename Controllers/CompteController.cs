@@ -810,7 +810,7 @@ namespace SPU.Controllers
         [HttpGet]
         public ActionResult CreationEmployeur(string hash)
         {
-            var Employeur = CreateSHA512("Employeyr");
+            var Employeur = CreateSHA512("Employeur");
 
             if (hash == Employeur)
                 return View("CreationEmployeur");
