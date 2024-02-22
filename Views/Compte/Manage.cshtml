@@ -523,14 +523,30 @@
 
         $(function () {
             $('.delete-button').click(function () {
-                const nomComplet = $(this).data('prenom') + ' ' + $(this).data('nom') || "this item";
+                const prenom = $(this).data('prenom');
+                const nom = $(this).data('nom');
+                const nomComplet = prenom && nom ? `${prenom} ${nom}` : "this item";
 
                 const message = `Voulez-vous vraiment supprimer ${nomComplet}?`;
 
-                if (confirm(message)) {
-                    $(this).parent("form").submit();
-                }
+                // Utiliser Swal pour la confirmation
+                Swal.fire({
+                    title: 'Êtes-vous sûr?',
+                    text: message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Oui, supprimez-le!',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Si l'utilisateur confirme, soumettre le formulaire
+                        $(this).parent("form").submit();
+                    }
+                });
             });
+
 
             $('.copy-link').click(function () {
                 const link = $(this).data('link');
