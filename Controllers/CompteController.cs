@@ -1157,7 +1157,7 @@ namespace SPU.Controllers
             }
 
             if(finStage == null && debutStage == null) {
-                TempData["ErrorMessage"] = "Veuillez entré une date de début et de fin de stage";
+                TempData["ErrorMessage"] = "Veuillez entrer une date de début et de fin de stage";
                 return RedirectToAction("Relier");
             }
      
@@ -1165,7 +1165,13 @@ namespace SPU.Controllers
 
             if (horaireTest != null && horaireTest.MDSId1 == idMdsSelectionne1 && horaireTest.StagiaireId != idStagiaire)
             {
-                TempData["ErrorMessage"] = "Veuillez retirer le mds 2 avant de retirer le 1er";
+                TempData["ErrorMessage"] = "Veuillez déselectionner le premier maître de stage avant de l'assigner à nouveau!";
+                return RedirectToAction("Relier");
+            }
+
+            if(idMdsSelectionne1 == null && idMdsSelectionne2 != null)
+            {
+                TempData["ErrorMessage"] = "Veuillez assigner le premier maître de stage avant le deuxième.";
                 return RedirectToAction("Relier");
             }
 
@@ -1421,7 +1427,7 @@ namespace SPU.Controllers
                     worksheet_horaire.Cell("D4").Value = "Matricule TAP #2";
 
                     Horaire horaire = _spuContext.Horaires.FirstOrDefault(x => x.StagiaireId == stagiaires[i].Id);
-                    List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id && x.StagiaireAbsent == false).ToList();
+                    List<PlageHoraire> plages = _spuContext.PlageHoraires.Where(x => x.HoraireId == horaire.Id && x.StagiairePresent == false).ToList();
 
                     for (int j = 0; i < plages.Count(); i++)
                     {
