@@ -19,6 +19,7 @@ namespace SPU.ViewComponents
             _loggedUserId = claim?.Value;
         }
 
+        //instanciation du view component
         public async Task<IViewComponentResult> InvokeAsync(Guid horaireId, Guid? MDSId1)
         {
             CalendrierHoraireVM calendrier = new CalendrierHoraireVM()
@@ -44,9 +45,11 @@ namespace SPU.ViewComponents
             List<JourneeTravailleVM> journeeTravailles = new List<JourneeTravailleVM>();
             List<PlageHoraire> listePlageHoraire = new List<PlageHoraire>();
 
+            //Va cherher toutes les plage horaires en lien avec l'horaire
             if (mds != null)
             {
                 calendrier.role = "mds";
+                //va trouver l'horaire avec le id de l'horaire
                 Horaire? horaire = _context.Horaires.Where(x => x.Id == horaireId).FirstOrDefault();
 
                 if (horaire != null)
@@ -67,7 +70,7 @@ namespace SPU.ViewComponents
             else if (stag != null)
             {
                 calendrier.role = "stagiaire";
-                //À vérfier ici
+                //Va trouver l'horaire avec l'id de stagiaire
                 Horaire horaire = _context.Horaires.Where(x => x.StagiaireId == stag.Id).FirstOrDefault();
 
                 if (horaire != null)
@@ -86,39 +89,6 @@ namespace SPU.ViewComponents
                 }
             }
 
-            // Aller chercher toutes les journées où la personne connectée travaille
-            //List<JourneeTravailleVM> donneesTest = new List<JourneeTravailleVM>();
-
-            // Ajouter des données de test
-            //donneesTest.Add(new JourneeTravailleVM
-            //{
-            //    Id = Guid.NewGuid(),
-            //    DateDebutQuart = new DateTime(2024, 1, 1, 8, 0, 0), // 1er janvier 2024 à 8h00
-            //    DateFinQuart = new DateTime(2024, 1, 1, 16, 30, 0), // 1er janvier 2024 à 12h00
-            //    Present = true
-            //});
-
-            //donneesTest.Add(new JourneeTravailleVM
-            //{
-            //    Id = Guid.NewGuid(),
-            //    DateDebutQuart = new DateTime(2024, 1, 2, 13, 0, 0), // 2 janvier 2024 à 13h00
-            //    DateFinQuart = new DateTime(2024, 1, 2, 21, 0, 0), // 2 janvier 2024 à 17h00
-            //    Present = true
-            //});
-            //donneesTest.Add(new JourneeTravailleVM
-            //{
-            //    Id = Guid.NewGuid(),
-            //    DateDebutQuart = new DateTime(2024, 1, 3, 20, 0, 0), // 3 janvier 2024 à 20h00
-            //    DateFinQuart = new DateTime(2024, 1, 4, 3, 0, 0), // 4 janvier 2024 à 3h00
-            //    Present = true
-            //});
-            //donneesTest.Add(new JourneeTravailleVM
-            //{
-            //    Id = Guid.NewGuid(),
-            //    DateDebutQuart = new DateTime(2024, 1, 4, 20, 0, 0), // 4 janvier 2024 à 20h00
-            //    DateFinQuart = new DateTime(2024, 1, 5, 3, 0, 0), // 5 janvier 2024 à 3h00
-            //    Present = true
-            //});
             // Renvoyer la vue avec les données
             return View(calendrier);
         }
