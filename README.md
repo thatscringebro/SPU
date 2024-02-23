@@ -310,11 +310,18 @@ Le coordonnateur est celui qui s'occupe des informations dans le système. À pa
 - Il est redirigé vers une page de gestion où il peut voir la liste de ses maîtres de stage.
 - L'employeur peut appuyer sur le bouton "Horaire" du maître de stage dans la liste.
   - Limite : Si le mds n'a pas d'horaire, un message d'erreur apparaît.
-  - Si le mds a un horaire, l'horaire du mds s'affiche.
   - Limite : Ne pas toucher aux plages horaires sinon on peut les effacer.
   - Limite : Les plages horaires ne s'affichent pas toujours.
+  - Si le mds a un horaire, l'horaire du mds s'affiche.
 - La déconnexion fonctionne.
 
+## Fonctions non-implémentées
+
+- Les notifications n'étaient pas incluses dans les cas d'utilisation, mais elles étaient mentionnées.
+- L'ajout d'une journée supplémentaire à l'horaire du stagiaire s'il est absent une journée et souhaite reprendre cette journée.
+  - Le code nécessaire est présent dans l'application ; cependant, il n'est pas encore intégré au frontend.
+- Plutôt que de supprimer un MDS, il convient de changer son statut pour "inactif". Il doit demeurer dans la base de données.
+- Être MDS à temps partiel devrait être possible. Théoriquement, il est envisageable de planifier son horaire une journée à la fois, donc il n'y a pas de fonction précise pour cela.
 
 ## Développement et déploiement
 

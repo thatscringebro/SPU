@@ -20,6 +20,13 @@ using DocumentFormat.OpenXml.Drawing;
 
 namespace SPU.Controllers
 {
+    /// <summary>
+    /// Auteur : Claudel D. Roy, Syntich Makougang et Merlin Gélinas
+    /// Description : Un contrôleur qui fait la gestion du login/logout, 
+    ///               les vues manages, la création des utilisateurs, 
+    ///               l'édition des utilisatieurs, la liaison entre les utlisateurs, 
+    ///               l'exportation des données, la validation de données et la suppression des utilisateurs.
+    /// </summary>
     [Authorize]
     public class CompteController : Controller
     {
@@ -163,8 +170,6 @@ namespace SPU.Controllers
             return View();
         }
 
-
-        //CRUD pour utilisateur 
         /// <summary>
         /// Affiche les listes des utilisateurs pour la gestion des utilisateurs
         /// </summary>
@@ -205,23 +210,16 @@ namespace SPU.Controllers
                             userDetail.PartagerInfoContact = Stagiaire?.PartagerInfoContact ?? false;
 
                             if (Stagiaire?.debutStage.HasValue == true)
-                            {
-                                userDetail.debutStage = Stagiaire.debutStage.Value.ToUniversalTime().Date.ToString("yyyy-MM-dd"); ;
-                                //Value.Date.ToString("yyyy-MM-dd");
-                            }
+                                userDetail.debutStage = Stagiaire.debutStage.Value.ToUniversalTime().Date.ToString("yyyy-MM-dd"); 
                             else
-                            {
                                 userDetail.debutStage = null;
-                            }
+
 
                             if (Stagiaire?.finStage.HasValue == true)
-                            {
-                                userDetail.finStage = Stagiaire.finStage.Value.ToUniversalTime().Date.ToString("yyyy-MM-dd"); ;
-                            }
+                                userDetail.finStage = Stagiaire.finStage.Value.ToUniversalTime().Date.ToString("yyyy-MM-dd"); 
                             else
-                            {
                                 userDetail.finStage = null;
-                            }
+                            
                             userDetail.Ecole = Ecole.Nom;
                         }
 
@@ -287,9 +285,7 @@ namespace SPU.Controllers
                 var idUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 if (idUser == null)
-                {
                     ViewBag.UserListErrorMessage = "Erreur d'affichage. Veuillez réessayer!";
-                }
 
                 Guid idEmp = _spuContext.Employeurs.FirstOrDefault(a => a.UtilisateurId == Guid.Parse(idUser)).Id;
 
@@ -325,9 +321,7 @@ namespace SPU.Controllers
                 var idUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 if (idUser == null)
-                {
                     ViewBag.UserListErrorMessage = "Erreur d'affichage. Veuillez réessayer!";
-                }
 
                 Guid idEns = _spuContext.Enseignants.FirstOrDefault(a => a.UtilisateurId == Guid.Parse(idUser)).Id;
 
@@ -371,9 +365,9 @@ namespace SPU.Controllers
         /// <summary>
         /// Affiche la vue pour le formulaire de création des stagiaires/enseignants/coordonnateur
         /// </summary>
-        /// <param name="vue"></param>
-        /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <param name="vue">La vue retourner</param>
+        /// <param name="hash">Le hash en url</param>
+        /// <returns>La bonne vue</returns>
         [AllowAnonymous]
         [Route("Compte/CreationNormal")]
         [Route("Compte/CreationNormal/{hash?}")]
@@ -433,7 +427,6 @@ namespace SPU.Controllers
         /// </summary>
         /// <param name="vm">Model vu contenant les informations pour l'inscription de l'utilisateur</param>
         /// <returns>Retourne à l'index </returns>
-        //CREATION STAGIAIRE/COORDO/ENSEIGNANT
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationNormal(UtilisateurCreationVM vm)
@@ -441,9 +434,7 @@ namespace SPU.Controllers
             ViewBag.Ecoles = PopulateEcoles();
 
             if (!ModelState.IsValid)
-            {
                 return View(vm);
-            }
 
             var roles = await _roleManager.Roles.ToListAsync();
 
@@ -539,8 +530,6 @@ namespace SPU.Controllers
         /// </summary>
         /// <param name="id">Id de l'utilisateur à modifier</param>
         /// <returns>La vue avec les informations actuelles sur l'utilisateur</returns>
-        //[AllowAnonymous]
-        //EDIT STAGIAIRE/COORDO/ENSEIGNANT
         [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> EditUtilisateur(Guid id)
@@ -578,7 +567,6 @@ namespace SPU.Controllers
         /// <param name="vm">Le contenu de la vue</param>
         /// <returns>La vue montrant les informations de l'utilisateur qui ont été modifiés</returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        //[AllowAnonymous]
         [Authorize(Roles = "Coordonnateur")]
         [HttpPost]
         public async Task<IActionResult> EditUtilisateur(Guid id, UtilisateurEditVM vm)
@@ -610,7 +598,7 @@ namespace SPU.Controllers
 
         #region CreationMDS et EditMDS
         /// <summary>
-        /// Rempli la drop down liste affichant les employeurs pour que l'utilisateur puisse en sélectionner un
+        /// Rempli le drop down liste affichant les employeurs pour que l'utilisateur puisse en sélectionner un
         /// </summary>
         /// <returns>la liste des employeurs déjà enregistrés</returns>
         private IEnumerable<SelectListItem> PopulateEmployeurs()
@@ -628,8 +616,8 @@ namespace SPU.Controllers
         /// Si hash -> Renvoie la vue pour que l'utilisateur s'inscrive lui-même, sinon cela signifie que c'est
         /// le coordonnateur qui crée le maitre de stage
         /// </summary>
-        /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <param name="hash">Le nom du role hasher en sha512</param>
+        /// <returns>La bonne vue</returns>
         [AllowAnonymous]
         [Route("Compte/CreationMDS")]
         [Route("Compte/CreationMDS/{hash?}")]
@@ -650,9 +638,8 @@ namespace SPU.Controllers
         /// <summary>
         /// Permet la création des utilisateurs qui auront comme rôle, maitres de stages 
         /// </summary>
-        /// <param name="vm"></param>
-        /// <returns></returns>
-        //CREATION MDS
+        /// <param name="vm">Le viewModel pour la création du Maitre de stage</param>
+        /// <returns>La vue</returns>
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationMDS(MDSCreationVM vm)
@@ -762,8 +749,7 @@ namespace SPU.Controllers
         /// Afficher les informations actuelles du maitre de stage sélectionné pour la modification
         /// </summary>
         /// <param name="id">Id de l'utilisateur a modifier</param>
-        /// <returns></returns>
-        //EDIT MDS
+        /// <returns>La vue</returns>
         [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> EditMDS(Guid id)
@@ -781,7 +767,6 @@ namespace SPU.Controllers
             if (userMDS == null)
                 return NotFound();
 
-            //var empId = await _spuContext.Employeurs.Where(userMDS.emp)
 
             var modifUser = new MDSEditVM
             {
@@ -792,7 +777,6 @@ namespace SPU.Controllers
                 PhoneNumber = userMDS.utilisateur.PhoneNumber,
                 MatriculeId = userMDS.MatriculeId,
                 Civilite = userMDS.civilite,
-                //NomEmployeur = userMDS.NomEmployeur,
                 telMaison = userMDS.telMaison,
                 TypeEmployeur = userMDS.typeEmployeur,
                 idEmployeurSelectionne = userMDS.EmployeurId,
@@ -884,7 +868,6 @@ namespace SPU.Controllers
         /// </summary>
         /// <param name="vm">Les informations entrées dans la vue (formulaire)</param>
         /// <returns></returns>
-        //[Authorize(Roles = "Coordinateur")]
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreationEmployeur(EmployeurCreationVM vm)
@@ -964,7 +947,6 @@ namespace SPU.Controllers
         /// </summary>
         /// <param name="id">Id de l'employeur que l'on désire mettre à jour ses informations</param>
         /// <returns></returns>
-        //EDIT EMPLOYEUR
         [Authorize(Roles = "Coordonnateur")]
         [HttpGet]
         public async Task<IActionResult> EditEmployeur(Guid id)
@@ -1062,7 +1044,7 @@ namespace SPU.Controllers
 
         #region Remove 
         /// <summary>
-        /// 
+        /// Retire l'utilisateur de la liste des utilisateurs
         /// </summary>
         /// <param name="id">De l'utilisateur qu'on désire enlever</param>
         /// <param name="role">Role de l'utilisateur qu'on désire enlever</param>
@@ -1384,6 +1366,10 @@ namespace SPU.Controllers
         #endregion
 
         #region Exportation
+        /// <summary>
+        /// Fait la création d'un fichier excel pour exporter les données. Remplit le fichier grâce à la base de données
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Coordonnateur")]
         public IActionResult ExportContrat()
         {

@@ -13,6 +13,10 @@ using System.Security.Cryptography;
 
 namespace SPU.Controllers
 {
+    /// <summary>
+    /// Auteur : Gabriel Bruneau et François Lampron
+    /// co-auteur : Claudel D. Roy et Syntich Makougang (pour des modifications minimes ) 
+    /// </summary>
     public class HoraireController : Controller
     {
         private readonly string _loggedUserId;
@@ -24,6 +28,10 @@ namespace SPU.Controllers
             _loggedUserId = claim?.Value;
         }
 
+        /// <summary>
+        /// L'index pour les horaires
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         public IActionResult Index()
         {
@@ -127,6 +135,12 @@ namespace SPU.Controllers
             return View(vm);
         }
 
+        /// <summary>
+        /// Affiche l'horaire pour le stagiaire
+        /// </summary>
+        /// <param name="horaireId">L'id de l'horaire du stagiaire</param>
+        /// <param name="vm">Le viewModel pour la page horaire</param>
+        /// <returns></returns>
         [Authorize]
         public IActionResult Horaire(Guid horaireId, HorairePageVM vm)
         {
@@ -192,6 +206,13 @@ namespace SPU.Controllers
 
             return View(vm);
         }
+
+        /// <summary>
+        /// L'horaire pour les maitres de stage
+        /// </summary>
+        /// <param name="userId">Le id du mds de stage</param>
+        /// <param name="vm">Le viewModel pour l'horaire</param>
+        /// <returns></returns>
         [Authorize]
         public IActionResult HoraireMds(Guid userId, HorairePageVM vm)
         {
@@ -276,67 +297,11 @@ namespace SPU.Controllers
             return View("Horaire", vm);
         }
 
-
-        //public IActionResult AjoutNouvelHoraireMDS()
-        //{
-        //Utilisateur? user = _context.Utilisateurs.FirstOrDefault(x => x.Id.ToString() == _loggedUserId);
-
-        //Coordonnateur? coordo = _context.Coordonnateurs.FirstOrDefault(x => x.UtilisateurId == user.Id);
-        //MDS? mds = _context.MDS.FirstOrDefault(x => x.UtilisateurId == user.Id);
-        //Stagiaire? stag = _context.Stagiaires.FirstOrDefault(x => x.UtilisateurId == user.Id);
-
-        //Horaire nouvelleHoraire = new Horaire();
-
-        //if (mds != null)
-        //{
-        //    nouvelleHoraire.Id = Guid.NewGuid();
-        //    nouvelleHoraire.mds = mds;
-        //    nouvelleHoraire.MDSId1 = mds.Id;
-
-        //    // Obtenir la date et l'heure actuelles dans le fuseau horaire local
-        //    DateTime debutHoraire = DateTime.Now;
-
-
-        //    // Démarrer l'horaire à partir du dimanche prochain
-        //    while (debutHoraire.DayOfWeek != DayOfWeek.Sunday)
-        //    {
-        //        debutHoraire = debutHoraire.AddDays(1);
-        //    }
-
-        //    debutHoraire = new DateTime(debutHoraire.Year, debutHoraire.Month, debutHoraire.Day, 0, 0, 0);
-
-        //    // Ajouter deux ans
-        //    DateTime finHoraire = debutHoraire.AddYears(2);
-
-        //    TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-
-        //    debutHoraire = TimeZoneInfo.ConvertTime(debutHoraire, localTimeZone);
-        //    finHoraire = TimeZoneInfo.ConvertTime(finHoraire, localTimeZone);
-
-        //    mds.DateCreationHoraire = debutHoraire.ToUniversalTime();
-        //    mds.DateExpiration = finHoraire.ToUniversalTime();
-
-        //    // !!! ---- Stagiaire fixif pour association horaire ----- !!!
-        //    Stagiaire stagiaireFixif = _context.Stagiaires.Include(c => c.utilisateur).FirstOrDefault();
-
-        //    if (stagiaireFixif != null)
-        //    {
-        //        stagiaireFixif.DateDebutStage = new DateTime(2024,2,26).ToUniversalTime();
-        //        stagiaireFixif.DateFinStage = new DateTime(2024,5,26).ToUniversalTime();
-
-        //        nouvelleHoraire.stagiaire = stagiaireFixif;
-        //        nouvelleHoraire.StagiaireId = stagiaireFixif.Id;
-        //    }
-        //    // !!! --- !!!
-
-        //    _context.Add(nouvelleHoraire);
-        //    _context.SaveChanges();
-
-        //    ViewBag.horaireId = nouvelleHoraire.Id;
-        //}
-
-        //return RedirectToAction("Horaire", "Horaire", new { horaireId = nouvelleHoraire.Id });
-        //}
+        /// <summary>
+        /// L'action pour ajouter une plage horaire si on est un maitre de stage
+        /// </summary>
+        /// <param name="horaireId">L'id de l'horaire a modifier</param>
+        /// <returns></returns>
         [Authorize]
         public IActionResult AjoutPlageHoraireMDS(Guid horaireId)
         {
@@ -366,8 +331,7 @@ namespace SPU.Controllers
 
                 if (horaire != null)
                 {
-                    //DateTime dateDebutStage = horaire.DateDebutStage;
-                    //DateTime dateFinStage = horaire.DateFinStage;
+                    
 
                     // Obtenir l'heure locale
                     TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
@@ -509,7 +473,13 @@ namespace SPU.Controllers
         }
 
 
-        // Ajout d'une confirmation
+        /// <summary>
+        /// Modifier une plage horaire existante
+        /// </summary>
+        /// <param name="vm">Le viewModel pour la modification</param>
+        /// <param name="idPlageHoraire">Le id de la plage horaire a modifier</param>
+        /// <param name="idHoraire">le id de l'horaire qui contient la plage horaire</param>
+        /// <returns></returns>
         [Authorize]
         public IActionResult ModifierPlageHoraire(ModifierPlageHoraireVM vm, Guid idPlageHoraire, Guid idHoraire)
         {
@@ -530,7 +500,13 @@ namespace SPU.Controllers
 
             return View(vm);
         }
-
+        /// <summary>
+        /// Modifier une plage horaire existante
+        /// </summary>
+        /// <param name="vm">Le viewModel pour la modification de plage horaire</param>
+        /// <param name="actionType">Le type d'action effectuer dans la modification</param>
+        /// <param name="PlageHoraireId">Le id de la plage horaire</param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult ModifierPlageHoraire(ModifierPlageHoraireVM vm, string actionType, Guid PlageHoraireId)
         {
@@ -636,11 +612,9 @@ namespace SPU.Controllers
                     // Mettre à jour les propriétés de la plage horaire avec les nouvelles valeurs
                     phBD.HoraireId = horaireId;
                     phBD.Commentaire = vm.Commentaire;
-                    //phBD.ConfirmationPresence = vm.EstPresent;
                     phBD.DateDebut = plageHoraireDebut.ToUniversalTime();
                     phBD.DateFin = plageHoraireFin.ToUniversalTime();
 
-                    //ICI CLAUDEL POUR LA MODIF DE LA PLAGE HORAIRE
                     if (!vm.EstPresent) //Verifier si il est deja dans la BD
                     {
                         if (phBD.MDS1absent == null)
@@ -679,7 +653,11 @@ namespace SPU.Controllers
         }
 
 
-        //Allo :)
+        /// <summary>
+        /// Supprimer une plage horaire
+        /// </summary>
+        /// <param name="vm">Le viewModel pour la modification de la plage horaire</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         public IActionResult SupprimerPlageHoraire(ModifierPlageHoraireVM vm)
@@ -688,7 +666,11 @@ namespace SPU.Controllers
         }
 
 
-        //affichage info
+        /// <summary>
+        /// Afficher les informations de la plage horaire
+        /// </summary>
+        /// <param name="Id">Le id de la plage horaire</param>
+        /// <returns></returns>
         public async Task<IActionResult> ObtenirInfoPlageHoraire(string Id)
         {
             JourneeTravailleVM? journeeTravailles = _context.PlageHoraires.Where(x => x.Id.ToString() == Id).Select(x => new JourneeTravailleVM
@@ -705,7 +687,11 @@ namespace SPU.Controllers
         }
 
 
-        //Stagiaire
+        /// <summary>
+        /// Un stagiaire peut se mettre absent
+        /// </summary>
+        /// <param name="Id">Le id de la plage horaire</param>
+        /// <returns></returns>
         public IActionResult MettreAbsent(string Id)
         {
             PlageHoraire? plage = _context.PlageHoraires.Where(x => x.Id.ToString() == Id).FirstOrDefault();
@@ -726,7 +712,10 @@ namespace SPU.Controllers
             }
         }
 
-        //reprendre une journee si le stagiaire s'absente
+        /// <summary>
+        /// La reprise de journée suite à une absence du stagiaire
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         public IActionResult ReprendreJournee()
         {
@@ -763,7 +752,12 @@ namespace SPU.Controllers
 
         }
 
-        //Afficher form de remplacent
+        /// <summary>
+        /// Le formulaire pour le remplacement du maitre de stage absent a remplir par le stagiaire
+        /// </summary>
+        /// <param name="vm">Le viewModel pour le remplacment des plages horaires</param>
+        /// <param name="idPlageHoraire">le id de la plage horaire a modifier</param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         public IActionResult MdsRemplacement(RemplacementPlageHoraireVM vm, Guid idPlageHoraire)
@@ -788,7 +782,13 @@ namespace SPU.Controllers
 
             return View(vm);
         }
-        //Remplacent
+        /// <summary>
+        /// Choisir le remplacent pour la plage horaire selectionner (le stagiaire qui choisi le maitre de stage) 
+        /// </summary>
+        /// <param name="vm">Le view Model pour le remplacement de la plage horaire</param>
+        /// <param name="PlageHoraireId"></param>
+        /// <param name="actionType"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         public IActionResult MdsRemplacement(RemplacementPlageHoraireVM vm, string PlageHoraireId, string actionType)

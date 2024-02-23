@@ -20,6 +20,10 @@ namespace SignalRChat.Hubs
 
         public static Dictionary<string, List<string>> ConnectedUsers = new ();
 
+        /// <summary>
+        /// Gestion de la connexion de l'utilisateur
+        /// </summary>
+        /// <returns></returns>
         public override async Task OnConnectedAsync()
         {
             var connectionId = Context.ConnectionId;
@@ -31,7 +35,11 @@ namespace SignalRChat.Hubs
                 ConnectedUsers[userId].Add(connectionId);
             }
         }
-
+        /// <summary>
+        /// Gestion de la déconnexion de l'utilisateur 
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns></returns>
         public override async Task OnDisconnectedAsync(Exception ex)
         {
             var connectionId = Context.ConnectionId;
@@ -47,7 +55,13 @@ namespace SignalRChat.Hubs
                 }
             }
         }
-
+        /// <summary>
+        /// Envoie les messages
+        /// </summary>
+        /// <param name="user">le nom de l'utilisateur qui envoie le message</param>
+        /// <param name="room">Le chat qui possède le message</param>
+        /// <param name="message">Le message</param>
+        /// <returns></returns>
         public async Task SendMessage(string user, string room, string message)
         {
             Message m = new Message{
