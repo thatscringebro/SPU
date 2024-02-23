@@ -7,7 +7,9 @@ using System.Net;
 using System.Security.Cryptography;
 
 namespace SPU.Domain
-{
+{/// <summary>
+/// A revoir, suite au changement dans le code, le seed n'est plus bon.
+/// </summary>
 	public static class SeedExtension
 	{
 		public static readonly PasswordHasher<Utilisateur> PASSWORD_HASHER = new();

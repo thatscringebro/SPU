@@ -10,7 +10,9 @@ using SPU.Domain.Entites;
 using Microsoft.EntityFrameworkCore;
 
 namespace SPU.Controllers;
-
+/// <summary>
+/// Auteur : Merlin Gélinas
+/// </summary>
 public class EvaluationController : Controller
 {
     private readonly string _loggedUserId;
@@ -22,7 +24,10 @@ public class EvaluationController : Controller
         var claim = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
         _loggedUserId = claim?.Value;
     }
-
+    /// <summary>
+    /// Redirection de la vue
+    /// </summary>
+    /// <returns></returns>
     [Authorize]
     public IActionResult Index()
     {
@@ -30,7 +35,13 @@ public class EvaluationController : Controller
 
         return View(user);
     }
-
+    /// <summary>
+    /// Ajout du liens form 
+    /// </summary>
+    /// <param name="lienGoogleForm">Le url du lien</param>
+    /// <param name="actif">Si le form est actif pour les stagiaires ou mds</param>
+    /// <param name="estStagiaire">Si le form est pour un stagiaire</param>
+    /// <returns></returns>
     [Authorize]
     public IActionResult Create(string lienGoogleForm, bool actif, bool estStagiaire)
     {
@@ -86,7 +97,11 @@ public class EvaluationController : Controller
 
         return Ok();
     }
-
+    /// <summary>
+    /// Pour supprimer le form de la liste
+    /// </summary>
+    /// <param name="lien">le nom du url a supprimer</param>
+    /// <returns></returns>
     [Authorize]
     public IActionResult Delete(string lien) 
     {
@@ -98,7 +113,12 @@ public class EvaluationController : Controller
 
       return Ok();
     }
-
+    /// <summary>
+    /// Pour mettre actif le form 
+    /// </summary>
+    /// <param name="idEval">Le id de l'évaluation a mettre active</param>
+    /// <param name="status">Le status de l'évaluation</param>
+    /// <returns></returns>
     [Authorize]
     public IActionResult setActif(Guid idEval, bool status)
     {
@@ -111,6 +131,12 @@ public class EvaluationController : Controller
       return Ok();
     }
 
+    /// <summary>
+    /// Pour savoir si le liens à été consulté
+    /// </summary>
+    /// <param name="idEval">Le id de l'évaluation</param>
+    /// <param name="status">Le status de l'évaluation</param>
+    /// <returns></returns>
     [Authorize]
     public IActionResult setConsultation(Guid idEval, bool status)
     {
@@ -123,7 +149,11 @@ public class EvaluationController : Controller
 
       return Ok();
     }
-
+    /// <summary>
+    /// Requête pour trouver un évaluation par son lien url
+    /// </summary>
+    /// <param name="url">Le url</param>
+    /// <returns></returns>
     [Authorize]
     public IActionResult GetEvaluationsByURL(string url)
     {

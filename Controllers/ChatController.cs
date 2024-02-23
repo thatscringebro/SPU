@@ -9,7 +9,9 @@ using SPU.Domain;
 using SPU.Domain.Entites;
 
 namespace SPU.Controllers;
-
+/// <summary>
+/// Auteur : Merlin Gélinas
+/// </summary>
 public class ChatController : Controller
 {
     private readonly string _loggedUserId;
@@ -21,7 +23,10 @@ public class ChatController : Controller
         var claim = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
         _loggedUserId = claim?.Value;
     }
-
+    /// <summary>
+    /// Index pour la redirection de la vue
+    /// </summary>
+    /// <returns></returns>
     [Authorize]
     public IActionResult Index()
     {

@@ -14,7 +14,6 @@ namespace SPU.Domain
         public DbSet<Adresse> Adresses { get; set; }
         public DbSet<Chat> Chats { get; set; }
 
-        //public DbSet<Contrat> Contrats { get; set; }
         public DbSet<Coordonnateur> Coordonnateurs { get; set; }
 
         public DbSet<Employeur> Employeurs { get; set; }
